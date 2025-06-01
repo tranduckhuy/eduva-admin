@@ -1,0 +1,24 @@
+@import "@angular/cdk/overlay-prebuilt.css";
+@import "primeicons/primeicons.css";
+@import "ckeditor5/ckeditor5.css";
+
+@import "./assets/css/grid.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  text-rendering: optimizeSpeed;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+input,
+textarea,
+select,
+button {
+  font-family: inherit;
+  font-size: inherit;
+}
