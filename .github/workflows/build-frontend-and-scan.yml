@@ -23,14 +23,12 @@ jobs:
               with:
                   node-version: "22.12.0"
                   cache: "npm"
-                  cache-dependency-path: frontend-admin/package-lock.json
+                  cache-dependency-path: package-lock.json
 
             - name: Install dependencies
-              working-directory: frontend-admin
               run: npm ci
 
             - name: Build Angular app for production
-              working-directory: frontend-admin
               run: npx ng build --configuration=production
               env:
                   API_URL: ${{ secrets.API_URL || 'https://api.eduva.example.com' }}
