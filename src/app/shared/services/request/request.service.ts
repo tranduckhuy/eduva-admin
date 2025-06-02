@@ -33,7 +33,7 @@ export class RequestService {
    * @returns An Observable of the response body.
    */
   post<T>(url: string, body?: any): Observable<T> {
-    return this.http.post<T>(url, JSON.stringify(body || {}), {
+    return this.http.post<T>(url, JSON.stringify(body ?? {}), {
       headers: this.getJsonHeaders(),
     });
   }
@@ -46,7 +46,7 @@ export class RequestService {
    * @returns An Observable of the response body.
    */
   put<T>(url: string, body?: any): Observable<T> {
-    return this.http.put<T>(url, JSON.stringify(body || {}), {
+    return this.http.put<T>(url, JSON.stringify(body ?? {}), {
       headers: this.getJsonHeaders(),
     });
   }
