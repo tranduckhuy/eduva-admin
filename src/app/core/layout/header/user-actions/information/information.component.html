@@ -1,0 +1,49 @@
+<div
+  class="absolute right-0 top-[46px]"
+  clickOutsideSubmenu
+  (clickOutside)="clickOutside.emit()">
+  <div
+    class="animate-fadeInForward rounded-md bg-white shadow-2xl transition-all duration-300 ease-in-out will-change-[opacity,transform]">
+    <div class="w-[195px] p-5">
+      <div class="flex items-center gap-3 border-b border-b-gray-100 pb-3">
+        <img
+          src="https://lh3.googleusercontent.com/a/AGNmyxZvwEXZAmBFuN14cAaRpQmPm5WQZCuoLGy1cWgb=s96-c"
+          alt="Quy Nguyen"
+          class="h-[30px] w-[30px] rounded-[50%] object-contain outline outline-[#C2CDFF]" />
+        <div class="flex flex-col">
+          <span class="text-textBlack font-medium">Quy Nguyen</span>
+          <span class="text-xs">Frontend Developer</span>
+        </div>
+      </div>
+      <ul>
+        <li>
+          <a href="#!" class="information-link py-3">
+            <fa-icon
+              [icon]="['far', 'circle-user']"
+              class="information-icon"></fa-icon>
+            Trang cá nhân
+          </a>
+        </li>
+      </ul>
+
+      <div class="separator"></div>
+
+      <ul>
+        <li>
+          <a href="#!" class="information-link pb-2 pt-3">
+            <fa-icon [icon]="'gear'" class="information-icon"></fa-icon>
+            Cài đặt
+          </a>
+        </li>
+        <li>
+          <a href="#!" class="information-link pt-2">
+            <fa-icon
+              [icon]="'arrow-right-from-bracket'"
+              class="information-icon"></fa-icon>
+            Đăng xuất
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

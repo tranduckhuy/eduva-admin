@@ -1,24 +1,67 @@
-@import "@angular/cdk/overlay-prebuilt.css";
-@import "primeicons/primeicons.css";
-@import "ckeditor5/ckeditor5.css";
+@import '@angular/cdk/overlay-prebuilt.css';
+@import 'primeicons/primeicons.css';
+@import 'ckeditor5/ckeditor5.css';
 
-@import "./assets/css/grid.css";
+@import './assets/css/grid.css';
+@import './assets/fonts/Inter/stylesheet.css';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-  text-rendering: optimizeSpeed;
-  direction: ltr;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
 
-input,
-textarea,
-select,
-button {
-  font-family: inherit;
-  font-size: inherit;
+  html {
+    font-family: 'Inter', sans-serif;
+  }
+
+  html *::-webkit-scrollbar {
+    border-radius: 0;
+    width: 8px;
+    height: 8px;
+  }
+
+  html *::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+
+  html *::-webkit-scrollbar-track {
+    border-radius: 0;
+    background-color: rgba(0, 0, 0, 0);
+  }
+
+  body {
+    font-size: 14px;
+    color: #64748b;
+    background-color: #f6f7f9;
+    line-height: 1.6;
+    text-rendering: optimizeSpeed;
+    direction: ltr;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  input,
+  textarea,
+  select,
+  button {
+    font-family: inherit;
+    font-size: inherit;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: #3a4252;
+    font-weight: 700;
+  }
 }

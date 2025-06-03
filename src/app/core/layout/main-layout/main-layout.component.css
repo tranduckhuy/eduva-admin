@@ -1,0 +1,60 @@
+.main-content,
+.navbar {
+  flex-shrink: 0;
+  height: 100%;
+  will-change: width, opacity;
+  transition: width 0.2s ease;
+  -webkit-transition: width 0.2s ease;
+}
+
+.main-content {
+  width: 100%;
+  overflow-y: auto;
+}
+
+.navbar {
+  width: 0;
+  background-color: #fff;
+  overflow: hidden;
+}
+
+.sidebar-open .main-content {
+  width: 83%;
+}
+
+.sidebar-open .navbar {
+  width: 17%;
+}
+
+@media screen and (max-width: 1399.98px) {
+  .sidebar-open .main-content {
+    width: 80%;
+  }
+
+  .sidebar-open .navbar {
+    width: 20%;
+  }
+}
+
+@media screen and (max-width: 1199.98px) {
+  .sidebar-open .main-content {
+    width: 78%;
+  }
+
+  .sidebar-open .navbar {
+    width: 22%;
+  }
+}
+
+@media screen and (max-width: 991.98px) {
+  .sidebar-open .main-content {
+    width: 100%;
+  }
+
+  .sidebar-open .navbar {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    width: 250px;
+  }
+}

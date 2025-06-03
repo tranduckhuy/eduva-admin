@@ -1,0 +1,27 @@
+.information-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #3a4252;
+  transition: color 0.2s linear;
+}
+
+.information-link:hover,
+.information-link:hover .information-icon {
+  color: #605dff;
+}
+
+.information-icon {
+  position: relative;
+  top: 1px;
+  font-size: 18px;
+  color: #3a4252;
+  transition: color 0.2s linear;
+}
+
+.separator {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background-color: #f3f4f6;
+}

@@ -1,1 +1,34 @@
-<p>navbar works!</p>
+<h1
+  class="absolute left-0 top-0 z-[2] w-full border-b border-b-gray-100 bg-white">
+  <a href="/" class="flex items-center gap-2 px-6 py-5">
+    <img
+      src="https://trezo-twcss.envytheme.com/assets/images/logo-icon.svg"
+      alt="Trezo"
+      class="h-7 w-7 object-contain" />
+    <span class="text-2xl">Trezo</span>
+  </a>
+  <button
+    class="absolute right-0 top-2 hidden p-5 md:block"
+    (click)="closeSidebar.emit()">
+    <span class="pi pi-times"></span>
+  </button>
+</h1>
+
+<nav class="h-full overflow-y-scroll px-4 pb-5 pt-[90px]">
+  @for (section of navConfigs; track $index) {
+    <h3
+      *ngIf="section.section"
+      class="mb-3 mt-6 text-xs font-medium uppercase text-gray-400 first:mt-0">
+      {{ section.section }}
+    </h3>
+
+    @for (item of section.navItems; track $index) {
+      <navbar-accordion-item
+        [label]="item.label"
+        [icon]="item.icon"
+        [type]="item.type"
+        [isActive]="item.isActive"
+        [submenuItems]="item.submenuItems" />
+    }
+  }
+</nav>

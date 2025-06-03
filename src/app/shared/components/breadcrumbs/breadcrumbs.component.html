@@ -1,0 +1,16 @@
+<p-breadcrumb [model]="breadcrumbsService.breadcrumbs()">
+  <ng-template #item let-item>
+    <a
+      class="p-breadcrumb-item-link flex cursor-pointer items-center gap-1"
+      [ngClass]="item.routerLink ? 'hover:text-[#605dff]' : ''"
+      [routerLink]="item.routerLink"
+      [href]="!item.routerLink ? item.url : ''">
+      <span
+        *ngIf="item.icon"
+        [ngClass]="[item.icon, 'relative bottom-[1px] text-[#605dff]']"></span>
+      <span [pTooltip]="item.tooltip" tooltipPosition="top">
+        {{ item.label }}
+      </span>
+    </a>
+  </ng-template>
+</p-breadcrumb>
