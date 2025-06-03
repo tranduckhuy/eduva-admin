@@ -1,0 +1,36 @@
+.accordion-item,
+.accordion-collapse {
+  width: 100%;
+}
+
+.accordion-item + .accordion-item,
+.accordion-collapse li + li {
+  margin-top: 4px;
+}
+
+.accordion-item i {
+  transition: color 0.2s ease;
+}
+
+.accordion-item.active .accordion-button,
+.accordion-button:hover {
+  background-color: #f6f7f9;
+}
+
+.accordion-item.active i,
+.accordion-item:hover i {
+  color: #3a4252;
+}
+
+.submenu-link {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.submenu-link.active,
+.submenu-link.active i,
+.submenu-link:hover,
+.submenu-link:hover i {
+  color: #605dff;
+  background-color: #ecf0ff;
+}
