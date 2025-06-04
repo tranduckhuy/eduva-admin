@@ -20,9 +20,9 @@ import { NetworkStateComponent } from './shared/components/network-state/network
   styleUrl: './app.component.css',
 })
 export class AppComponent {
-  private titleService = inject(Title);
-  private router = inject(Router);
-  private activatedRoute = inject(ActivatedRoute);
+  private readonly titleService = inject(Title);
+  private readonly router = inject(Router);
+  private readonly activatedRoute = inject(ActivatedRoute);
 
   ngOnInit() {
     this.router.events
