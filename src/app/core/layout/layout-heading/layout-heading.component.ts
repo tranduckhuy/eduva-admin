@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { BreadcrumbsComponent } from '../../../shared/components/breadcrumbs/breadcrumbs.component';
 import { Router } from '@angular/router';
+import { DateDisplayService } from './services/date-display.service';
 
 @Component({
   selector: 'app-layout-heading',
@@ -20,12 +21,8 @@ import { Router } from '@angular/router';
 export class LayoutHeadingComponent {
   heading = input.required<string>();
 
-  private readonly router = inject(Router);
-
-  showDate = computed(() => {
-    const url = this.router.url;
-    return url === '/' || url.startsWith('/dashboard');
-  });
+  private readonly dateDisplayService = inject(DateDisplayService);
+  showDate = this.dateDisplayService.showDate;
 
   currentDate = signal(
     new Intl.DateTimeFormat('vi-VN', {
