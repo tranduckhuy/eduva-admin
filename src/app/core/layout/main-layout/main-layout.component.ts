@@ -4,12 +4,12 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { RouterOutlet } from '@angular/router';
 
-import { BreadcrumbsDirective } from '../../../shared/directives/breadcrumbs/breadcrumbs.directive';
+import { RouteMetadataDirective } from '../../../shared/directives/route-metadata/route-metadata.directive';
 
-import { LayoutHeadingService } from '../layout-heading/services/layout-heading.service';
+import { LayoutHeadingService } from '../../../shared/services/layout-heading/layout-heading.service';
 
 import { HeaderComponent } from '../header/header.component';
 import { NavbarComponent } from '../navbar/navbar.component';
@@ -19,9 +19,9 @@ import { LayoutHeadingComponent } from '../layout-heading/layout-heading.compone
   selector: 'app-main-layout',
   standalone: true,
   imports: [
-    RouterOutlet,
     CommonModule,
-    BreadcrumbsDirective,
+    RouterOutlet,
+    RouteMetadataDirective,
     HeaderComponent,
     NavbarComponent,
     LayoutHeadingComponent,
@@ -39,7 +39,7 @@ import { LayoutHeadingComponent } from '../layout-heading/layout-heading.compone
       <div class="main-content px-6">
         <app-header (toggleSidebar)="toggleSidebar()" />
 
-        <main appBreadcrumbs>
+        <main routeMetadata>
           <app-layout-heading [heading]="heading()" />
 
           <router-outlet />

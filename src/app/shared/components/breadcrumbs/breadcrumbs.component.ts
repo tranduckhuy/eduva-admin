@@ -16,5 +16,6 @@ import { BreadcrumbsService } from '../../services/breadcrumbs/breadcrumbs.servi
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BreadcrumbsComponent {
-  readonly breadcrumbsService = inject(BreadcrumbsService);
+  private readonly breadcrumbsService = inject(BreadcrumbsService);
+  breadcrumbs = this.breadcrumbsService.breadcrumbs;
 }
