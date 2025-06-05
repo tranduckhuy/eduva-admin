@@ -1,25 +1,23 @@
 <header
-  class="sticky top-0 h-[70px] rounded-b-md bg-white px-5 py-3 sm:flex sm:h-auto">
-  <div
-    class="flex items-center justify-between sm:mx-auto sm:flex-col sm:gap-y-4 sm:py-3">
+  class="sticky top-0 h-[70px] rounded-b-md bg-white px-5 py-3 dark:border-b dark:border-dark-500 dark:bg-dark-200 sm:flex sm:h-auto">
+  <div class="flex flex-1 items-center justify-between sm:gap-y-4 sm:py-3">
     <!-- ? Search Input -->
     <div class="flex items-center justify-center gap-6">
       <button
-        class="transition-colors duration-200 ease-in hover:text-[#605dff]"
+        class="text-primary"
         style="position: static"
         (click)="toggleSidebar.emit()">
         <span class="pi pi-bars"></span>
       </button>
 
       <div
-        class="flex h-11 w-[250px] items-center rounded-md border-gray-50 bg-gray-50 px-4 py-3">
+        class="flex h-11 w-full items-center rounded-md border-gray-50 bg-gray-50 px-4 py-3 dark:bg-dark-400">
         <input
           type="text"
-          class="h-full w-full border-none bg-transparent pr-2 font-medium text-textBlack outline-none placeholder:text-gray-500"
+          class="block h-[44px] w-full rounded-md border border-gray-50 bg-gray-50 pb-[12px] pr-[13px] pt-[11px] text-black outline-0 placeholder:font-medium placeholder:tracking-wide placeholder:text-gray-500 dark:border-dark-400 dark:bg-dark-400 dark:text-white dark:placeholder:text-gray-400 md:px-[16px]"
           placeholder="Tìm kiếm..." />
-        <button
-          class="relative top-1 transition-colors duration-200 ease-in hover:text-[#605dff]">
-          <span class="pi pi-search"></span>
+        <button class="text-primary">
+          <i class="material-symbols-outlined !text-xl"> search </i>
         </button>
       </div>
     </div>
