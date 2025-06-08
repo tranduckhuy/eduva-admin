@@ -1,16 +1,26 @@
 <div class="flex items-center justify-center gap-6">
-  <button class="action-btn">
-    <span class="action-btn-icon pi pi-sun" style="font-size: 18px"></span>
+  <button
+    class="action-btn hover:text-primary cubic-bezier(0.4, 0, 0.2, 1) dark:text-dark-100 text-xl transition duration-100 sm:hidden"
+    (click)="toggleDarkMode()">
+    @if (isDarkMode()) {
+      <span class="material-symbols-outlined"> light_mode </span>
+    } @else {
+      <span class="material-symbols-outlined"> dark_mode </span>
+    }
   </button>
-  <button class="action-btn" (click)="toggleFullscreen()">
+  <button
+    class="action-btn hover:text-primary cubic-bezier(0.4, 0, 0.2, 1) dark:text-dark-100 transition duration-100 sm:hidden"
+    (click)="toggleFullscreen()">
     <span
       class="material-symbols-rounded action-btn-icon"
-      style="font-size: 20px">
+      style="font-size: 24px">
       {{ isFullscreen() ? 'fullscreen_exit' : 'fullscreen' }}
     </span>
   </button>
   <div class="relative">
-    <button class="action-btn" (click)="toggleMenu('notifications')">
+    <button
+      class="action-btn hover:text-primary cubic-bezier(0.4, 0, 0.2, 1) dark:text-dark-100 transition duration-100"
+      (click)="toggleMenu('notifications')">
       <span class="action-btn-icon pi pi-bell" style="font-size: 18px"></span>
     </button>
     @if (headerSubmenuService.getActiveSubmenuMenu() === 'notifications') {
@@ -20,19 +30,26 @@
 
   <div class="relative">
     <div
-      class="flex cursor-pointer items-center gap-2"
+      class="flex cursor-pointer items-center gap-2 text-orange"
       (click)="toggleMenu('information')">
       <img
-        src="https://lh3.googleusercontent.com/a/AGNmyxZvwEXZAmBFuN14cAaRpQmPm5WQZCuoLGy1cWgb=s96-c"
+        src="https://htmlcss.fullstack.edu.vn/assets/f8_icon.png"
         alt="Quy Nguyen"
-        class="h-[35px] w-[35px] rounded-[50%] object-contain outline outline-[#C2CDFF]" />
-      <div class="flex items-center gap-1">
-        <span class="select-none font-semibold text-textBlack">Quy Nguyen</span>
-        <span class="pi pi-angle-down text-textBlack"></span>
+        class="h-[35px] w-[35px] flex-shrink-0 rounded-[50%] object-contain outline outline-[#C2CDFF]" />
+      <div class="flex items-center gap-1 xs:hidden">
+        <span class="dark:text-white select-none font-semibold text-textBlack"
+          >Quy Nguyen</span
+        >
+        <span class="pi pi-angle-down dark:text-white text-textBlack"></span>
       </div>
     </div>
     @if (headerSubmenuService.getActiveSubmenuMenu() === 'information') {
-      <header-information (clickOutside)="headerSubmenuService.close()" />
+      <header-information
+        (clickOutside)="headerSubmenuService.close()"
+        [isFullScreen]="isFullscreen()"
+        (toggleFullSCreen)="toggleFullscreen()"
+        (toggleDarkMode)="toggleDarkMode()"
+        [isDarkMode]="isDarkMode()" />
     }
   </div>
 </div>

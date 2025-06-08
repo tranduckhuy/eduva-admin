@@ -1,11 +1,11 @@
 <h1
-  class="absolute left-0 top-0 z-[2] w-full border-b border-b-gray-100 bg-white">
+  class="absolute left-0 top-0 z-[2] w-full border-b border-b-gray-100 bg-white dark:border-dark-500 dark:bg-dark-200">
   <a href="/" class="flex items-center gap-2 px-6 py-5">
     <img
       src="./images/logo.png"
       alt="EDUVA"
       class="size-10 rounded-lg object-contain" />
-    <span class="text-2xl">EDUVA</span>
+    <span class="text-2xl dark:text-white">EDUVA</span>
   </a>
   <button
     class="absolute right-0 top-2 hidden p-5 md:block"
@@ -14,7 +14,7 @@
   </button>
 </h1>
 
-<nav class="h-full overflow-y-scroll px-4 pb-5 pt-[90px]">
+<nav class="h-full overflow-y-scroll px-4 pb-5 pt-[90px] dark:bg-dark-200">
   @for (section of navConfigs; track $index) {
     <h3
       *ngIf="section.section"

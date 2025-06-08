@@ -12,14 +12,14 @@
   transition: color 0.2s ease;
 }
 
-.accordion-item.active .accordion-button,
+.accordion-item.active > .accordion-button,
 .accordion-button:hover {
-  background-color: #f6f7f9;
+  background-color: var(--color-bg-secondary);
 }
 
 .accordion-item.active i,
-.accordion-item:hover i {
-  color: #3a4252;
+.accordion-button:hover i {
+  color: var(--color-text-primary);
 }
 
 .submenu-link {
@@ -31,6 +31,6 @@
 .submenu-link.active i,
 .submenu-link:hover,
 .submenu-link:hover i {
-  color: #605dff;
-  background-color: #ecf0ff;
+  color: #2093e7;
+  background-color: var(--color-hover-primary);
 }

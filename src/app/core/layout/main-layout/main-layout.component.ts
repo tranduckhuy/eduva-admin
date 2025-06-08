@@ -41,7 +41,6 @@ import { LayoutHeadingComponent } from '../layout-heading/layout-heading.compone
 
         <main routeMetadata>
           <app-layout-heading [heading]="heading()" />
-
           <router-outlet />
         </main>
       </div>

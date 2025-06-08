@@ -23,11 +23,20 @@ export class UserActionsComponent implements OnInit {
   readonly headerSubmenuService = inject(HeaderSubmenuService);
 
   isFullscreen = signal(false);
+  isDarkMode = signal(false);
 
   ngOnInit(): void {
     document.addEventListener('fullscreenchange', () => {
       this.isFullscreen.set(!!document.fullscreenElement);
     });
+
+    const savedMode = localStorage.getItem('darkMode') === 'true';
+
+    this.isDarkMode.set(savedMode);
+
+    if (this.isDarkMode()) {
+      document.documentElement.classList.add('dark');
+    }
   }
 
   toggleMenu(submenuKey: string): void {
@@ -51,6 +60,17 @@ export class UserActionsComponent implements OnInit {
       document.exitFullscreen?.().then(() => {
         this.isFullscreen.set(false);
       });
+    }
+  }
+
+  toggleDarkMode() {
+    this.isDarkMode.set(!this.isDarkMode());
+    if (this.isDarkMode()) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('darkMode', 'true');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('darkMode', 'false');
     }
   }
 }
