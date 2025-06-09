@@ -7,7 +7,19 @@ export const teacherRoutes: Routes = [
       import('../../core/layout/main-layout/main-layout.component').then(
         mod => mod.MainLayoutComponent
       ),
-    children: [],
+    children: [
+      {
+        path: '',
+        data: {
+          title: 'Dashboard',
+          heading: 'Bảng thống kê',
+        },
+        loadComponent: () =>
+          import('./dashboard/dashboard.component').then(
+            mod => mod.DashboardComponent
+          ),
+      },
+    ],
   },
   {
     path: '',
