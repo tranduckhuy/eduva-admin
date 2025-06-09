@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
+  input,
   output,
 } from '@angular/core';
 
@@ -26,7 +27,12 @@ import { SubmenuDirective } from '../../../../../shared/directives/submenu/subme
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InformationComponent {
+  isFullScreen = input(false);
+  isDarkMode = input(false);
+
   clickOutside = output();
+  toggleFullSCreen = output();
+  toggleDarkMode = output();
 
   libIcon = inject(FaIconLibrary);
 
