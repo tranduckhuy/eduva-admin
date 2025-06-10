@@ -1,22 +1,33 @@
 <header
-  class="sticky top-0 z-10 h-[70px] rounded-b-md bg-white px-5 py-3 dark:border-b dark:border-dark-500 dark:bg-dark-200 sm:flex sm:h-auto">
-  <div class="flex flex-1 items-center justify-between sm:gap-y-4 sm:py-3">
+  class="flex h-[70px] items-center border-b border-b-gray-100 bg-white py-3 pr-5 dark:border-b dark:border-dark-500 dark:bg-dark-200 sm:h-auto">
+  <div class="mt-[-2px] flex flex-1 items-center justify-between">
     <!-- ? Search Input -->
     <div class="flex items-center justify-center gap-6">
-      <button
-        class="text-primary"
-        style="position: static"
-        (click)="toggleSidebar.emit()">
-        <span class="pi pi-bars"></span>
-      </button>
+      <div class="flex items-center">
+        <a
+          href="/"
+          class="hidden h-[70px] shrink-0 items-center gap-2 py-[14px] pl-5 md:flex">
+          <img
+            src="./images/logo.png"
+            alt="EDUVA"
+            class="size-9 rounded-md object-contain" />
+        </a>
+        <button
+          class="mt-[5px] pl-5 text-primary md:mr-8"
+          style="position: static"
+          (click)="toggleSidebar.emit()">
+          <span class="pi pi-bars"></span>
+        </button>
+      </div>
 
       <div
-        class="flex h-11 w-full items-center rounded-md border-gray-50 bg-gray-50 px-4 py-3 dark:bg-dark-400">
+        class="relative flex h-11 w-[275px] items-center rounded-sm bg-transparent py-6 md:mr-6 md:w-full">
         <input
           type="text"
-          class="block h-[44px] w-full rounded-md border border-gray-50 bg-gray-50 pb-[12px] pr-[13px] pt-[11px] text-black outline-0 placeholder:font-medium placeholder:tracking-wide placeholder:text-gray-500 dark:border-dark-400 dark:bg-dark-400 dark:text-white dark:placeholder:text-gray-400 md:px-[16px]"
+          class="dark: relative block h-10 w-full max-w-[275px] rounded border border-[#e9edf6] py-[10px] pl-[10px] pr-10 text-black outline-0 placeholder:font-medium placeholder:tracking-wide placeholder:text-gray-500 dark:border-dark-500 dark:bg-dark-400 dark:text-white dark:placeholder:text-gray-400 md:pl-4"
           placeholder="Tìm kiếm..." />
-        <button class="text-primary">
+        <button
+          class="absolute right-0 top-0 mt-[5px] h-10 pl-2 pr-3 text-primary">
           <i class="material-symbols-outlined !text-xl"> search </i>
         </button>
       </div>

@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  output,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { AccordionItemComponent } from './accordion-item/accordion-item.component';
@@ -26,6 +31,7 @@ type NavbarConfig = {
 })
 export class NavbarComponent {
   closeSidebar = output();
+  isSidebarCollapsed = input();
 
   navConfigs: NavbarConfig[] = [
     {
