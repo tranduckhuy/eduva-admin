@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
+  computed,
   inject,
   signal,
 } from '@angular/core';
@@ -10,6 +11,7 @@ import { HeaderSubmenuService } from '../services/header-submenu.service';
 
 import { NotificationsComponent } from './notifications/notifications.component';
 import { InformationComponent } from './information/information.component';
+import { ThemeService } from '../../../../shared/services/theme/theme.service';
 
 @Component({
   selector: 'header-user-actions',
@@ -20,23 +22,19 @@ import { InformationComponent } from './information/information.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserActionsComponent implements OnInit {
-  readonly headerSubmenuService = inject(HeaderSubmenuService);
-
   isFullscreen = signal(false);
-  isDarkMode = signal(false);
+
+  readonly headerSubmenuService = inject(HeaderSubmenuService);
+  readonly themeService = inject(ThemeService);
+
+  readonly isDarkMode = computed(() => {
+    return this.themeService.isDarkMode();
+  });
 
   ngOnInit(): void {
     document.addEventListener('fullscreenchange', () => {
       this.isFullscreen.set(!!document.fullscreenElement);
     });
-
-    const savedMode = localStorage.getItem('darkMode') === 'true';
-
-    this.isDarkMode.set(savedMode);
-
-    if (this.isDarkMode()) {
-      document.documentElement.classList.add('dark');
-    }
   }
 
   toggleMenu(submenuKey: string): void {
@@ -64,13 +62,6 @@ export class UserActionsComponent implements OnInit {
   }
 
   toggleDarkMode() {
-    this.isDarkMode.set(!this.isDarkMode());
-    if (this.isDarkMode()) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('darkMode', 'true');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('darkMode', 'false');
-    }
+    this.themeService.toggleDarkMode();
   }
 }

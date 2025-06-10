@@ -9,7 +9,9 @@
         class="material-symbols-rounded text-[22px] leading-none text-gray-500 dark:text-dark-100">
         {{ icon() }}
       </i>
-      <span>{{ label() }}</span>
+      @if (!isSidebarCollapsed()) {
+        <span>{{ label() }}</span>
+      }
     </a>
   </div>
 }
@@ -25,14 +27,16 @@
         class="material-symbols-rounded text-[22px] leading-none text-gray-500 dark:text-dark-100">
         {{ icon() }}
       </i>
-      <span class="flex grow items-center justify-between">
-        {{ label() }}
-        <i
-          class="material-symbols-rounded text-lg leading-none text-gray-500 dark:text-dark-100"
-          [class.rotate-90]="isOpen()">
-          chevron_right
-        </i>
-      </span>
+      @if (!isSidebarCollapsed()) {
+        <span class="flex grow items-center justify-between">
+          {{ label() }}
+          <i
+            class="material-symbols-rounded text-lg leading-none text-gray-500 dark:text-dark-100"
+            [class.rotate-90]="isOpen()">
+            chevron_right
+          </i>
+        </span>
+      }
     </button>
     <div class="accordion-collapse mt-1" [class.hidden]="!isOpen()">
       <ul>

@@ -3,8 +3,7 @@
 @import 'ckeditor5/ckeditor5.css';
 
 @import './assets/css/grid.css';
-@import './assets/fonts/Inter/stylesheet.css';
-@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined');
+/* @import './assets/fonts/Inter/stylesheet.css'; */
 
 @tailwind base;
 @tailwind components;
@@ -113,7 +112,7 @@
     --color-bg-secondary: var(--color-gray-50);
     --color-bg-third: var(--color-gray-50);
 
-    --color-border-primary: var(--color-gray-100);
+    --color-border-primary: #f3f3f3;
     --color-border-secondary: var(--color-gray-50);
 
     --color-text-primary: var(--color-dark);
@@ -123,14 +122,16 @@
     --color-hover-secondary: var(--color-white);
 
     --color-placeholder-primary: var(--color-gray-500);
+
+    --color-heading: var(--color-black);
   }
 
   html {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Nunito', sans-serif;
   }
 
   html.dark {
-    --color-bg-primary: #0c1427;
+    --color-bg-primary: #001027;
     --color-bg-secondary: #15203c;
     --color-bg-third: #0a0e19;
 
@@ -144,6 +145,8 @@
     --color-hover-secondary: var(--color-dark);
 
     --color-placeholder-primary: var(--color-gray-400);
+
+    --color-heading: var(--color-white);
   }
 
   html *::-webkit-scrollbar {
@@ -187,7 +190,7 @@
   h4,
   h5,
   h6 {
-    color: #3a4252;
+    color: var(--color-heading);
     font-weight: 700;
   }
 }

@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -14,7 +15,7 @@ type Item = {
 @Component({
   selector: 'navbar-accordion-item',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './accordion-item.component.html',
   styleUrl: './accordion-item.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -23,6 +24,7 @@ export class AccordionItemComponent {
   // ? Input
   label = input.required<string>();
   icon = input.required<string>();
+  isSidebarCollapsed = input.required();
   type = input.required<'accordion' | 'link'>();
   link = input<string>('#!');
   submenuItems = input<Item[]>([]);

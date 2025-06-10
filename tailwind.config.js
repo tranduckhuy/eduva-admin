@@ -59,6 +59,8 @@ module.exports = {
       boxShadow: {
         filterBox: '0 -4px 32px #0003',
         subjectCard: '0 4px 8px #0000001a',
+        main: '0 2px 10px rgba(168, 180, 208, 0.1)',
+        auth: '0 4px 25px 0 rgba(168, 180, 208, .1)',
       },
       colors: {
         textBlack: '#3A4252',
@@ -87,8 +89,10 @@ module.exports = {
           800: '#163990',
         },
         dark: {
+          50: '#f3f3f3',
           100: '#8695aa',
-          200: '#0c1427',
+          200: '#001027',
+          300: '#071932',
           400: '#15203c',
           500: '#172036',
           800: '#0a0e19',
