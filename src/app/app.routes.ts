@@ -18,11 +18,4 @@ export const routes: Routes = [
         mod => mod.schoolAdminRoutes
       ),
   },
-  {
-    path: 'teacher',
-    loadChildren: () =>
-      import('./features/teacher/teacher.routes').then(
-        mod => mod.teacherRoutes
-      ),
-  },
 ];

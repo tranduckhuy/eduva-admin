@@ -69,7 +69,6 @@ export class ButtonComponent {
       danger: 'bg-danger-600 text-white hover:opacity-90',
       warning: 'bg-warning-600 text-black hover:opacity-90',
       info: 'bg-info-500 text-white hover:opacity-90',
-      // light: 'bg-primary-100 text-primary hover:bg-primary hover:text-white',
       light: 'bg-gray-100 hover:bg-gray-200',
       dark: 'bg-gray-900 text-white hover:opacity-90',
     };
