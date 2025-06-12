@@ -26,6 +26,7 @@ type ButtonVariant =
   | 'outline'
   | 'rounded'
   | 'light'
+  | 'light-danger'
   | 'light-rounded'
   | 'outline-rounded';
 
@@ -85,7 +86,10 @@ export class ButtonComponent {
       outline:
         'border border-current bg-transparent hover:bg-current hover:text-white',
       rounded: 'rounded-full',
-      light: 'bg-gray-100 text-gray-900',
+      light:
+        'bg-primary-500/20 hover:!text-gray-50 !text-primary-500 hover:bg-primary-500',
+      'light-danger':
+        '!bg-danger-500/20 hover:!text-gray-50 !text-danger-500 hover:!bg-danger-500',
       'light-rounded': 'bg-gray-100 text-gray-900 rounded-full',
       'outline-rounded':
         'border border-current bg-transparent rounded-full hover:bg-current hover:text-white',

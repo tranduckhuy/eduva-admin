@@ -49,11 +49,15 @@ import { LayoutHeadingComponent } from '../layout-heading/layout-heading.compone
 
       <!-- Main Content -->
       <div class="main-content md:!pl-0" #mainElement>
-        <app-header (toggleSidebar)="manualToggleSidebar()" />
+        <app-header
+          (toggleSidebar)="manualToggleSidebar()"
+          [isManuallyToggled]="isManuallyToggled()" />
 
-        <main routeMetadata>
-          <app-layout-heading [heading]="heading()" />
-          <router-outlet />
+        <main routeMetadata class="e-container-fluid mb-10 mt-[94px]">
+          <div class="px-3">
+            <app-layout-heading [heading]="heading()" />
+            <router-outlet />
+          </div>
         </main>
       </div>
     </div>

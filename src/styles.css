@@ -72,15 +72,15 @@
     --color-secondary-700: #1d48b3;
     --color-secondary-800: #163990;
 
-    --color-success-50: #eeffe5;
-    --color-success-100: #d8ffc8;
-    --color-success-200: #b2ff97;
-    --color-success-300: #82fc5a;
-    --color-success-400: #58f229;
-    --color-success-500: #37d80a;
-    --color-success-600: #25b003;
-    --color-success-700: #1e8308;
-    --color-success-900: #1a5710;
+    --color-success-50: #e6f4e9;
+    --color-success-100: #c1e6bd;
+    --color-success-200: #8edc82;
+    --color-success-300: #5ecc4a;
+    --color-success-400: #39b82b;
+    --color-success-500: #22c03c;
+    --color-success-600: #1b9c2f;
+    --color-success-700: #157824;
+    --color-success-900: #0d4a15;
 
     --color-danger-50: #fff2f0;
     --color-danger-100: #ffe1dd;
@@ -113,7 +113,7 @@
     --color-bg-third: var(--color-gray-50);
 
     --color-border-primary: #f3f3f3;
-    --color-border-secondary: var(--color-gray-50);
+    --color-border-secondary: #e9edf6;
 
     --color-text-primary: var(--color-dark);
     --color-text-secondary: var(--color-gray-500);
@@ -133,7 +133,7 @@
   html.dark {
     --color-bg-primary: #001027;
     --color-bg-secondary: #15203c;
-    --color-bg-third: #0a0e19;
+    --color-bg-third: #071932;
 
     --color-border-primary: #172036;
     --color-border-secondary: #15203c;
@@ -167,13 +167,17 @@
 
   body {
     font-size: 14px;
-    color: #64748b;
+    color: var(--color-black);
     background-color: var(--color-bg-third);
     line-height: 1.6;
     text-rendering: optimizeSpeed;
     direction: ltr;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  .dark body {
+    color: #64748b;
   }
 
   input,
