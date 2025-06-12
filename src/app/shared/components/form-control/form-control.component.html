@@ -14,17 +14,23 @@
     </div>
 
     <div
-      class="dark:bg-dark-300 relative flex h-[44px] overflow-hidden rounded-md border-[1.5px] border-[#dee3e9] bg-white dark:border-gray-900"
+      class="relative flex h-[44px] overflow-hidden rounded-md border-[1.5px] bg-white dark:bg-dark-300"
       [ngClass]="{
-        'focus-within:border-primary': !(control.invalid && control.touched),
-        'border-[#f33a58] focus-within:border-[#f33a58]':
+        'border-[#f33a58] dark:border-[#f33a58]':
           control.invalid && control.touched,
+        'focus-within:border-[#f33a58] dark:border-[#f33a58]':
+          control.invalid && control.touched,
+        'border-gray-200 dark:border-gray-900': !(
+          control.invalid && control.touched
+        ),
       }"
       [style.backgroundColor]="
         control.invalid && control.touched ? '#ff00001a' : ''
       ">
       <input
-        class="flex w-full items-center border-none bg-transparent py-3 pl-4 pr-[42px] leading-none outline-none placeholder:text-black/60 dark:placeholder:text-[#64748b]"
+        [readOnly]="readOnly()"
+        [value]="value()"
+        class="flex w-full items-center border-none bg-transparent py-3 pl-4 pr-[42px] leading-none outline-none placeholder:text-black/60 dark:text-white dark:placeholder:text-[#64748b]"
         [class.text-[#f33a58]]="
           control.invalid && control.touched && control.dirty
         "

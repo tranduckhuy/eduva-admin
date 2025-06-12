@@ -11,6 +11,7 @@ import { LeadingZeroPipe } from '../../../shared/pipes/leading-zero.pipe';
 import { BadgeComponent } from '../../../shared/components/badge/badge.component';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { TooltipModule } from 'primeng/tooltip';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-schools',
@@ -22,6 +23,7 @@ import { TooltipModule } from 'primeng/tooltip';
     BadgeComponent,
     ButtonComponent,
     TooltipModule,
+    RouterLink,
   ],
   templateUrl: './schools.component.html',
   styleUrl: './schools.component.css',
