@@ -7,7 +7,7 @@ import {
   HostBinding,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
+import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 type ButtonTheme =
   | 'default'

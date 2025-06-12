@@ -1,9 +1,7 @@
 @import '@angular/cdk/overlay-prebuilt.css';
 @import 'primeicons/primeicons.css';
 @import 'ckeditor5/ckeditor5.css';
-
 @import './assets/css/grid.css';
-/* @import './assets/fonts/Inter/stylesheet.css'; */
 
 @tailwind base;
 @tailwind components;
