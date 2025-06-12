@@ -12,6 +12,7 @@ type NavItem = {
   label: string;
   icon: string;
   type: 'link' | 'accordion';
+  link?: string;
   isActive: boolean;
   submenuItems: { label: string; link: string; active?: boolean }[];
 };
@@ -49,6 +50,14 @@ export class NavbarComponent {
     {
       section: 'Quản lý',
       navItems: [
+        {
+          label: 'Quản lý trường học',
+          icon: 'school',
+          link: '/admin/schools',
+          type: 'link',
+          isActive: false,
+          submenuItems: [],
+        },
         {
           label: 'Quản lý học tập',
           icon: 'auto_stories',

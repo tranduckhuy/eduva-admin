@@ -37,6 +37,7 @@
     @for (item of section.navItems; track $index) {
       <navbar-accordion-item
         [label]="item.label"
+        [link]="item.link || '#!'"
         [icon]="item.icon"
         [type]="item.type"
         [isActive]="item.isActive"

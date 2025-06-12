@@ -7,7 +7,7 @@ import {
   HostBinding,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
+import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 type ButtonTheme =
   | 'default'
@@ -26,6 +26,7 @@ type ButtonVariant =
   | 'outline'
   | 'rounded'
   | 'light'
+  | 'light-danger'
   | 'light-rounded'
   | 'outline-rounded';
 
@@ -69,7 +70,6 @@ export class ButtonComponent {
       danger: 'bg-danger-600 text-white hover:opacity-90',
       warning: 'bg-warning-600 text-black hover:opacity-90',
       info: 'bg-info-500 text-white hover:opacity-90',
-      // light: 'bg-primary-100 text-primary hover:bg-primary hover:text-white',
       light: 'bg-gray-100 hover:bg-gray-200',
       dark: 'bg-gray-900 text-white hover:opacity-90',
     };
@@ -86,7 +86,10 @@ export class ButtonComponent {
       outline:
         'border border-current bg-transparent hover:bg-current hover:text-white',
       rounded: 'rounded-full',
-      light: 'bg-gray-100 text-gray-900',
+      light:
+        'bg-primary-500/20 hover:!text-gray-50 !text-primary-500 hover:bg-primary-500',
+      'light-danger':
+        '!bg-danger-500/20 hover:!text-gray-50 !text-danger-500 hover:!bg-danger-500',
       'light-rounded': 'bg-gray-100 text-gray-900 rounded-full',
       'outline-rounded':
         'border border-current bg-transparent rounded-full hover:bg-current hover:text-white',

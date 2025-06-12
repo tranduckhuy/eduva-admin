@@ -7,7 +7,19 @@ export const adminRoutes: Routes = [
       import('../../core/layout/main-layout/main-layout.component').then(
         mod => mod.MainLayoutComponent
       ),
-    children: [],
+    children: [
+      {
+        path: 'schools',
+        loadComponent: () =>
+          import('./schools/schools.component').then(
+            mod => mod.SchoolsComponent
+          ),
+        data: {
+          heading: 'School List',
+          breadcrumb: 'Schools',
+        },
+      },
+    ],
   },
   {
     path: '',
