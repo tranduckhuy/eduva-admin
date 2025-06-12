@@ -47,6 +47,8 @@ export class FormControlComponent implements OnInit, ControlValueAccessor {
   name = input<string>('');
   type = input<string>('text');
   label = input<string>('');
+  value = input<string>('');
+  readOnly = input<boolean>(false);
   redirectLink = input<{ value: string; href: string }>({
     value: '',
     href: '#!',
@@ -66,7 +68,6 @@ export class FormControlComponent implements OnInit, ControlValueAccessor {
   confirmPassword = input<string | null>(null);
 
   // ? State Management
-  value = signal<string>('');
   isShowPassword = signal<boolean>(false);
 
   readonly inputType = computed(() =>

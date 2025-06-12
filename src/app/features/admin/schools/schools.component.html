@@ -46,13 +46,15 @@
         </td>
         <td class="!text-center">
           <div class="mr-4 flex items-center justify-center gap-2">
-            <app-button
-              pTooltip="Xem chi tiết"
-              tooltipPosition="top"
-              [variant]="'light'"
-              class="material-symbols-outlined px-[8px] pb-[1px] pt-[6px] text-lg"
-              >visibility</app-button
-            >
+            <a [routerLink]="['/admin/schools', school.id]">
+              <app-button
+                pTooltip="Xem chi tiết"
+                tooltipPosition="top"
+                [variant]="'light'"
+                class="material-symbols-outlined px-[8px] pb-[1px] pt-[6px] text-lg"
+                >visibility</app-button
+              >
+            </a>
             <app-button
               pTooltip="Chỉnh sửa"
               tooltipPosition="top"

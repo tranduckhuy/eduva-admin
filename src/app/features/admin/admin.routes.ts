@@ -19,6 +19,17 @@ export const adminRoutes: Routes = [
           breadcrumb: 'Schools',
         },
       },
+      {
+        path: 'schools/:schoolId',
+        loadComponent: () =>
+          import('./schools/school/school.component').then(
+            mod => mod.SchoolComponent
+          ),
+        data: {
+          heading: 'School Detail',
+          breadcrumb: 'School Detail',
+        },
+      },
     ],
   },
   {
