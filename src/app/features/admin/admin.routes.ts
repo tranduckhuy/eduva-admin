@@ -10,36 +10,15 @@ export const adminRoutes: Routes = [
     children: [
       {
         path: 'schools',
-        loadComponent: () =>
-          import('./schools/schools.component').then(
-            mod => mod.SchoolsComponent
-          ),
-        data: {
-          heading: 'Danh sách trường học',
-          breadcrumb: 'Danh sách trường học',
-        },
+        loadChildren: () =>
+          import('./schools/schools.routes').then(mod => mod.schoolsRoute),
       },
       {
-        path: 'schools/:schoolId/update',
-        loadComponent: () =>
-          import('./schools/edit-school/edit-school.component').then(
-            mod => mod.EditSchoolComponent
+        path: 'school-admins',
+        loadChildren: () =>
+          import('./school-admins/school-admins.routes').then(
+            mod => mod.schoolAdminsRoute
           ),
-        data: {
-          heading: 'Cập nhật trường học',
-          breadcrumb: 'Cập nhật trường học',
-        },
-      },
-      {
-        path: 'schools/:schoolId',
-        loadComponent: () =>
-          import('./schools/school/school.component').then(
-            mod => mod.SchoolComponent
-          ),
-        data: {
-          heading: 'Chi tiết trường học',
-          breadcrumb: 'Chi tiết trường học',
-        },
       },
     ],
   },
