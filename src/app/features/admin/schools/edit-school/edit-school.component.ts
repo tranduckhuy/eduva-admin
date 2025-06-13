@@ -7,11 +7,10 @@ import {
   signal,
 } from '@angular/core';
 import { FormControlComponent } from '../../../../shared/components/form-control/form-control.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { DatePipe, registerLocaleData } from '@angular/common';
 import localeVi from '@angular/common/locales/vi';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
-import { RouterLink } from '@angular/router';
 
 const school = {
   id: 1,
@@ -33,13 +32,13 @@ registerLocaleData(localeVi);
 @Component({
   selector: 'app-school',
   standalone: true,
-  imports: [FormControlComponent, FormsModule, ButtonComponent, RouterLink],
-  templateUrl: './school.component.html',
-  styleUrl: './school.component.css',
+  imports: [FormControlComponent, FormsModule, ButtonComponent],
+  templateUrl: './edit-school.component.html',
+  styleUrl: './edit-school.component.css',
   providers: [DatePipe, { provide: LOCALE_ID, useValue: 'vi' }],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SchoolComponent implements OnInit {
+export class EditSchoolComponent implements OnInit {
   schoolId = input.required<string>();
 
   name = signal<string>('');
@@ -52,8 +51,12 @@ export class SchoolComponent implements OnInit {
   createdAt = signal<string>('');
   lastModifiedAt = signal<string>('');
 
-  schoolAdminName = signal<string>('Nguyễn Văn A');
-  schoolAdminEmail = signal<string>('nguyenvana@gmail.com');
+  submitted = false;
+
+  statusOptions = [
+    { label: 'Hoạt động', value: 'active' },
+    { label: 'Ngừng hoạt động', value: 'inactive' },
+  ];
 
   constructor(private readonly datePipe: DatePipe) {}
 
@@ -68,10 +71,17 @@ export class SchoolComponent implements OnInit {
     this.address.set(school.address);
     this.phoneNumber.set(school.phoneNumber);
     this.websiteUrl.set(school.websiteUrl);
-    this.status.set(
-      school.status === 'active' ? 'Đang hoạt động' : 'Vô hiệu hóa'
-    );
+    this.status.set(school.status);
     this.createdAt.set(this.formatDateVi(new Date(school.createdAt)));
     this.lastModifiedAt.set(this.formatDateVi(new Date(school.lastModifiedAt)));
+  }
+
+  onSubmit(form: NgForm) {
+    this.submitted = true;
+    if (form.invalid) {
+      Object.values(form.controls).forEach(control => control.markAsTouched());
+      return;
+    }
+    // Submit logic
   }
 }

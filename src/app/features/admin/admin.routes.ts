@@ -15,8 +15,19 @@ export const adminRoutes: Routes = [
             mod => mod.SchoolsComponent
           ),
         data: {
-          heading: 'School List',
-          breadcrumb: 'Schools',
+          heading: 'Danh sách trường học',
+          breadcrumb: 'Danh sách trường học',
+        },
+      },
+      {
+        path: 'schools/:schoolId/update',
+        loadComponent: () =>
+          import('./schools/edit-school/edit-school.component').then(
+            mod => mod.EditSchoolComponent
+          ),
+        data: {
+          heading: 'Cập nhật trường học',
+          breadcrumb: 'Cập nhật trường học',
         },
       },
       {
@@ -26,8 +37,8 @@ export const adminRoutes: Routes = [
             mod => mod.SchoolComponent
           ),
         data: {
-          heading: 'School Detail',
-          breadcrumb: 'School Detail',
+          heading: 'Chi tiết trường học',
+          breadcrumb: 'Chi tiết trường học',
         },
       },
     ],

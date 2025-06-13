@@ -21,13 +21,13 @@ import {
   matchPasswordValidator,
   minWordCountValidator,
 } from '../../utils/form-validators';
-import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { NgForOf, NgIf, CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-form-control',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, RouterLink],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink, NgForOf, NgIf],
   templateUrl: './form-control.component.html',
   styleUrl: './form-control.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -54,6 +54,24 @@ export class FormControlComponent implements OnInit, ControlValueAccessor {
     href: '#!',
   });
   placeholder = input<string>('');
+  options = input<Array<{ label: string; value: string }>>([]); // Thêm input options
+
+  // Custom select search state
+  searchTerm = signal<string>('');
+  filteredOptions = computed(() => {
+    const term = this.searchTerm().toLowerCase();
+    return this.options().filter(opt => opt.label.toLowerCase().includes(term));
+  });
+
+  // Optional: only show search box if options.length > 7
+  get showSearchBox() {
+    return this.options().length > 7;
+  }
+
+  onSearchInput(event: Event) {
+    const value = (event.target as HTMLInputElement)?.value ?? '';
+    this.searchTerm.set(value);
+  }
 
   // ? Validators
   maxLength = input<number>(50);
@@ -77,6 +95,9 @@ export class FormControlComponent implements OnInit, ControlValueAccessor {
   private onChange: (value: string) => void = () => {};
   private onTouched: () => void = () => {};
 
+  // ? Submitted state from parent component
+  submitted = input<boolean>(false);
+
   ngOnInit(): void {
     const validators = this.buildValidators();
     this.control.setValidators(validators);
@@ -89,7 +110,10 @@ export class FormControlComponent implements OnInit, ControlValueAccessor {
 
   get errorMessage(): string | null {
     const errors = this.control.errors;
-    if (errors && (this.control.dirty || this.control.touched)) {
+    if (
+      errors &&
+      (this.control.dirty || this.control.touched || this.submitted())
+    ) {
       const firstErrorKey = Object.keys(errors)[0];
       return (
         this.errorMessages()[firstErrorKey] ||
