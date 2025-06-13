@@ -59,6 +59,14 @@ export class NavbarComponent {
           submenuItems: [],
         },
         {
+          label: 'Quản lý school admins',
+          icon: 'local_library',
+          link: '/admin/school-admins',
+          type: 'link',
+          isActive: false,
+          submenuItems: [],
+        },
+        {
           label: 'Quản lý học tập',
           icon: 'auto_stories',
           type: 'accordion',

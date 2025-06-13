@@ -5,6 +5,7 @@ import {
   input,
   signal,
 } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 type Item = {
   label: string;
@@ -15,7 +16,7 @@ type Item = {
 @Component({
   selector: 'navbar-accordion-item',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './accordion-item.component.html',
   styleUrl: './accordion-item.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
