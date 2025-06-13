@@ -55,13 +55,15 @@
                 >visibility</app-button
               >
             </a>
-            <app-button
-              pTooltip="Chỉnh sửa"
-              tooltipPosition="top"
-              [variant]="'light'"
-              class="material-symbols-outlined px-[8px] pb-[1px] pt-[6px] text-lg"
-              >edit</app-button
-            >
+            <a [routerLink]="['/admin/schools', school.id, 'update']">
+              <app-button
+                pTooltip="Chỉnh sửa"
+                tooltipPosition="top"
+                [variant]="'light'"
+                class="material-symbols-outlined px-[8px] pb-[1px] pt-[6px] text-lg"
+                >edit</app-button
+              >
+            </a>
             <app-button
               pTooltip="Vô hiệu hóa"
               tooltipPosition="top"

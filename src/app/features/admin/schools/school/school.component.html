@@ -2,6 +2,9 @@
   class="rounded border border-gray-100 bg-white p-6 shadow-main dark:border-dark-500 dark:bg-dark-200">
   <div class="mb-2 flex items-center justify-between">
     <h2 class="text-base font-medium">Thông tin trường học</h2>
+    <app-button [variant]="'light'"
+      ><a routerLink="update">Chỉnh sửa</a></app-button
+    >
   </div>
   <div
     class="rounded border border-gray-200 p-6 dark:border-dark-500 dark:bg-dark-200">
@@ -89,7 +92,9 @@
 
   <div class="mb-2 mt-10 flex items-center justify-between">
     <h2 class="text-base font-medium">Thông tin quản lý</h2>
-    <app-button><a routerLink="#!">Xem chi tiết</a></app-button>
+    <app-button [variant]="'light'"
+      ><a routerLink="#!">Xem chi tiết</a></app-button
+    >
   </div>
   <div
     class="rounded border border-gray-200 p-6 dark:border-dark-500 dark:bg-dark-200">
