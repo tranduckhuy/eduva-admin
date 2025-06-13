@@ -55,10 +55,10 @@ export class SchoolComponent implements OnInit {
   schoolAdminName = signal<string>('Nguyễn Văn A');
   schoolAdminEmail = signal<string>('nguyenvana@gmail.com');
 
-  constructor(private datePipe: DatePipe) {}
+  constructor(private readonly datePipe: DatePipe) {}
 
   formatDateVi(date: Date | string): string {
-    return this.datePipe.transform(date, 'medium', undefined, 'vi') || '';
+    return this.datePipe.transform(date, 'medium', undefined, 'vi') ?? '';
   }
 
   ngOnInit(): void {

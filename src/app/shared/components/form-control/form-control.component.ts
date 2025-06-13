@@ -21,9 +21,8 @@ import {
   matchPasswordValidator,
   minWordCountValidator,
 } from '../../utils/form-validators';
-import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { NgForOf, NgIf } from '@angular/common';
+import { NgForOf, NgIf, CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-form-control',
@@ -111,7 +110,10 @@ export class FormControlComponent implements OnInit, ControlValueAccessor {
 
   get errorMessage(): string | null {
     const errors = this.control.errors;
-    if (errors && (this.control.dirty || this.control.touched || this.submitted())) {
+    if (
+      errors &&
+      (this.control.dirty || this.control.touched || this.submitted())
+    ) {
       const firstErrorKey = Object.keys(errors)[0];
       return (
         this.errorMessages()[firstErrorKey] ||

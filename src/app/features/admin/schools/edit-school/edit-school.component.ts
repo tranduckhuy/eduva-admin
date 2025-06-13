@@ -58,10 +58,10 @@ export class EditSchoolComponent implements OnInit {
     { label: 'Ngừng hoạt động', value: 'inactive' },
   ];
 
-  constructor(private datePipe: DatePipe) {}
+  constructor(private readonly datePipe: DatePipe) {}
 
   formatDateVi(date: Date | string): string {
-    return this.datePipe.transform(date, 'medium', undefined, 'vi') || '';
+    return this.datePipe.transform(date, 'medium', undefined, 'vi') ?? '';
   }
 
   ngOnInit(): void {
