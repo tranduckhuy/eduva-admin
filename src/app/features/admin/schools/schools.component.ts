@@ -3,6 +3,7 @@ import {
   Component,
   OnInit,
   signal,
+  ViewChild,
 } from '@angular/core';
 import { SearchInputComponent } from '../../../shared/components/search-input/search-input.component';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
@@ -12,6 +13,7 @@ import { BadgeComponent } from '../../../shared/components/badge/badge.component
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { TooltipModule } from 'primeng/tooltip';
 import { RouterLink } from '@angular/router';
+import { DialogComponent } from '../../../shared/components/dialog/dialog.component';
 
 @Component({
   selector: 'app-schools',
@@ -24,6 +26,7 @@ import { RouterLink } from '@angular/router';
     ButtonComponent,
     TooltipModule,
     RouterLink,
+    DialogComponent,
   ],
   templateUrl: './schools.component.html',
   styleUrl: './schools.component.css',
@@ -316,8 +319,9 @@ export class SchoolsComponent implements OnInit {
   totalRecords = signal<number>(0);
   loading = signal<boolean>(false);
   first = signal<number>(0);
-
   rows = signal<number>(0);
+
+  @ViewChild('unarchiveDialogRef') unarchiveDialogRef!: DialogComponent;
 
   ngOnInit(): void {
     this.totalRecords.set(this.schools.length);
@@ -364,5 +368,9 @@ export class SchoolsComponent implements OnInit {
 
   isFirstPage(): boolean {
     return this.schools ? this.first() === 0 : true;
+  }
+
+  openUnarchiveDialog() {
+    this.unarchiveDialogRef.showDialog();
   }
 }

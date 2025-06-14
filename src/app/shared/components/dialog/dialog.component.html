@@ -1,0 +1,22 @@
+<p-dialog
+  [(visible)]="visible"
+  [modal]="true"
+  [dismissableMask]="true"
+  [style]="{ width: '25rem' }"
+  [appendTo]="'body'"
+  [contentStyleClass]="customClass()">
+  <ng-template #header>
+    <h2 class="text-xl font-bold">{{ title() }}</h2>
+  </ng-template>
+  @if (desc()) {
+    <span class="mb-4 mt-2 block text-gray-600 dark:text-dark-100">{{
+      desc()
+    }}</span>
+  }
+  <!-- Main modal content -->
+  <ng-content select="[dialog-body],:not([footer])" />
+  <ng-template #footer>
+    <!-- Footer actions -->
+    <ng-content select="[footer]" />
+  </ng-template>
+</p-dialog>
