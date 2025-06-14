@@ -12,17 +12,17 @@ export const schoolAdminsRoute: Routes = [
       breadcrumb: 'Danh sách quản lý trường học',
     },
   },
-  // {
-  //   path: ':schoolId/update',
-  //   loadComponent: () =>
-  //     import('./edit-school/edit-school.component').then(
-  //       mod => mod.EditSchoolComponent
-  //     ),
-  //   data: {
-  //     heading: 'Cập nhật trường học',
-  //     breadcrumb: 'Cập nhật trường học',
-  //   },
-  // },
+  {
+    path: ':schoolId/update',
+    loadComponent: () =>
+      import('./edit-school-admin/edit-school-admin.component').then(
+        mod => mod.EditSchoolAdminComponent
+      ),
+    data: {
+      heading: 'Cập nhật trường học',
+      breadcrumb: 'Cập nhật trường học',
+    },
+  },
   {
     path: ':schoolAdminId',
     loadComponent: () =>
