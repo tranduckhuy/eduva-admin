@@ -3,6 +3,7 @@ import {
   Component,
   OnInit,
   signal,
+  ViewChild,
 } from '@angular/core';
 import { SchoolAdmin } from '../../../shared/models/school-admin/school-admin.model';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
@@ -11,6 +12,7 @@ import { SearchInputComponent } from '../../../shared/components/search-input/se
 import { BadgeComponent } from '../../../shared/components/badge/badge.component';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { RouterLink } from '@angular/router';
+import { DialogComponent } from '../../../shared/components/dialog/dialog.component';
 
 @Component({
   selector: 'app-school-admins',
@@ -22,6 +24,7 @@ import { RouterLink } from '@angular/router';
     TableModule,
     LeadingZeroPipe,
     RouterLink,
+    DialogComponent,
   ],
   templateUrl: './school-admins.component.html',
   styleUrl: './school-admins.component.css',
@@ -314,8 +317,9 @@ export class SchoolAdminsComponent implements OnInit {
   totalRecords = signal<number>(0);
   loading = signal<boolean>(false);
   first = signal<number>(0);
-
   rows = signal<number>(0);
+
+  @ViewChild('unarchiveDialogRef') unarchiveDialogRef!: DialogComponent;
 
   ngOnInit(): void {
     this.totalRecords.set(this.schoolAdmins.length);
@@ -352,5 +356,9 @@ export class SchoolAdminsComponent implements OnInit {
 
   isFirstPage(): boolean {
     return this.schoolAdmins ? this.first() === 0 : true;
+  }
+
+  openUnarchiveDialog() {
+    this.unarchiveDialogRef.showDialog();
   }
 }
