@@ -3,8 +3,11 @@ import {
   Component,
   input,
   output,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs';
 
 import { AccordionItemComponent } from './accordion-item/accordion-item.component';
 
@@ -143,4 +146,72 @@ export class NavbarComponent {
       ],
     },
   ];
+
+  constructor(
+    private router: Router,
+    private cdr: ChangeDetectorRef
+  ) {
+    // Immediately update for current route on init
+    this.updateActiveNav(this.router.url);
+
+    // Listen to route changes
+    this.router.events
+      .pipe(
+        filter(
+          (event): event is NavigationEnd => event instanceof NavigationEnd
+        )
+      )
+      .subscribe(event => {
+        this.updateActiveNav(event.url);
+        // Trigger change detection to update the view
+        this.cdr.detectChanges();
+      });
+  }
+
+  private updateActiveNav(currentUrl: string) {
+    // Reset all active states first
+    for (const section of this.navConfigs) {
+      for (const item of section.navItems) {
+        item.isActive = false;
+        if (item.submenuItems) {
+          item.submenuItems.forEach(sub => (sub.active = false));
+        }
+      }
+    }
+
+    // Then set active states based on current URL
+    for (const section of this.navConfigs) {
+      for (const item of section.navItems) {
+        // Check for direct link match
+        if (
+          item.link &&
+          item.link !== '#!' &&
+          currentUrl.startsWith(item.link)
+        ) {
+          item.isActive = true;
+        }
+
+        // Check submenu items
+        if (item.submenuItems?.length > 0) {
+          const hasActiveSubmenu = item.submenuItems.some(
+            sub =>
+              sub.link && sub.link !== '#!' && currentUrl.startsWith(sub.link)
+          );
+
+          if (hasActiveSubmenu) {
+            item.isActive = true;
+            item.submenuItems.forEach(sub => {
+              if (
+                sub.link &&
+                sub.link !== '#!' &&
+                currentUrl.startsWith(sub.link)
+              ) {
+                sub.active = true;
+              }
+            });
+          }
+        }
+      }
+    }
+  }
 }

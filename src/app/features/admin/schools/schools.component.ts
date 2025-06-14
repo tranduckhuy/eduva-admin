@@ -319,7 +319,7 @@ export class SchoolsComponent implements OnInit {
   totalRecords = signal<number>(0);
   loading = signal<boolean>(false);
   first = signal<number>(0);
-  rows = signal<number>(0);
+  rows = signal<number>(10);
 
   @ViewChild('unarchiveDialogRef') unarchiveDialogRef!: DialogComponent;
 
@@ -372,5 +372,9 @@ export class SchoolsComponent implements OnInit {
 
   openUnarchiveDialog() {
     this.unarchiveDialogRef.showDialog();
+  }
+
+  get pagedSchools(): School[] {
+    return this.schools.slice(this.first(), this.first() + this.rows());
   }
 }
