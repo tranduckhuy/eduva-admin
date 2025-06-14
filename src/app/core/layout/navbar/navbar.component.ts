@@ -148,8 +148,8 @@ export class NavbarComponent {
   ];
 
   constructor(
-    private router: Router,
-    private cdr: ChangeDetectorRef
+    private readonly router: Router,
+    private readonly cdr: ChangeDetectorRef
   ) {
     // Immediately update for current route on init
     this.updateActiveNav(this.router.url);
@@ -176,12 +176,8 @@ export class NavbarComponent {
         if (item.submenuItems) {
           item.submenuItems.forEach(sub => (sub.active = false));
         }
-      }
-    }
 
-    // Then set active states based on current URL
-    for (const section of this.navConfigs) {
-      for (const item of section.navItems) {
+        // Then set active states based on current URL
         // Check for direct link match
         if (
           item.link &&

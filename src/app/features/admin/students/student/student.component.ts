@@ -3,7 +3,6 @@ import {
   Component,
   input,
   LOCALE_ID,
-  OnInit,
   signal,
 } from '@angular/core';
 import { FormControlComponent } from '../../../../shared/components/form-control/form-control.component';
