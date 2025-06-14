@@ -9,10 +9,9 @@ import {
 } from '@angular/core';
 import { FormControlComponent } from '../../../../shared/components/form-control/form-control.component';
 import { FormsModule, NgForm } from '@angular/forms';
-import { DatePipe, registerLocaleData } from '@angular/common';
+import { DatePipe, registerLocaleData, CommonModule } from '@angular/common';
 import localeVi from '@angular/common/locales/vi';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
-import { CommonModule } from '@angular/common';
 
 registerLocaleData(localeVi);
 
@@ -69,7 +68,7 @@ export class EditSchoolAdminComponent implements OnInit {
 
   constructor(
     private readonly datePipe: DatePipe,
-    private cdr: ChangeDetectorRef
+    private readonly cdr: ChangeDetectorRef
   ) {}
 
   formatDateVi(date: Date | string): string {
@@ -94,7 +93,7 @@ export class EditSchoolAdminComponent implements OnInit {
 
   onAvatarChange(event: Event) {
     const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
+    if (input?.files?.[0]) {
       const file = input.files[0];
       this.selectedAvatarFile.set(file);
       const reader = new FileReader();

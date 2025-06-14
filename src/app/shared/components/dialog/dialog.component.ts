@@ -3,7 +3,6 @@ import {
   Component,
   input,
   signal,
-  Input,
 } from '@angular/core';
 import { Dialog } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
