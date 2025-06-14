@@ -5,7 +5,7 @@
   </div>
 
   <p-table
-    [value]="schoolAdmins"
+    [value]="teachers"
     [tableStyle]="{ 'min-width': '50rem' }"
     [paginator]="true"
     [rows]="10"
@@ -15,71 +15,59 @@
     (onLazyLoad)="loadProductsLazy($event)"
     [totalRecords]="totalRecords()"
     currentPageReportTemplate="
-      Hiển thị {first} đến {last} trên {totalRecords} school admins
+      Hiển thị {first} đến {last} trên {totalRecords} giáo viên
     "
     (onPage)="pageChange($event)"
     [loading]="loading()">
     <ng-template #header>
       <tr>
         <th scope="col" class="!w-[5%] !text-center">STT</th>
-        <th scope="col" class="!w-[25%]">School Admin</th>
+        <th scope="col" class="!w-[25%]">Giáo viên</th>
         <th scope="col" class="!w-[25%]">Trường</th>
         <th scope="col" class="!w-[15%]">Số điện thoại</th>
         <th scope="col" class="!w-[10%] !text-center">Trạng thái</th>
-        <th scope="col" class="!w-[15%] !text-center">Hành động</th>
+        <th scope="col" class="!w-[15%] !pr-4 !text-center">Hành động</th>
       </tr>
     </ng-template>
-    <ng-template #body let-schoolAdmin let-i="rowIndex">
+    <ng-template #body let-teacher let-i="rowIndex">
       <tr>
         <td class="!text-center">{{ i + 1 | leadingZero }}</td>
         <td>
           <div class="flex items-center gap-2">
             <img
-              [src]="schoolAdmin.avatarUrl"
+              [src]="teacher.avatarUrl"
               class="size-10 rounded-full object-cover"
               alt="Avatar" />
             <div class="flex flex-col">
               <h3 class="text-base font-semibold">
-                {{ schoolAdmin.name }}
+                {{ teacher.name }}
               </h3>
               <p class="w-[200px] text-sm text-gray-500">
-                {{ schoolAdmin.email }}
+                {{ teacher.email }}
               </p>
             </div>
           </div>
         </td>
-        <td>{{ schoolAdmin.schoolName }}</td>
-        <td>{{ schoolAdmin.phoneNumber }}</td>
+        <td>{{ teacher.schoolName }}</td>
+        <td>{{ teacher.phoneNumber }}</td>
         <td class="!text-center">
           <app-badge
             class="whitespace-nowrap"
-            [variant]="
-              schoolAdmin.status === 'active' ? 'success' : 'destructive'
-            "
+            [variant]="teacher.status === 'active' ? 'success' : 'destructive'"
             >{{
-              schoolAdmin.status === 'active' ? 'Đang hoạt động' : 'Vô hiệu hóa'
+              teacher.status === 'active' ? 'Đang hoạt động' : 'Vô hiệu hóa'
             }}</app-badge
           >
         </td>
         <td class="!text-center">
-          <div class="mr-4 flex items-center justify-center gap-2">
-            <a [routerLink]="['/admin/school-admins', schoolAdmin.id]">
+          <div class="flex items-center justify-center gap-2">
+            <a [routerLink]="['/admin/school-admins', teacher.id]">
               <app-button
                 pTooltip="Xem chi tiết"
                 tooltipPosition="top"
                 [variant]="'light'"
                 class="material-symbols-outlined px-[7px] py-[3.5px] text-lg"
                 >visibility</app-button
-              >
-            </a>
-            <a
-              [routerLink]="['/admin/school-admins', schoolAdmin.id, 'update']">
-              <app-button
-                pTooltip="Chỉnh sửa"
-                tooltipPosition="top"
-                [variant]="'light'"
-                class="material-symbols-outlined px-[7px] py-[3.5px] text-lg"
-                >edit</app-button
               >
             </a>
             <app-button

@@ -342,8 +342,6 @@ export class SchoolAdminsComponent implements OnInit {
   }
 
   pageChange(event: any) {
-    console.log(this.first());
-
     this.first.set(event.first);
     this.rows.set(event.rows);
   }
