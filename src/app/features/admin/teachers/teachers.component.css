@@ -12,11 +12,6 @@
   padding-bottom: 11px !important;
 }
 
-::ng-deep .p-datatable-thead > tr > th:last-of-type {
-  padding-right: 16px !important;
-  white-space: pre-wrap !important;
-}
-
 ::ng-deep .dark .p-datatable-thead > tr > th {
   background-color: var(--color-primary-500) !important;
 }

@@ -26,7 +26,7 @@
         ),
         'focus-within:border-primary':
           !control.invalid || (!control.touched && !submitted()),
-        'bg-[#e1e6f2] dark:bg-gray-700': readOnly() === true,
+        'bg-[#e1e6f2] dark:!bg-gray-700': readOnly() === true,
       }"
       [style.backgroundColor]="
         control.invalid && (control.touched || submitted()) ? '#ff00001a' : ''

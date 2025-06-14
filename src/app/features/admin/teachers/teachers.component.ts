@@ -4,7 +4,7 @@ import {
   signal,
   ViewChild,
 } from '@angular/core';
-import { Teacher } from '../../../shared/models/teacher/teacher.model';
+import { Teacher } from '../../../shared/models/entities/teacher/teacher.model';
 import { SearchInputComponent } from '../../../shared/components/search-input/search-input.component';
 import { BadgeComponent } from '../../../shared/components/badge/badge.component';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
@@ -12,6 +12,7 @@ import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { LeadingZeroPipe } from '../../../shared/pipes/leading-zero.pipe';
 import { RouterLink } from '@angular/router';
 import { DialogComponent } from '../../../shared/components/dialog/dialog.component';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-teachers',
@@ -22,6 +23,7 @@ import { DialogComponent } from '../../../shared/components/dialog/dialog.compon
     ButtonComponent,
     TableModule,
     LeadingZeroPipe,
+    TooltipModule,
     RouterLink,
     DialogComponent,
   ],

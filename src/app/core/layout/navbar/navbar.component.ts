@@ -67,6 +67,22 @@ export class NavbarComponent {
           submenuItems: [],
         },
         {
+          label: 'Quản lý giáo viên',
+          icon: 'co_present',
+          link: '/admin/teachers',
+          type: 'link',
+          isActive: false,
+          submenuItems: [],
+        },
+        {
+          label: 'Quản lý học sinh',
+          icon: 'person_edit',
+          link: '/admin/students',
+          type: 'link',
+          isActive: false,
+          submenuItems: [],
+        },
+        {
           label: 'Quản lý học tập',
           icon: 'auto_stories',
           type: 'accordion',

@@ -5,7 +5,7 @@ import {
   signal,
   ViewChild,
 } from '@angular/core';
-import { SchoolAdmin } from '../../../shared/models/school-admin/school-admin.model';
+import { SchoolAdmin } from '../../../shared/models/entities/school-admin/school-admin.model';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { LeadingZeroPipe } from '../../../shared/pipes/leading-zero.pipe';
 import { SearchInputComponent } from '../../../shared/components/search-input/search-input.component';
@@ -13,6 +13,7 @@ import { BadgeComponent } from '../../../shared/components/badge/badge.component
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { RouterLink } from '@angular/router';
 import { DialogComponent } from '../../../shared/components/dialog/dialog.component';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-school-admins',
@@ -24,6 +25,7 @@ import { DialogComponent } from '../../../shared/components/dialog/dialog.compon
     TableModule,
     LeadingZeroPipe,
     RouterLink,
+    TooltipModule,
     DialogComponent,
   ],
   templateUrl: './school-admins.component.html',

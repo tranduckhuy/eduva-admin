@@ -61,12 +61,13 @@
         </td>
         <td class="!text-center">
           <div class="flex items-center justify-center gap-2">
-            <a [routerLink]="['/admin/school-admins', teacher.id]">
+            <a [routerLink]="['/admin/teachers', teacher.id]">
               <app-button
                 pTooltip="Xem chi tiết"
                 tooltipPosition="top"
                 [variant]="'light'"
-                class="material-symbols-outlined px-[7px] py-[3.5px] text-lg"
+                [size]="'xs'"
+                class="material-symbols-outlined px-[7px] pb-[6px] pt-[8px] text-lg leading-none"
                 >visibility</app-button
               >
             </a>
@@ -75,7 +76,7 @@
               tooltipPosition="top"
               (clicked)="openUnarchiveDialog()"
               [variant]="'light-danger'"
-              class="material-symbols-outlined px-[7px] py-[3.5px] text-lg"
+              class="material-symbols-outlined px-[7px] py-[7px] text-lg leading-none"
               >unarchive</app-button
             >
           </div>
@@ -87,15 +88,13 @@
 
 <app-dialog #unarchiveDialogRef [title]="'Vô hiệu hóa school admin'">
   <p class="mt-4 dark:text-dark-100" dialog-body>
-    Bạn có chắc chắn muốn vô hiệu hóa school admin này? Họ sẽ không thể đăng
-    nhập vào hệ thống nữa.
+    Bạn có chắc chắn muốn vô hiệu hóa giáo viên này? Họ sẽ không thể đăng nhập
+    vào hệ thống nữa.
   </p>
   <div footer class="flex justify-end gap-2">
-    <app-button
-      [variant]="'light-danger'"
-      (click)="unarchiveDialogRef.hideDialog()"
+    <app-button [theme]="'danger'" (click)="unarchiveDialogRef.hideDialog()"
       >Hủy</app-button
     >
-    <app-button [variant]="'light'">Xác nhận</app-button>
+    <app-button>Xác nhận</app-button>
   </div>
 </app-dialog>

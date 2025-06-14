@@ -10,24 +10,13 @@ export const teachersRoute: Routes = [
       breadcrumb: 'Danh sách giáo viên',
     },
   },
-  // {
-  //   path: ':schoolId/update',
-  //   loadComponent: () =>
-  //     import('./edit-school/edit-school.component').then(
-  //       mod => mod.EditSchoolComponent
-  //     ),
-  //   data: {
-  //     heading: 'Cập nhật trường học',
-  //     breadcrumb: 'Cập nhật trường học',
-  //   },
-  // },
-  // {
-  //   path: ':schoolId',
-  //   loadComponent: () =>
-  //     import('./school/school.component').then(mod => mod.SchoolComponent),
-  //   data: {
-  //     heading: 'Chi tiết trường học',
-  //     breadcrumb: 'Chi tiết trường học',
-  //   },
-  // },
+  {
+    path: ':teacherId',
+    loadComponent: () =>
+      import('./teacher/teacher.component').then(mod => mod.TeacherComponent),
+    data: {
+      heading: 'Chi tiết giáo viên',
+      breadcrumb: 'Chi tiết giáo viên',
+    },
+  },
 ];
