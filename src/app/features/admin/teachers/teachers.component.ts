@@ -248,7 +248,7 @@ export class TeachersComponent {
   totalRecords = signal<number>(0);
   loading = signal<boolean>(false);
   first = signal<number>(0);
-  rows = signal<number>(0);
+  rows = signal<number>(10);
 
   @ViewChild('unarchiveDialogRef') unarchiveDialogRef!: DialogComponent;
 
@@ -289,5 +289,9 @@ export class TeachersComponent {
 
   openUnarchiveDialog() {
     this.unarchiveDialogRef.showDialog();
+  }
+
+  get pagedTeachers(): Teacher[] {
+    return this.teachers.slice(this.first(), this.first() + this.rows());
   }
 }

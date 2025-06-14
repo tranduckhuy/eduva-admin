@@ -319,7 +319,7 @@ export class SchoolAdminsComponent implements OnInit {
   totalRecords = signal<number>(0);
   loading = signal<boolean>(false);
   first = signal<number>(0);
-  rows = signal<number>(0);
+  rows = signal<number>(10);
 
   @ViewChild('unarchiveDialogRef') unarchiveDialogRef!: DialogComponent;
 
@@ -360,5 +360,9 @@ export class SchoolAdminsComponent implements OnInit {
 
   openUnarchiveDialog() {
     this.unarchiveDialogRef.showDialog();
+  }
+
+  get pagedSchoolAdmins(): SchoolAdmin[] {
+    return this.schoolAdmins.slice(this.first(), this.first() + this.rows());
   }
 }

@@ -9,36 +9,36 @@ import { FormControlComponent } from '../../../../shared/components/form-control
 import { FormsModule } from '@angular/forms';
 import { DatePipe, registerLocaleData } from '@angular/common';
 import localeVi from '@angular/common/locales/vi';
-import { Teacher } from '../../../../shared/models/entities/teacher/teacher.model';
+import { Student } from '../../../../shared/models/entities/student/student.model';
 
 registerLocaleData(localeVi);
 
 @Component({
-  selector: 'app-teacher',
+  selector: 'app-student',
   standalone: true,
   imports: [FormControlComponent, FormsModule],
-  templateUrl: './teacher.component.html',
-  styleUrl: './teacher.component.css',
+  templateUrl: './student.component.html',
+  styleUrl: './student.component.css',
   providers: [DatePipe, { provide: LOCALE_ID, useValue: 'vi' }],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TeacherComponent {
-  teacher: Teacher = {
+export class StudentComponent {
+  student: Student = {
     id: 1,
-    name: 'Nguyễn Văn An',
-    username: 'ngvanan',
-    avatarUrl: 'https://randomuser.me/api/portraits/men/1.jpg',
-    dob: '1980-05-12',
-    email: 'ngvanan@example.com',
+    name: 'Phạm Văn A',
+    username: 'pvana',
+    avatarUrl: 'https://randomuser.me/api/portraits/men/21.jpg',
+    dob: '2005-01-15',
+    email: 'pvana@example.com',
     phoneNumber: '0901234567',
     schoolId: 'SCH001',
     schoolName: 'Trường THPT A',
     status: 'active',
-    createdAt: new Date('2020-01-15'),
-    lastModifiedAt: new Date('2023-04-10'),
+    createdAt: new Date('2021-09-01'),
+    lastModifiedAt: new Date('2023-05-01'),
   };
 
-  teacherId = input.required<string>();
+  studentId = input.required<string>();
 
   name = signal<string>('');
   dob = signal<string>('');
@@ -58,18 +58,18 @@ export class TeacherComponent {
   }
 
   ngOnInit(): void {
-    this.name.set(this.teacher.name);
-    this.username.set(this.teacher.username);
-    this.email.set(this.teacher.email);
-    this.teacher.dob && this.dob.set(this.teacher.dob);
-    this.phoneNumber.set(this.teacher.phoneNumber);
-    this.avatarUrl.set(this.teacher.avatarUrl);
+    this.name.set(this.student.name);
+    this.username.set(this.student.username);
+    this.email.set(this.student.email);
+    this.student.dob && this.dob.set(this.student.dob);
+    this.phoneNumber.set(this.student.phoneNumber);
+    this.avatarUrl.set(this.student.avatarUrl);
     this.status.set(
-      this.teacher.status === 'active' ? 'Đang hoạt động' : 'Vô hiệu hóa'
+      this.student.status === 'active' ? 'Đang hoạt động' : 'Vô hiệu hóa'
     );
-    this.createdAt.set(this.formatDateVi(new Date(this.teacher.createdAt!)));
+    this.createdAt.set(this.formatDateVi(new Date(this.student.createdAt!)));
     this.lastModifiedAt.set(
-      this.formatDateVi(new Date(this.teacher.lastModifiedAt!))
+      this.formatDateVi(new Date(this.student.lastModifiedAt!))
     );
   }
 }
