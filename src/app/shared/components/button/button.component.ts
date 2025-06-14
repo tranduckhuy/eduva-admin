@@ -67,7 +67,7 @@ export class ButtonComponent {
       default: 'bg-primary text-white shadow hover:opacity-90',
       primary: 'bg-primary text-white shadow hover:opacity-90',
       success: 'bg-success-600 text-white hover:opacity-90',
-      danger: 'bg-danger-600 text-white hover:opacity-90',
+      danger: 'bg-danger-500 text-white hover:opacity-90',
       warning: 'bg-warning-600 text-black hover:opacity-90',
       info: 'bg-info-500 text-white hover:opacity-90',
       light: 'bg-gray-100 hover:bg-gray-200',

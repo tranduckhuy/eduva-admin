@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { SearchInputComponent } from '../../../shared/components/search-input/search-input.component';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
-import { School } from '../../../shared/models/school/school.model';
+import { School } from '../../../shared/models/entities/school/school.model';
 import { LeadingZeroPipe } from '../../../shared/pipes/leading-zero.pipe';
 import { BadgeComponent } from '../../../shared/components/badge/badge.component';
 import { ButtonComponent } from '../../../shared/components/button/button.component';

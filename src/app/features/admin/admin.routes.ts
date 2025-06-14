@@ -20,6 +20,11 @@ export const adminRoutes: Routes = [
             mod => mod.schoolAdminsRoute
           ),
       },
+      {
+        path: 'teachers',
+        loadChildren: () =>
+          import('./teachers/teachers.routes').then(mod => mod.teachersRoute),
+      },
     ],
   },
   {

@@ -5,7 +5,7 @@
   </div>
 
   <p-table
-    [value]="schools"
+    [value]="teachers"
     [tableStyle]="{ 'min-width': '50rem' }"
     [paginator]="true"
     [rows]="10"
@@ -15,60 +15,67 @@
     (onLazyLoad)="loadProductsLazy($event)"
     [totalRecords]="totalRecords()"
     currentPageReportTemplate="
-      Hiển thị {first} đến {last} trên {totalRecords} trường
+      Hiển thị {first} đến {last} trên {totalRecords} giáo viên
     "
     (onPage)="pageChange($event)"
     [loading]="loading()">
     <ng-template #header>
       <tr>
-        <th scope="col" class="!text-center">STT</th>
-        <th scope="col" class="!w-1/4">Tên</th>
-        <th scope="col" class="!w-[35%]">Địa chỉ</th>
+        <th scope="col" class="!w-[5%] !text-center">STT</th>
+        <th scope="col" class="!w-[25%]">Giáo viên</th>
+        <th scope="col" class="!w-[25%]">Trường</th>
         <th scope="col" class="!w-[15%]">Số điện thoại</th>
         <th scope="col" class="!w-[10%] !text-center">Trạng thái</th>
-        <th scope="col" class="!w-[15%] !text-center">Hành động</th>
+        <th scope="col" class="!w-[15%] !pr-4 !text-center">Hành động</th>
       </tr>
     </ng-template>
-    <ng-template #body let-school let-i="rowIndex">
+    <ng-template #body let-teacher let-i="rowIndex">
       <tr>
         <td class="!text-center">{{ i + 1 | leadingZero }}</td>
-        <td>{{ school.name }}</td>
-        <td>{{ school.address }}</td>
-        <td>{{ school.phoneNumber }}</td>
+        <td>
+          <div class="flex items-center gap-2">
+            <img
+              [src]="teacher.avatarUrl"
+              class="size-10 rounded-full object-cover"
+              alt="Avatar" />
+            <div class="flex flex-col">
+              <h3 class="text-base font-semibold">
+                {{ teacher.name }}
+              </h3>
+              <p class="w-[200px] text-sm text-gray-500">
+                {{ teacher.email }}
+              </p>
+            </div>
+          </div>
+        </td>
+        <td>{{ teacher.schoolName }}</td>
+        <td>{{ teacher.phoneNumber }}</td>
         <td class="!text-center">
           <app-badge
             class="whitespace-nowrap"
-            [variant]="school.status === 'active' ? 'success' : 'destructive'"
+            [variant]="teacher.status === 'active' ? 'success' : 'destructive'"
             >{{
-              school.status === 'active' ? 'Đang hoạt động' : 'Vô hiệu hóa'
+              teacher.status === 'active' ? 'Đang hoạt động' : 'Vô hiệu hóa'
             }}</app-badge
           >
         </td>
         <td class="!text-center">
-          <div class="mr-4 flex items-center justify-center gap-2">
-            <a [routerLink]="['/admin/schools', school.id]">
+          <div class="flex items-center justify-center gap-2">
+            <a [routerLink]="['/admin/teachers', teacher.id]">
               <app-button
                 pTooltip="Xem chi tiết"
                 tooltipPosition="top"
                 [variant]="'light'"
+                [size]="'xs'"
                 class="material-symbols-outlined px-[7px] pb-[6px] pt-[8px] text-lg leading-none"
                 >visibility</app-button
-              >
-            </a>
-            <a [routerLink]="['/admin/schools', school.id, 'update']">
-              <app-button
-                pTooltip="Chỉnh sửa"
-                tooltipPosition="top"
-                [variant]="'light'"
-                class="material-symbols-outlined px-[7px] py-[7px] text-lg leading-none"
-                >edit</app-button
               >
             </a>
             <app-button
               pTooltip="Vô hiệu hóa"
               tooltipPosition="top"
-              [variant]="'light-danger'"
               (clicked)="openUnarchiveDialog()"
+              [variant]="'light-danger'"
               class="material-symbols-outlined px-[7px] py-[7px] text-lg leading-none"
               >unarchive</app-button
             >
@@ -79,17 +86,15 @@
   </p-table>
 </div>
 
-<app-dialog #unarchiveDialogRef [title]="'Vô hiệu hóa school'">
+<app-dialog #unarchiveDialogRef [title]="'Vô hiệu hóa school admin'">
   <p class="mt-4 dark:text-dark-100" dialog-body>
-    Bạn có chắc chắn muốn vô hiệu hóa trường học này? Toàn bộ người dùng thuộc
-    trường học này sẽ không thể đăng nhập vào hệ thống nữa.
+    Bạn có chắc chắn muốn vô hiệu hóa giáo viên này? Họ sẽ không thể đăng nhập
+    vào hệ thống nữa.
   </p>
   <div footer class="flex justify-end gap-2">
-    <app-button
-      [variant]="'light-danger'"
-      (click)="unarchiveDialogRef.hideDialog()"
+    <app-button [theme]="'danger'" (click)="unarchiveDialogRef.hideDialog()"
       >Hủy</app-button
     >
-    <app-button [variant]="'light'">Xác nhận</app-button>
+    <app-button>Xác nhận</app-button>
   </div>
 </app-dialog>
