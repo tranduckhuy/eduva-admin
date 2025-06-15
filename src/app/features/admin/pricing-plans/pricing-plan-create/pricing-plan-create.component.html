@@ -1,0 +1,118 @@
+<form #createForm="ngForm" (ngSubmit)="onSubmit(createForm)">
+  <div class="e-row e-g-4 e-g-md-6">
+    <div class="e-col-8 e-col-lg-12">
+      <div
+        class="rounded border border-gray-100 bg-white p-4 shadow-main dark:border-dark-500 dark:bg-dark-200">
+        <div class="mb-4 flex items-center justify-between">
+          <h2 class="text-base font-medium">Thông tin gói đăng ký</h2>
+          <app-button [variant]="'light'" [type]="'submit'"
+            >Lưu thông tin</app-button
+          >
+        </div>
+
+        <div class="e-row e-row-cols-2 e-row-cols-md-1 e-g-4">
+          <div class="e-col">
+            <app-form-control
+              label="Tên gói"
+              type="text"
+              [name]="'name'"
+              [required]="true"
+              [placeholder]="'Nhập tên gói...'"
+              [submitted]="submitted"
+              #nameCtrl="ngModel"
+              [(ngModel)]="name">
+            </app-form-control>
+          </div>
+          <div class="e-col">
+            <app-form-control
+              label="Giá (vnd)"
+              [type]="'number'"
+              [name]="'price'"
+              [required]="true"
+              [min]="1"
+              [placeholder]="'Nhập giá gói...'"
+              [submitted]="submitted"
+              #priceCtrl="ngModel"
+              [(ngModel)]="price">
+            </app-form-control>
+          </div>
+          <div class="e-col">
+            <app-form-control
+              label="Số lượng credit"
+              [type]="'number'"
+              [name]="'creditLimit'"
+              [required]="true"
+              [min]="1"
+              [placeholder]="'Nhập số lượng credit...'"
+              [submitted]="submitted"
+              #creditLimitCtrl="ngModel"
+              [(ngModel)]="creditLimit">
+            </app-form-control>
+          </div>
+          <div class="e-col">
+            <app-form-control
+              label="Số lượng tài khoản"
+              [type]="'number'"
+              [name]="'maxAccounts'"
+              [required]="true"
+              [min]="1"
+              [placeholder]="'Nhập số lượng tài khoản...'"
+              [submitted]="submitted"
+              #maxAccountsCtrl="ngModel"
+              [(ngModel)]="maxAccounts">
+            </app-form-control>
+          </div>
+          <div class="e-col-12">
+            <app-form-control
+              [isTextarea]="true"
+              [label]="'Mô tả'"
+              [placeholder]="'Nhập mô tả...'"
+              [name]="'description'"
+              [required]="true"
+              [submitted]="submitted"
+              #descriptionCtrl="ngModel"
+              [(ngModel)]="description">
+            </app-form-control>
+          </div>
+          <div class="e-col">
+            <app-form-control
+              label="Dung lượng (GB)"
+              [type]="'text'"
+              [name]="'storageLimit'"
+              [min]="1"
+              [required]="true"
+              [placeholder]="'Nhập dung lượng...'"
+              [submitted]="submitted"
+              #storageLimitCtrl="ngModel"
+              [(ngModel)]="storageLimit">
+            </app-form-control>
+          </div>
+          <div class="e-col">
+            <app-form-control
+              label="Loại gói"
+              [type]="'text'"
+              [options]="billingCycleOptions"
+              [name]="'billingCycle'"
+              [required]="true"
+              [placeholder]="'Chọn loại gói...'"
+              [submitted]="submitted"
+              #billingCycleCtrl="ngModel"
+              [(ngModel)]="billingCycle">
+            </app-form-control>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="e-col-4 e-col-lg-12">
+      <app-pricing-plan-card
+        [name]="name()"
+        [price]="price()"
+        [creditLimit]="creditLimit()"
+        [maxAccounts]="maxAccounts()"
+        [description]="description()"
+        [storageLimit]="storageLimit()"
+        [billingCycle]="billingCycle() === 'monthly' ? 'tháng' : 'năm'" />
+    </div>
+  </div>
+</form>

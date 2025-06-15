@@ -79,6 +79,8 @@ export class FormControlComponent implements OnInit, ControlValueAccessor {
   // ? Validators
   maxLength = input<number>(50);
   minLength = input<number>(0);
+  max = input<number>(0);
+  min = input<number>(0);
   minWords = input<number>(0);
   email = input<boolean>(false);
   phone = input<boolean>(false);
@@ -176,6 +178,10 @@ export class FormControlComponent implements OnInit, ControlValueAccessor {
       validators.push((ctrl: AbstractControl) =>
         minWordCountValidator(ctrl, this.minWords())
       );
+    // ? Match Min Value
+    if (this.min() !== 0) validators.push(Validators.min(this.min()));
+    // ? Match Max Value
+    if (this.max() !== 0) validators.push(Validators.max(this.max()));
     // ? Match Max Length
     if (this.maxLength())
       validators.push(Validators.maxLength(this.maxLength()));
@@ -201,7 +207,8 @@ export class FormControlComponent implements OnInit, ControlValueAccessor {
       minlength: `Cần có ít nhất ${this.minLength()} ký tự`,
       email: 'Email không hợp lệ',
       minWords: `Cần có ít nhất ${this.minWords()} từ`,
-
+      min: `Giá trị không được nhỏ hơn ${this.min()}`,
+      max: `Giá trị không được lớn hơn ${this.max()}`,
       passTooShort: 'Mật khẩu phải có ít nhất 8 ký tự',
       passTooLong: 'Mật khẩu không được vượt quá 18 ký tự',
       missingLowercase: 'Mật khẩu cần ít nhất một chữ cái thường (a-z)',

@@ -8,8 +8,8 @@ export const pricingPlansRoute: Routes = [
         mod => mod.PricingPlansComponent
       ),
     data: {
-      heading: 'Danh sách pricing plans',
-      breadcrumb: 'Danh sách pricing plans',
+      heading: 'Danh sách gói đăng ký',
+      breadcrumb: 'Danh sách gói đăng ký',
     },
   },
   // {
@@ -19,10 +19,21 @@ export const pricingPlansRoute: Routes = [
   //       mod => mod.EditSchoolAdminComponent
   //     ),
   //   data: {
-  //     heading: 'Cập nhật pricing plans',
-  //     breadcrumb: 'Cập nhật pricing plans',
+  //     heading: 'Cập nhật gói đăng ký',
+  //     breadcrumb: 'Cập nhật gói đăng ký',
   //   },
   // },
+  {
+    path: 'create',
+    loadComponent: () =>
+      import('./pricing-plan-create/pricing-plan-create.component').then(
+        mod => mod.PricingPlanCreateComponent
+      ),
+    data: {
+      heading: 'Tạo gói đăng ký',
+      breadcrumb: 'Tạo gói đăng ký',
+    },
+  },
   {
     path: ':pricingPlanId',
     loadComponent: () =>

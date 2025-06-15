@@ -1,4 +1,4 @@
-import { CurrencyPipe, DatePipe, registerLocaleData } from '@angular/common';
+import { DatePipe, registerLocaleData } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -22,7 +22,6 @@ registerLocaleData(localeVi);
     FormControlComponent,
     FormsModule,
     ButtonComponent,
-    CurrencyPipe,
     PricingPlanCardComponent,
   ],
   templateUrl: './pricing-plan.component.html',
