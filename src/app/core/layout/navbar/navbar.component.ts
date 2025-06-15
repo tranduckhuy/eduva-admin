@@ -54,7 +54,7 @@ export class NavbarComponent {
       section: 'Quản lý',
       navItems: [
         {
-          label: 'Quản lý trường học',
+          label: 'Trường học',
           icon: 'school',
           link: '/admin/schools',
           type: 'link',
@@ -62,7 +62,7 @@ export class NavbarComponent {
           submenuItems: [],
         },
         {
-          label: 'Quản lý school admins',
+          label: 'School admins',
           icon: 'local_library',
           link: '/admin/school-admins',
           type: 'link',
@@ -70,7 +70,7 @@ export class NavbarComponent {
           submenuItems: [],
         },
         {
-          label: 'Quản lý giáo viên',
+          label: 'Giáo viên',
           icon: 'co_present',
           link: '/admin/teachers',
           type: 'link',
@@ -78,7 +78,7 @@ export class NavbarComponent {
           submenuItems: [],
         },
         {
-          label: 'Quản lý học sinh',
+          label: 'Học sinh',
           icon: 'person_edit',
           link: '/admin/students',
           type: 'link',
@@ -86,7 +86,15 @@ export class NavbarComponent {
           submenuItems: [],
         },
         {
-          label: 'Quản lý học tập',
+          label: 'Gói đăng ký',
+          icon: 'paid',
+          link: '/admin/pricing-plans',
+          type: 'link',
+          isActive: false,
+          submenuItems: [],
+        },
+        {
+          label: 'Học tập',
           icon: 'auto_stories',
           type: 'accordion',
           isActive: false,
@@ -100,7 +108,7 @@ export class NavbarComponent {
           ],
         },
         {
-          label: 'Quản lý tài liệu',
+          label: 'Tài liệu',
           icon: 'folder_open',
           type: 'accordion',
           isActive: false,

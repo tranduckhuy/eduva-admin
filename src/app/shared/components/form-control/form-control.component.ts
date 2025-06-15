@@ -14,6 +14,7 @@ import {
   ControlValueAccessor,
   Validators,
   NG_VALUE_ACCESSOR,
+  ValidationErrors,
 } from '@angular/forms';
 
 import {
@@ -49,6 +50,8 @@ export class FormControlComponent implements OnInit, ControlValueAccessor {
   label = input<string>('');
   value = input<string>('');
   readOnly = input<boolean>(false);
+  isTextarea = input<boolean>(false);
+  rows = input<number>(3); // Thêm số dòng mặc định cho textarea
   redirectLink = input<{ value: string; href: string }>({
     value: '',
     href: '#!',
@@ -76,6 +79,8 @@ export class FormControlComponent implements OnInit, ControlValueAccessor {
   // ? Validators
   maxLength = input<number>(50);
   minLength = input<number>(0);
+  max = input<number>(0);
+  min = input<number>(0);
   minWords = input<number>(0);
   email = input<boolean>(false);
   phone = input<boolean>(false);
@@ -87,9 +92,12 @@ export class FormControlComponent implements OnInit, ControlValueAccessor {
 
   // ? State Management
   isShowPassword = signal<boolean>(false);
-
   readonly inputType = computed(() =>
-    this.type() === 'password' && !this.isShowPassword() ? 'password' : 'text'
+    this.type() === 'password'
+      ? this.isShowPassword()
+        ? 'text'
+        : 'password'
+      : this.type()
   );
 
   private onChange: (value: string) => void = () => {};
@@ -143,9 +151,15 @@ export class FormControlComponent implements OnInit, ControlValueAccessor {
     this.control.markAsTouched();
     this.onTouched();
   }
-
   private buildValidators() {
-    const validators = [];
+    const validators: Array<
+      (control: AbstractControl) => ValidationErrors | null
+    > = [];
+
+    // Skip validation for textarea
+    if (this.isTextarea()) {
+      return validators;
+    }
 
     // ? Required
     if (this.required()) validators.push(Validators.required);
@@ -164,6 +178,10 @@ export class FormControlComponent implements OnInit, ControlValueAccessor {
       validators.push((ctrl: AbstractControl) =>
         minWordCountValidator(ctrl, this.minWords())
       );
+    // ? Match Min Value
+    if (this.min() !== 0) validators.push(Validators.min(this.min()));
+    // ? Match Max Value
+    if (this.max() !== 0) validators.push(Validators.max(this.max()));
     // ? Match Max Length
     if (this.maxLength())
       validators.push(Validators.maxLength(this.maxLength()));
@@ -189,7 +207,8 @@ export class FormControlComponent implements OnInit, ControlValueAccessor {
       minlength: `Cần có ít nhất ${this.minLength()} ký tự`,
       email: 'Email không hợp lệ',
       minWords: `Cần có ít nhất ${this.minWords()} từ`,
-
+      min: `Giá trị không được nhỏ hơn ${this.min()}`,
+      max: `Giá trị không được lớn hơn ${this.max()}`,
       passTooShort: 'Mật khẩu phải có ít nhất 8 ký tự',
       passTooLong: 'Mật khẩu không được vượt quá 18 ký tự',
       missingLowercase: 'Mật khẩu cần ít nhất một chữ cái thường (a-z)',

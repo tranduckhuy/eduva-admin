@@ -30,6 +30,13 @@ export const adminRoutes: Routes = [
         loadChildren: () =>
           import('./students/students.routes').then(mod => mod.studentsRoute),
       },
+      {
+        path: 'pricing-plans',
+        loadChildren: () =>
+          import('./pricing-plans/pricing-plans.routes').then(
+            mod => mod.pricingPlansRoute
+          ),
+      },
     ],
   },
   {

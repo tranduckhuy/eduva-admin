@@ -12,10 +12,10 @@
         >
       }
     </div>
-
     <div
-      class="relative flex h-[44px] overflow-hidden rounded-md border-[1.5px] bg-white dark:bg-dark-300"
+      class="relative flex overflow-hidden rounded-md border-[1.5px] bg-white dark:bg-dark-300"
       [ngClass]="{
+        'h-[44px]': !isTextarea(),
         'border-[#f33a58] dark:border-[#f33a58]':
           control.invalid && (control.touched || submitted()),
         'focus-within:border-[#f33a58] dark:border-[#f33a58]':
@@ -26,7 +26,7 @@
         ),
         'focus-within:border-primary':
           !control.invalid || (!control.touched && !submitted()),
-        'bg-[#e1e6f2] dark:!bg-gray-700': readOnly() === true,
+        'bg-[#e1e6f2]': readOnly() === true,
       }"
       [style.backgroundColor]="
         control.invalid && (control.touched || submitted()) ? '#ff00001a' : ''
@@ -55,6 +55,18 @@
             </option>
           </select>
         </div>
+      } @else if (isTextarea()) {
+        <textarea
+          [readOnly]="readOnly()"
+          [value]="value()"
+          class="flex max-h-[300px] min-h-[120px] w-full resize-y overflow-y-auto border-none bg-transparent py-3 pl-4 pr-[42px] leading-normal outline-none placeholder:text-black/60 dark:text-white dark:placeholder:text-[#64748b]"
+          [class.text-[#f33a58]]="
+            control.invalid && control.touched && control.dirty
+          "
+          [placeholder]="placeholder()"
+          [formControl]="control"
+          [rows]="rows()"
+          (blur)="handleTouched()"></textarea>
       } @else {
         <input
           [readOnly]="readOnly()"
