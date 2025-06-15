@@ -21,15 +21,12 @@
     [loading]="loading()">
     <ng-template #header>
       <tr>
-        <th scope="col" class="!w-[4%] !text-center">STT</th>
-        <th scope="col" class="!w-[10%]">Tên</th>
-        <th scope="col" class="!w-[20%]">Mô tả</th>
-        <th scope="col" class="!w-[10%]">Credit</th>
-        <th scope="col" class="!w-[11%]">
-          Số lượng <br />
-          tài khoản
-        </th>
-        <th scope="col" class="!w-[10%]">Giá thành</th>
+        <th scope="col" class="!w-[5%] !text-center">STT</th>
+        <th scope="col" class="!w-[20%]">Tên</th>
+        <th scope="col">Dung lượng</th>
+        <th scope="col">Credit</th>
+        <th scope="col">Tài khoản</th>
+        <th scope="col">Giá thành</th>
         <th scope="col" class="!w-[10%] !text-center">Trạng thái</th>
         <th scope="col" class="!w-[15%] !pr-4 !text-center">Hành động</th>
       </tr>
@@ -40,7 +37,7 @@
         <td>
           {{ pricing.name }}
         </td>
-        <td>{{ pricing.description }}</td>
+        <td>{{ pricing.storageLimit }} GB</td>
         <td>{{ pricing.creditLimit }}</td>
         <td>{{ pricing.maxAccounts }}</td>
         <td>

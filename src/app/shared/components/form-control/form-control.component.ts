@@ -14,6 +14,7 @@ import {
   ControlValueAccessor,
   Validators,
   NG_VALUE_ACCESSOR,
+  ValidationErrors,
 } from '@angular/forms';
 
 import {
@@ -49,6 +50,8 @@ export class FormControlComponent implements OnInit, ControlValueAccessor {
   label = input<string>('');
   value = input<string>('');
   readOnly = input<boolean>(false);
+  isTextarea = input<boolean>(false);
+  rows = input<number>(3); // Thêm số dòng mặc định cho textarea
   redirectLink = input<{ value: string; href: string }>({
     value: '',
     href: '#!',
@@ -87,9 +90,12 @@ export class FormControlComponent implements OnInit, ControlValueAccessor {
 
   // ? State Management
   isShowPassword = signal<boolean>(false);
-
   readonly inputType = computed(() =>
-    this.type() === 'password' && !this.isShowPassword() ? 'password' : 'text'
+    this.type() === 'password'
+      ? this.isShowPassword()
+        ? 'text'
+        : 'password'
+      : this.type()
   );
 
   private onChange: (value: string) => void = () => {};
@@ -143,9 +149,15 @@ export class FormControlComponent implements OnInit, ControlValueAccessor {
     this.control.markAsTouched();
     this.onTouched();
   }
-
   private buildValidators() {
-    const validators = [];
+    const validators: Array<
+      (control: AbstractControl) => ValidationErrors | null
+    > = [];
+
+    // Skip validation for textarea
+    if (this.isTextarea()) {
+      return validators;
+    }
 
     // ? Required
     if (this.required()) validators.push(Validators.required);

@@ -23,15 +23,15 @@ export const pricingPlansRoute: Routes = [
   //     breadcrumb: 'Cập nhật pricing plans',
   //   },
   // },
-  // {
-  //   path: ':schoolAdminId',
-  //   loadComponent: () =>
-  //     import('./school-admin/school-admin.component').then(
-  //       mod => mod.SchoolAdminComponent
-  //     ),
-  //   data: {
-  //     heading: 'Chi tiết pricing plan',
-  //     breadcrumb: 'Chi tiết pricing plan',
-  //   },
-  // },
+  {
+    path: ':pricingPlanId',
+    loadComponent: () =>
+      import('./pricing-plan/pricing-plan.component').then(
+        mod => mod.PricingPlanComponent
+      ),
+    data: {
+      heading: 'Chi tiết pricing plan',
+      breadcrumb: 'Chi tiết pricing plan',
+    },
+  },
 ];

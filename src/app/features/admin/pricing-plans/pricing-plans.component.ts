@@ -44,51 +44,113 @@ export class PricingPlansComponent {
       description: 'Gói cơ bản, phù hợp với trường nhỏ (thanh toán theo tháng)',
       creditLimit: 500,
       maxAccounts: 10,
+      storageLimit: 50, // GB
       price: 1000000,
       billingCycle: 'monthly',
       status: 'active',
     },
     {
       id: 2,
-      name: 'Basic Yearly',
-      description: 'Gói cơ bản, phù hợp với trường nhỏ (thanh toán theo năm)',
-      creditLimit: 500,
-      maxAccounts: 10,
-      price: 11000000,
-      billingCycle: 'yearly',
-      status: 'active',
-    },
-    {
-      id: 3,
       name: 'Standard Monthly',
       description:
         'Gói tiêu chuẩn, phù hợp với trường vừa (thanh toán theo tháng)',
       creditLimit: 1500,
       maxAccounts: 30,
+      storageLimit: 150, // GB
       price: 2500000,
       billingCycle: 'monthly',
       status: 'active',
     },
     {
-      id: 4,
-      name: 'Standard Yearly',
-      description:
-        'Gói tiêu chuẩn, phù hợp với trường vừa (thanh toán theo năm)',
-      creditLimit: 1500,
-      maxAccounts: 30,
-      price: 27000000,
-      billingCycle: 'yearly',
-      status: 'active',
-    },
-    {
-      id: 5,
+      id: 3,
       name: 'Professional Monthly',
       description:
         'Gói chuyên nghiệp, nhiều tính năng hơn (thanh toán theo tháng)',
       creditLimit: 5000,
       maxAccounts: 100,
+      storageLimit: 500, // GB
       price: 6000000,
       billingCycle: 'monthly',
+      status: 'active',
+    },
+    {
+      id: 4,
+      name: 'Enterprise Monthly',
+      description: 'Gói doanh nghiệp, dung lượng lớn (thanh toán theo tháng)',
+      creditLimit: 15000,
+      maxAccounts: 300,
+      storageLimit: 2000, // GB (2 TB)
+      price: 15000000,
+      billingCycle: 'monthly',
+      status: 'active',
+    },
+    {
+      id: 5,
+      name: 'Ultimate Monthly',
+      description: 'Gói tối ưu nhất, hỗ trợ toàn diện (thanh toán theo tháng)',
+      creditLimit: 30000,
+      maxAccounts: 500,
+      storageLimit: 5000, // GB (5 TB)
+      price: 25000000,
+      billingCycle: 'monthly',
+      status: 'active',
+    },
+
+    {
+      id: 6,
+      name: 'Basic Yearly',
+      description: 'Gói cơ bản, phù hợp với trường nhỏ (thanh toán theo năm)',
+      creditLimit: 500,
+      maxAccounts: 10,
+      storageLimit: 50, // GB
+      price: 11000000,
+      billingCycle: 'yearly',
+      status: 'active',
+    },
+    {
+      id: 7,
+      name: 'Standard Yearly',
+      description:
+        'Gói tiêu chuẩn, phù hợp với trường vừa (thanh toán theo năm)',
+      creditLimit: 1500,
+      maxAccounts: 30,
+      storageLimit: 150, // GB
+      price: 27000000,
+      billingCycle: 'yearly',
+      status: 'active',
+    },
+    {
+      id: 8,
+      name: 'Professional Yearly',
+      description:
+        'Gói chuyên nghiệp, nhiều tính năng hơn (thanh toán theo năm)',
+      creditLimit: 5000,
+      maxAccounts: 100,
+      storageLimit: 500, // GB
+      price: 66000000,
+      billingCycle: 'yearly',
+      status: 'active',
+    },
+    {
+      id: 9,
+      name: 'Enterprise Yearly',
+      description: 'Gói doanh nghiệp, dung lượng lớn (thanh toán theo năm)',
+      creditLimit: 15000,
+      maxAccounts: 300,
+      storageLimit: 2000, // GB
+      price: 165000000,
+      billingCycle: 'yearly',
+      status: 'active',
+    },
+    {
+      id: 10,
+      name: 'Ultimate Yearly',
+      description: 'Gói tối ưu nhất, hỗ trợ toàn diện (thanh toán theo năm)',
+      creditLimit: 30000,
+      maxAccounts: 500,
+      storageLimit: 5000, // GB
+      price: 275000000,
+      billingCycle: 'yearly',
       status: 'active',
     },
   ];

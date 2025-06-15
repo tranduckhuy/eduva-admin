@@ -86,6 +86,14 @@ export class NavbarComponent {
           submenuItems: [],
         },
         {
+          label: 'Quản lý pricing plans',
+          icon: 'paid',
+          link: '/admin/pricing-plans',
+          type: 'link',
+          isActive: false,
+          submenuItems: [],
+        },
+        {
           label: 'Quản lý học tập',
           icon: 'auto_stories',
           type: 'accordion',
