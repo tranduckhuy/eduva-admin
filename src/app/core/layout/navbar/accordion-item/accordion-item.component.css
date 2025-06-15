@@ -14,12 +14,14 @@
 
 .accordion-item.active > .accordion-button,
 .accordion-button:hover {
-  background-color: var(--color-bg-secondary);
+  background-color: var(--color-primary-50);
 }
 
 .accordion-item.active i,
-.accordion-button:hover i {
-  color: var(--color-text-primary);
+.accordion-button:hover i,
+.accordion-item.active,
+.accordion-button:hover {
+  color: var(--color-primary-500);
 }
 
 .submenu-link {

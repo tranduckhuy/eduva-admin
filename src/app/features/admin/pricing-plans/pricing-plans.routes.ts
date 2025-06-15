@@ -12,17 +12,17 @@ export const pricingPlansRoute: Routes = [
       breadcrumb: 'Danh sách gói đăng ký',
     },
   },
-  // {
-  //   path: ':schoolId/update',
-  //   loadComponent: () =>
-  //     import('./edit-school-admin/edit-school-admin.component').then(
-  //       mod => mod.EditSchoolAdminComponent
-  //     ),
-  //   data: {
-  //     heading: 'Cập nhật gói đăng ký',
-  //     breadcrumb: 'Cập nhật gói đăng ký',
-  //   },
-  // },
+  {
+    path: ':pricingPlanId/update',
+    loadComponent: () =>
+      import('./edit-pricing-plan/edit-pricing-plan.component').then(
+        mod => mod.EditPricingPlanComponent
+      ),
+    data: {
+      heading: 'Cập nhật gói đăng ký',
+      breadcrumb: 'Cập nhật gói đăng ký',
+    },
+  },
   {
     path: 'create',
     loadComponent: () =>
