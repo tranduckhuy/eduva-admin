@@ -4,6 +4,7 @@ import {
   Component,
   input,
   signal,
+  computed,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
@@ -32,9 +33,15 @@ export class AccordionItemComponent {
   isActive = input<boolean>(false);
 
   // ? State Management
-  isOpen = signal<boolean>(false);
+  private _manuallyOpened = signal<boolean>(false);
+
+  // Compute isOpen based on both manual state and active state
+  isOpen = computed(() => {
+    return this._manuallyOpened() || this.isActive();
+  });
 
   toggleAccordion() {
-    this.isOpen.set(!this.isOpen());
+    // Only toggle the manual state, don't affect the active state
+    this._manuallyOpened.set(!this._manuallyOpened());
   }
 }

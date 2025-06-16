@@ -4,6 +4,7 @@ import {
   input,
   output,
   ChangeDetectorRef,
+  signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
@@ -37,7 +38,7 @@ export class NavbarComponent {
   closeSidebar = output();
   isSidebarCollapsed = input();
 
-  navConfigs: NavbarConfig[] = [
+  navConfigs = signal<NavbarConfig[]>([
     {
       section: 'Thống kê',
       navItems: [
@@ -62,28 +63,19 @@ export class NavbarComponent {
           submenuItems: [],
         },
         {
-          label: 'School admins',
-          icon: 'local_library',
-          link: '/admin/school-admins',
-          type: 'link',
+          label: 'Người dùng',
+          icon: 'people',
+          type: 'accordion',
           isActive: false,
-          submenuItems: [],
-        },
-        {
-          label: 'Giáo viên',
-          icon: 'co_present',
-          link: '/admin/teachers',
-          type: 'link',
-          isActive: false,
-          submenuItems: [],
-        },
-        {
-          label: 'Học sinh',
-          icon: 'person_edit',
-          link: '/admin/students',
-          type: 'link',
-          isActive: false,
-          submenuItems: [],
+          submenuItems: [
+            {
+              label: 'School admins',
+              link: '/admin/school-admins',
+              active: true,
+            },
+            { label: 'Giáo viên', link: '/admin/teachers', active: true },
+            { label: 'Học sinh', link: '/admin/students', active: true },
+          ],
         },
         {
           label: 'Gói đăng ký',
@@ -161,7 +153,7 @@ export class NavbarComponent {
         },
       ],
     },
-  ];
+  ]);
 
   constructor(
     private readonly router: Router,
@@ -185,16 +177,43 @@ export class NavbarComponent {
   }
 
   private updateActiveNav(currentUrl: string) {
-    // Reset all active states first
-    for (const section of this.navConfigs) {
+    const navConfigs = this.navConfigs();
+    // Create a new array to hold the updated configs
+    const updatedConfigs = navConfigs.map(section => ({
+      ...section,
+      navItems: section.navItems.map(item => ({
+        ...item,
+        isActive: false,
+        submenuItems: item.submenuItems.map(sub => ({
+          ...sub,
+          active: false,
+        })),
+      })),
+    }));
+
+    // Update active states based on current URL
+    for (const section of updatedConfigs) {
       for (const item of section.navItems) {
-        item.isActive = false;
-        if (item.submenuItems) {
-          item.submenuItems.forEach(sub => (sub.active = false));
+        // First check submenu items
+        if (item.submenuItems?.length > 0) {
+          const hasActiveSubmenu = item.submenuItems.some(sub => {
+            if (
+              sub.link &&
+              sub.link !== '#!' &&
+              currentUrl.startsWith(sub.link)
+            ) {
+              sub.active = true;
+              return true;
+            }
+            return false;
+          });
+
+          if (hasActiveSubmenu) {
+            item.isActive = true;
+          }
         }
 
-        // Then set active states based on current URL
-        // Check for direct link match
+        // Then check direct link match
         if (
           item.link &&
           item.link !== '#!' &&
@@ -202,28 +221,10 @@ export class NavbarComponent {
         ) {
           item.isActive = true;
         }
-
-        // Check submenu items
-        if (item.submenuItems?.length > 0) {
-          const hasActiveSubmenu = item.submenuItems.some(
-            sub =>
-              sub.link && sub.link !== '#!' && currentUrl.startsWith(sub.link)
-          );
-
-          if (hasActiveSubmenu) {
-            item.isActive = true;
-            item.submenuItems.forEach(sub => {
-              if (
-                sub.link &&
-                sub.link !== '#!' &&
-                currentUrl.startsWith(sub.link)
-              ) {
-                sub.active = true;
-              }
-            });
-          }
-        }
       }
     }
+
+    // Update the signal with new configs
+    this.navConfigs.set(updatedConfigs);
   }
 }
