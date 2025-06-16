@@ -14,7 +14,7 @@
 
 .accordion-item.active > .accordion-button,
 .accordion-button:hover {
-  background-color: var(--color-primary-50);
+  background-color: var(--color-hover-primary);
 }
 
 .accordion-item.active i,
