@@ -18,7 +18,7 @@
   [ngClass]="{
     'flex flex-col items-center pl-5 pr-4': isSidebarCollapsed(),
   }">
-  @for (section of navConfigs; track $index) {
+  @for (section of navConfigs(); track $index) {
     @if (isSidebarCollapsed()) {
       <div>
         <span
