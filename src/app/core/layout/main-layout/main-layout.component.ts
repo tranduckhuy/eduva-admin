@@ -1,12 +1,12 @@
 import {
-  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  DestroyRef,
+  afterNextRender,
+  viewChild,
   inject,
   signal,
-  viewChild,
-  DestroyRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
@@ -51,11 +51,13 @@ import { LayoutHeadingComponent } from '../layout-heading/layout-heading.compone
       <div class="main-content md:!pl-0" #mainElement>
         <app-header
           (toggleSidebar)="manualToggleSidebar()"
+          [isSmallScreen]="isSmallScreen()"
           [isManuallyToggled]="isManuallyToggled()" />
 
         <main routeMetadata class="e-container-fluid mb-10 mt-[94px]">
-          <div class="px-3">
+          <div class="px-3 lg:px-2">
             <app-layout-heading [heading]="heading()" />
+
             <router-outlet />
           </div>
         </main>
@@ -73,6 +75,7 @@ export class MainLayoutComponent {
   navbar = viewChild<ElementRef>('navbar');
   mainElement = viewChild<ElementRef>('mainElement');
 
+  isSmallScreen = signal<boolean>(false);
   isSidebarCollapsed = signal<boolean>(false);
   isManuallyToggled = signal<boolean>(true);
 
@@ -92,7 +95,6 @@ export class MainLayoutComponent {
         const navbarElement = this.navbar()?.nativeElement;
         if (navbarElement) {
           navbarElement.addEventListener('mouseenter', () => {
-            // Only expand if collapsed and not manually toggled
             if (this.isSidebarCollapsed() && !this.isManuallyToggled()) {
               this.isSidebarCollapsed.set(false);
               const mainEl = this.mainElement()?.nativeElement;
@@ -103,13 +105,12 @@ export class MainLayoutComponent {
           });
 
           navbarElement.addEventListener('mouseleave', () => {
-            // Only collapse if not manually toggled
-            const mainEl = this.mainElement()?.nativeElement;
-            if (mainEl && !this.isManuallyToggled()) {
-              mainEl.style.paddingLeft = '80px';
-            }
             if (!this.isManuallyToggled()) {
               this.isSidebarCollapsed.set(true);
+              const mainEl = this.mainElement()?.nativeElement;
+              if (mainEl) {
+                mainEl.style.paddingLeft = '80px';
+              }
             }
           });
         }
@@ -117,31 +118,45 @@ export class MainLayoutComponent {
     });
   }
 
-  private checkScreenSize(): void {
-    if (window.innerWidth > 991.98) {
-      this.isSidebarCollapsed.set(false);
-      this.isManuallyToggled.set(true);
-
-      // Adjust padding if needed
-      const mainEl = this.mainElement()?.nativeElement;
-      if (mainEl) {
-        mainEl.style.paddingLeft = '250px';
-      }
-    }
-  }
-
   toggleSidebar() {
     this.isSidebarCollapsed.set(!this.isSidebarCollapsed());
   }
 
   manualToggleSidebar() {
-    this.isManuallyToggled.set(!this.isManuallyToggled());
+    const next = !this.isManuallyToggled();
+    this.isManuallyToggled.set(next);
+
     const mainEl = this.mainElement()?.nativeElement;
-    if (this.isManuallyToggled()) {
-      mainEl && (mainEl.style.paddingLeft = '250px');
-    } else {
-      mainEl && (mainEl.style.paddingLeft = '80px');
+    if (mainEl) {
+      if (this.isSmallScreen()) {
+        mainEl.style.paddingLeft = '0';
+      } else {
+        mainEl.style.paddingLeft = next ? '250px' : '80px';
+      }
     }
+
     this.toggleSidebar();
+  }
+
+  private checkScreenSize(): void {
+    const small = window.innerWidth <= 991.98;
+    this.isSmallScreen.set(small);
+
+    if (small) {
+      this.isSidebarCollapsed.set(true);
+      this.isManuallyToggled.set(false);
+    } else {
+      this.isSidebarCollapsed.set(false);
+      this.isManuallyToggled.set(true);
+    }
+
+    const mainEl = this.mainElement()?.nativeElement;
+    if (mainEl) {
+      mainEl.style.paddingLeft = small
+        ? '0'
+        : this.isManuallyToggled()
+          ? '250px'
+          : '80px';
+    }
   }
 }
