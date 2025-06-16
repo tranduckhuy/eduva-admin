@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  input,
-  LOCALE_ID,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, LOCALE_ID } from '@angular/core';
 import { CurrencyPipe, DatePipe, registerLocaleData } from '@angular/common';
 import localeVi from '@angular/common/locales/vi';
 import { Invoice } from '../../../../shared/models/entities/invoice/invoice.model';
