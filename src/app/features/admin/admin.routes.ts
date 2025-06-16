@@ -31,6 +31,11 @@ export const adminRoutes: Routes = [
           import('./students/students.routes').then(mod => mod.studentsRoute),
       },
       {
+        path: 'invoices',
+        loadChildren: () =>
+          import('./invoices/invoices.routes').then(mod => mod.invoicesRoute),
+      },
+      {
         path: 'pricing-plans',
         loadChildren: () =>
           import('./pricing-plans/pricing-plans.routes').then(

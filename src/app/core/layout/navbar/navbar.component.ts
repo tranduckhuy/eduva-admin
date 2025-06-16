@@ -94,6 +94,14 @@ export class NavbarComponent {
           submenuItems: [],
         },
         {
+          label: 'Hóa đơn',
+          icon: 'receipt_long',
+          link: '/admin/invoices',
+          type: 'link',
+          isActive: false,
+          submenuItems: [],
+        },
+        {
           label: 'Học tập',
           icon: 'auto_stories',
           type: 'accordion',
