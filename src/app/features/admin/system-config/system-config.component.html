@@ -1,0 +1,82 @@
+<div
+  class="rounded border border-gray-100 bg-white p-5 shadow-main dark:border-dark-500 dark:bg-dark-200">
+  <div class="mb-5 flex items-center justify-between">
+    <app-search-input (search)="onSearchTriggered($event)" />
+  </div>
+  <p-table
+    [value]="items()"
+    dataKey="id"
+    [tableStyle]="{ 'min-width': '50rem' }"
+    (onEditComplete)="onEditComplete($event)">
+    <ng-template #header>
+      <tr>
+        <th scope="col" class="!w-[5%] !text-center">STT</th>
+        <th style="width: 15%" class="!text-center">Mã</th>
+        <th style="width: 20%" class="!text-center">Tên</th>
+        <th style="width: 25%" class="!text-center">Giá trị</th>
+        <th style="width: 15%" class="!text-center">Hành động</th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-item let-i="rowIndex" let-editing="editing">
+      <tr>
+        <td class="!text-center">{{ i + 1 | leadingZero }}</td>
+
+        <td class="!text-center">
+          <p-cellEditor>
+            <ng-template #input>
+              <input pInputText type="text" [(ngModel)]="item.code" />
+            </ng-template>
+            <ng-template #output>
+              {{ item.code }}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td
+          [pEditableColumn]="item.name"
+          class="!text-center"
+          pEditableColumnField="name">
+          <p-cellEditor>
+            <ng-template #input>
+              <input pInputText type="text" [(ngModel)]="item.name" required />
+            </ng-template>
+            <ng-template #output>
+              {{ item.name }}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td
+          [pEditableColumn]="item.value"
+          class="!text-center"
+          pEditableColumnField="value">
+          <p-cellEditor>
+            <ng-template #input>
+              <input pInputText [(ngModel)]="item.value" />
+            </ng-template>
+            <ng-template #output>
+              {{ item.value }}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td class="!text-center">
+          <div class="flex items-center justify-center gap-2">
+            <app-button
+              pTooltip="Xem chi tiết"
+              tooltipPosition="top"
+              [variant]="'light'"
+              [size]="'xs'"
+              class="material-symbols-outlined rounded-full px-[7px] pb-[6px] pt-[8px] text-lg leading-none"
+              >visibility</app-button
+            >
+            <app-button
+              pTooltip="Vô hiệu hóa"
+              tooltipPosition="top"
+              [variant]="'light-danger'"
+              class="material-symbols-outlined rounded-full px-[7px] py-[7px] text-lg leading-none"
+              >unarchive</app-button
+            >
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
