@@ -52,6 +52,6 @@ export class LoginComponent {
       return;
     }
 
-    const request: LoginRequest = this.form.value;
+    // const request: LoginRequest = this.form.value;
   }
 }
