@@ -1,19 +1,22 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  inject,
   OnInit,
   signal,
-  ViewChild,
 } from '@angular/core';
-import { SchoolAdmin } from '../../../shared/models/entities/school-admin/school-admin.model';
+
+import { RouterLink } from '@angular/router';
+
+import { TooltipModule } from 'primeng/tooltip';
+import { ConfirmationService } from 'primeng/api';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
+
 import { LeadingZeroPipe } from '../../../shared/pipes/leading-zero.pipe';
-import { SearchInputComponent } from '../../../shared/components/search-input/search-input.component';
 import { BadgeComponent } from '../../../shared/components/badge/badge.component';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
-import { RouterLink } from '@angular/router';
-import { DialogComponent } from '../../../shared/components/dialog/dialog.component';
-import { TooltipModule } from 'primeng/tooltip';
+import { SchoolAdmin } from '../../../shared/models/entities/school-admin/school-admin.model';
+import { SearchInputComponent } from '../../../shared/components/search-input/search-input.component';
 
 @Component({
   selector: 'app-school-admins',
@@ -26,7 +29,6 @@ import { TooltipModule } from 'primeng/tooltip';
     LeadingZeroPipe,
     RouterLink,
     TooltipModule,
-    DialogComponent,
   ],
   templateUrl: './school-admins.component.html',
   styleUrl: './school-admins.component.css',
@@ -316,12 +318,16 @@ export class SchoolAdminsComponent implements OnInit {
     },
   ];
 
+  private readonly confirmationService = inject(ConfirmationService);
+
   totalRecords = signal<number>(0);
   loading = signal<boolean>(false);
   first = signal<number>(0);
   rows = signal<number>(10);
 
-  @ViewChild('unarchiveDialogRef') unarchiveDialogRef!: DialogComponent;
+  get pagedSchoolAdmins(): SchoolAdmin[] {
+    return this.schoolAdmins.slice(this.first(), this.first() + this.rows());
+  }
 
   ngOnInit(): void {
     this.totalRecords.set(this.schoolAdmins.length);
@@ -358,11 +364,25 @@ export class SchoolAdminsComponent implements OnInit {
     return this.schoolAdmins ? this.first() === 0 : true;
   }
 
-  openUnarchiveDialog() {
-    this.unarchiveDialogRef.showDialog();
-  }
+  openConfirmDialog(event: Event) {
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: 'Bạn có chắc chắn muốn vô hiệu hóa school admin này không?',
+      header: 'Vô hiệu hóa school admin',
+      icon: 'pi pi-info-circle',
+      rejectLabel: 'Hủy',
+      rejectButtonProps: {
+        label: 'Hủy',
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        label: 'Xác nhận',
+        severity: 'danger',
+      },
 
-  get pagedSchoolAdmins(): SchoolAdmin[] {
-    return this.schoolAdmins.slice(this.first(), this.first() + this.rows());
+      accept: () => {},
+      reject: () => {},
+    });
   }
 }

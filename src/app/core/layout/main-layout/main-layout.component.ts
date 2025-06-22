@@ -11,13 +11,17 @@ import {
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
 import { fromEvent } from 'rxjs';
 
 import { RouteMetadataDirective } from '../../../shared/directives/route-metadata/route-metadata.directive';
-import { LayoutHeadingService } from '../../../shared/services/layout-heading/layout-heading.service';
+import { LayoutHeadingService } from '../../../shared/services/layout/layout-heading/layout-heading.service';
+
 import { HeaderComponent } from '../header/header.component';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { LayoutHeadingComponent } from '../layout-heading/layout-heading.component';
+import { GlobalModalHostComponent } from '../../../shared/components/global-modal-host/global-modal-host.component';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-main-layout',
@@ -29,6 +33,8 @@ import { LayoutHeadingComponent } from '../layout-heading/layout-heading.compone
     HeaderComponent,
     NavbarComponent,
     LayoutHeadingComponent,
+    GlobalModalHostComponent,
+    ConfirmDialogModule,
   ],
   template: `
     <div [ngClass]="isSidebarCollapsed() ? 'sidebar-collapsed' : ''">
@@ -61,6 +67,9 @@ import { LayoutHeadingComponent } from '../layout-heading/layout-heading.compone
         </main>
       </div>
     </div>
+
+    <p-confirmdialog [baseZIndex]="1000" />
+    <app-global-modal-host />
   `,
   styleUrl: './main-layout.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,18 +1,20 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  inject,
   signal,
-  ViewChild,
 } from '@angular/core';
+import { RouterLink } from '@angular/router';
+
+import { TooltipModule } from 'primeng/tooltip';
+import { TableLazyLoadEvent, TableModule } from 'primeng/table';
+import { ConfirmationService } from 'primeng/api';
+
+import { LeadingZeroPipe } from '../../../shared/pipes/leading-zero.pipe';
 import { Student } from '../../../shared/models/entities/student/student.model';
-import { SearchInputComponent } from '../../../shared/components/search-input/search-input.component';
 import { BadgeComponent } from '../../../shared/components/badge/badge.component';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
-import { TableLazyLoadEvent, TableModule } from 'primeng/table';
-import { LeadingZeroPipe } from '../../../shared/pipes/leading-zero.pipe';
-import { RouterLink } from '@angular/router';
-import { DialogComponent } from '../../../shared/components/dialog/dialog.component';
-import { TooltipModule } from 'primeng/tooltip';
+import { SearchInputComponent } from '../../../shared/components/search-input/search-input.component';
 
 @Component({
   selector: 'app-students',
@@ -25,7 +27,6 @@ import { TooltipModule } from 'primeng/tooltip';
     LeadingZeroPipe,
     TooltipModule,
     RouterLink,
-    DialogComponent,
   ],
   templateUrl: './students.component.html',
   styleUrl: './students.component.css',
@@ -245,12 +246,16 @@ export class StudentsComponent {
     },
   ];
 
+  private readonly confirmationService = inject(ConfirmationService);
+
   totalRecords = signal<number>(0);
   loading = signal<boolean>(false);
   first = signal<number>(0);
   rows = signal<number>(10);
 
-  @ViewChild('unarchiveDialogRef') unarchiveDialogRef!: DialogComponent;
+  get pagedStudents(): Student[] {
+    return this.students.slice(this.first(), this.first() + this.rows());
+  }
 
   ngOnInit(): void {
     this.totalRecords.set(this.students.length);
@@ -287,11 +292,25 @@ export class StudentsComponent {
     return this.students ? this.first() === 0 : true;
   }
 
-  openUnarchiveDialog() {
-    this.unarchiveDialogRef.showDialog();
-  }
+  openConfirmDialog(event: Event) {
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: 'Bạn có chắc chắn muốn vô hiệu hóa học sinh này không?',
+      header: 'Vô hiệu hóa học sinh',
+      icon: 'pi pi-info-circle',
+      rejectLabel: 'Hủy',
+      rejectButtonProps: {
+        label: 'Hủy',
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        label: 'Xác nhận',
+        severity: 'danger',
+      },
 
-  get pagedStudents(): Student[] {
-    return this.students.slice(this.first(), this.first() + this.rows());
+      accept: () => {},
+      reject: () => {},
+    });
   }
 }

@@ -52,3 +52,14 @@
     width: 0;
   }
 }
+
+::ng-deep .p-dialog-header,
+::ng-deep .p-dialog-footer {
+  border-radius: 8px !important;
+}
+
+::ng-deep .p-dialog-header,
+::ng-deep .p-dialog-content,
+::ng-deep .p-dialog-footer {
+  background-color: var(--color-bg-primary) !important;
+}

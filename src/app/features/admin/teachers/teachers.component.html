@@ -74,7 +74,7 @@
             <app-button
               pTooltip="Vô hiệu hóa"
               tooltipPosition="top"
-              (clicked)="openUnarchiveDialog()"
+              (clicked)="openConfirmDialog($event)"
               [variant]="'light-danger'"
               class="material-symbols-outlined rounded-full px-[7px] py-[7px] text-lg leading-none"
               >unarchive</app-button
@@ -85,16 +85,3 @@
     </ng-template>
   </p-table>
 </div>
-
-<app-dialog #unarchiveDialogRef [title]="'Vô hiệu hóa school admin'">
-  <p class="mt-4 dark:text-dark-100" dialog-body>
-    Bạn có chắc chắn muốn vô hiệu hóa giáo viên này? Họ sẽ không thể đăng nhập
-    vào hệ thống nữa.
-  </p>
-  <div footer class="flex justify-end gap-2">
-    <app-button [theme]="'danger'" (click)="unarchiveDialogRef.hideDialog()"
-      >Hủy</app-button
-    >
-    <app-button>Xác nhận</app-button>
-  </div>
-</app-dialog>

@@ -1,19 +1,21 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  inject,
   OnInit,
   signal,
-  ViewChild,
 } from '@angular/core';
-import { SearchInputComponent } from '../../../shared/components/search-input/search-input.component';
+import { RouterLink } from '@angular/router';
+
+import { TooltipModule } from 'primeng/tooltip';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
-import { School } from '../../../shared/models/entities/school/school.model';
+import { ConfirmationService } from 'primeng/api';
+
 import { LeadingZeroPipe } from '../../../shared/pipes/leading-zero.pipe';
+import { School } from '../../../shared/models/entities/school/school.model';
 import { BadgeComponent } from '../../../shared/components/badge/badge.component';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
-import { TooltipModule } from 'primeng/tooltip';
-import { RouterLink } from '@angular/router';
-import { DialogComponent } from '../../../shared/components/dialog/dialog.component';
+import { SearchInputComponent } from '../../../shared/components/search-input/search-input.component';
 
 @Component({
   selector: 'app-schools',
@@ -26,13 +28,14 @@ import { DialogComponent } from '../../../shared/components/dialog/dialog.compon
     ButtonComponent,
     TooltipModule,
     RouterLink,
-    DialogComponent,
   ],
   templateUrl: './schools.component.html',
   styleUrl: './schools.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SchoolsComponent implements OnInit {
+  private readonly confirmationService = inject(ConfirmationService);
+
   schools: School[] = [
     {
       id: 1,
@@ -321,7 +324,9 @@ export class SchoolsComponent implements OnInit {
   first = signal<number>(0);
   rows = signal<number>(10);
 
-  @ViewChild('unarchiveDialogRef') unarchiveDialogRef!: DialogComponent;
+  get pagedSchools(): School[] {
+    return this.schools.slice(this.first(), this.first() + this.rows());
+  }
 
   ngOnInit(): void {
     this.totalRecords.set(this.schools.length);
@@ -370,11 +375,25 @@ export class SchoolsComponent implements OnInit {
     return this.schools ? this.first() === 0 : true;
   }
 
-  openUnarchiveDialog() {
-    this.unarchiveDialogRef.showDialog();
-  }
+  openConfirmDialog(event: Event) {
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: 'Bạn có chắc chắn muốn vô hiệu hóa trường học này không?',
+      header: 'Vô hiệu hóa trường học',
+      icon: 'pi pi-info-circle',
+      rejectLabel: 'Hủy',
+      rejectButtonProps: {
+        label: 'Hủy',
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        label: 'Xác nhận',
+        severity: 'danger',
+      },
 
-  get pagedSchools(): School[] {
-    return this.schools.slice(this.first(), this.first() + this.rows());
+      accept: () => {},
+      reject: () => {},
+    });
   }
 }
