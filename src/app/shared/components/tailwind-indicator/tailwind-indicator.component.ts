@@ -7,7 +7,7 @@ import { ChangeDetectionStrategy, Component, isDevMode } from '@angular/core';
   template: `
     @if (_isDevMode) {
       <div
-        class="dark:bg-white dark:text-gray-800 fixed bottom-1 left-1 z-[99999] flex h-6 w-6 items-center justify-center rounded-full bg-gray-800 p-4 text-xs text-white">
+        class="fixed bottom-1 left-1 z-[99999] flex h-6 w-6 items-center justify-center rounded-full bg-gray-800 p-4 text-xs text-white dark:bg-white dark:text-gray-800">
         <div class="block xxxxl:hidden" title="xxxxxl: >=1800px">xxxxxl</div>
         <div class="hidden xxxxl:block xxxl:hidden" title="xxxxl: >=1600px">
           xxxxl

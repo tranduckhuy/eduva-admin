@@ -11,6 +11,8 @@ import {
   Validators,
 } from '@angular/forms';
 
+import { AuthService } from '../../services/auth.service';
+
 import { AuthLayoutComponent } from '../../auth-layout/auth-layout.component';
 
 import { FormControlComponent } from '../../../../shared/components/form-control/form-control.component';
@@ -32,6 +34,7 @@ import { type LoginRequest } from './models/login-request.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginComponent {
+  private readonly authService = inject(AuthService);
   private readonly fb = inject(FormBuilder);
 
   form!: FormGroup;
@@ -52,6 +55,8 @@ export class LoginComponent {
       return;
     }
 
-    // const request: LoginRequest = this.form.value;
+    const request: LoginRequest = this.form.value;
+
+    this.authService.login(request).subscribe();
   }
 }
