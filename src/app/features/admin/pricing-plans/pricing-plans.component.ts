@@ -1,20 +1,22 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  inject,
   LOCALE_ID,
   signal,
-  ViewChild,
 } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { CurrencyPipe, registerLocaleData } from '@angular/common';
+import localeVi from '@angular/common/locales/vi';
+
+import { TableLazyLoadEvent, TableModule } from 'primeng/table';
+import { TooltipModule } from 'primeng/tooltip';
+import { ConfirmationService } from 'primeng/api';
+
 import { SearchInputComponent } from '../../../shared/components/search-input/search-input.component';
 import { BadgeComponent } from '../../../shared/components/badge/badge.component';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
-import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { LeadingZeroPipe } from '../../../shared/pipes/leading-zero.pipe';
-import { RouterLink } from '@angular/router';
-import { DialogComponent } from '../../../shared/components/dialog/dialog.component';
-import { TooltipModule } from 'primeng/tooltip';
-import { CurrencyPipe, registerLocaleData } from '@angular/common';
-import localeVi from '@angular/common/locales/vi';
 
 registerLocaleData(localeVi);
 @Component({
@@ -29,7 +31,6 @@ registerLocaleData(localeVi);
     LeadingZeroPipe,
     TooltipModule,
     RouterLink,
-    DialogComponent,
   ],
   templateUrl: './pricing-plans.component.html',
   styleUrl: './pricing-plans.component.css',
@@ -155,12 +156,16 @@ export class PricingPlansComponent {
     },
   ];
 
+  private readonly confirmationService = inject(ConfirmationService);
+
   totalRecords = signal<number>(0);
   loading = signal<boolean>(false);
   first = signal<number>(0);
   rows = signal<number>(10);
 
-  @ViewChild('unarchiveDialogRef') unarchiveDialogRef!: DialogComponent;
+  get pagedPricingPlans() {
+    return this.pricingPlans.slice(this.first(), this.first() + this.rows());
+  }
 
   ngOnInit(): void {
     this.totalRecords.set(this.pricingPlans.length);
@@ -197,11 +202,25 @@ export class PricingPlansComponent {
     return this.pricingPlans ? this.first() === 0 : true;
   }
 
-  openUnarchiveDialog() {
-    this.unarchiveDialogRef.showDialog();
-  }
+  openConfirmDialog(event: Event) {
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: 'Bạn có chắc chắn muốn vô hiệu hóa gói đăng ký này không?',
+      header: 'Vô hiệu hóa gói đăng ký',
+      icon: 'pi pi-info-circle',
+      rejectLabel: 'Hủy',
+      rejectButtonProps: {
+        label: 'Hủy',
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        label: 'Xác nhận',
+        severity: 'danger',
+      },
 
-  get pagedPricingPlans() {
-    return this.pricingPlans.slice(this.first(), this.first() + this.rows());
+      accept: () => {},
+      reject: () => {},
+    });
   }
 }

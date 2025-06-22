@@ -142,6 +142,7 @@ export class NavbarComponent {
             { label: 'Change Password', link: '#!' },
             { label: 'Privacy Policy', link: '#!' },
             { label: 'Terms & Conditions', link: '#!' },
+            { label: 'Cấu hình hệ thống', link: '/admin/system-config' },
           ],
         },
         {

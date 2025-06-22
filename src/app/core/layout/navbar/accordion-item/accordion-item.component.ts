@@ -33,7 +33,7 @@ export class AccordionItemComponent {
   isActive = input<boolean>(false);
 
   // ? State Management
-  private _manuallyOpened = signal<boolean>(false);
+  private readonly _manuallyOpened = signal<boolean>(false);
 
   // Compute isOpen based on both manual state and active state
   isOpen = computed(() => {

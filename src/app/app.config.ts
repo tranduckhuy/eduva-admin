@@ -18,9 +18,13 @@ import { MyPreset } from './my-preset';
 
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { tokenInterceptor } from './core/interceptors/token.interceptor';
+import { ConfirmationService, MessageService } from 'primeng/api';
+
+const AppProviders = [MessageService, ConfirmationService]; // ? Can add more global service here for injector
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    ...AppProviders,
     provideExperimentalZonelessChangeDetection(),
     provideHttpClient(withInterceptors([authInterceptor, tokenInterceptor])),
     provideRouter(
