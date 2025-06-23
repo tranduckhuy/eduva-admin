@@ -40,7 +40,10 @@ export class AuthService {
 
   login(request: LoginRequest): Observable<AuthTokenResponse | null> {
     return this.requestService
-      .postWithoutAuth<AuthTokenResponse>(this.LOGIN_API_URL, request)
+      .post<AuthTokenResponse>(this.LOGIN_API_URL, request, {
+        bypassAuth: true,
+        showLoading: false,
+      })
       .pipe(
         map(res => {
           if (res.statusCode === StatusCode.SUCCESS && res.data) {
@@ -104,7 +107,10 @@ export class AuthService {
     request: RefreshTokenRequest
   ): Observable<AuthTokenResponse | null> {
     return this.requestService
-      .postWithoutAuth<AuthTokenResponse>(this.REFRESH_TOKEN_API_URL, request)
+      .post<AuthTokenResponse>(this.REFRESH_TOKEN_API_URL, request, {
+        bypassAuth: true,
+        showLoading: false,
+      })
       .pipe(
         map(res => {
           if (res.statusCode === StatusCode.SUCCESS && res.data) {
