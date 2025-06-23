@@ -11,31 +11,34 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 import { providePrimeNG } from 'primeng/config';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { MessageService, ConfirmationService } from 'primeng/api';
 
 import { routes } from './app.routes';
 
 import { MyPreset } from './my-preset';
 
+import { loggingInterceptor } from './core/interceptors/logging.interceptor';
 import { retryInterceptor } from './core/interceptors/retry.interceptor';
-import { cacheInterceptor } from './core/interceptors/cache.interceptor';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { loadingInterceptor } from './core/interceptors/loading.interceptor';
+import { cacheInterceptor } from './core/interceptors/cache.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 
 const AppProviders = [MessageService, ConfirmationService]; // ? Can add more global service here for injector
+const httpInterceptors = withInterceptors([
+  loggingInterceptor,
+  authInterceptor,
+  cacheInterceptor,
+  loadingInterceptor,
+  retryInterceptor,
+  errorInterceptor,
+]);
 
 export const appConfig: ApplicationConfig = {
   providers: [
     ...AppProviders,
     provideExperimentalZonelessChangeDetection(),
-    provideHttpClient(
-      withInterceptors([
-        retryInterceptor,
-        cacheInterceptor,
-        authInterceptor,
-        errorInterceptor,
-      ])
-    ),
+    provideHttpClient(httpInterceptors),
     provideRouter(
       routes,
       withComponentInputBinding(),
