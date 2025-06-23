@@ -60,13 +60,8 @@ export class AuthService {
                 return;
               }
 
-              if (
-                user.roles.includes('Teacher') ||
-                user.roles.includes('ContentModerator')
-              ) {
-                this.router.navigateByUrl('/teacher');
-              } else {
-                this.router.navigateByUrl('/school-admin');
+              if (user.roles.includes('SystemAdmin')) {
+                this.router.navigateByUrl('/');
               }
             });
 

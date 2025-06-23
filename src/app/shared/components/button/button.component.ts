@@ -1,11 +1,10 @@
 import {
   Component,
-  Input,
-  Output,
-  EventEmitter,
   forwardRef,
   HostBinding,
   ChangeDetectionStrategy,
+  input,
+  output,
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
@@ -24,6 +23,7 @@ type ButtonSize = 'default' | 'xs' | 'lg' | 'xl';
 type ButtonVariant =
   | 'default'
   | 'outline'
+  | 'outline-danger'
   | 'rounded'
   | 'light'
   | 'light-danger'
@@ -46,14 +46,15 @@ type ButtonWidth = 'default' | 'full' | 'xs' | 'sm' | 'md' | 'lg';
   ],
 })
 export class ButtonComponent {
-  @Input() variant: ButtonVariant = 'default';
-  @Input() size: ButtonSize = 'default';
-  @Input() theme: ButtonTheme = 'default';
-  @Input() width: ButtonWidth = 'default';
-  @Input() disabled = false;
-  @Input() type: 'button' | 'submit' | 'reset' = 'button';
-  @Input() asChild = false;
-  @Output() clicked = new EventEmitter<Event>();
+  variant = input<ButtonVariant>('default');
+  size = input<ButtonSize>('default');
+  theme = input<ButtonTheme>('default');
+  width = input<ButtonWidth>('default');
+  type = input<'button' | 'submit' | 'reset'>('button');
+  disabled = input<boolean>(false);
+  asChild = input<boolean>(false);
+
+  clicked = output<Event>();
 
   @HostBinding('class') get classes() {
     return this.buttonVariants();
@@ -67,7 +68,7 @@ export class ButtonComponent {
       default: 'bg-primary text-white shadow hover:opacity-90',
       primary: 'bg-primary text-white shadow hover:opacity-90',
       success: 'bg-success-600 text-white hover:opacity-90',
-      danger: 'bg-danger-500 text-white hover:opacity-90',
+      danger: 'bg-danger-600 text-white hover:opacity-90',
       warning: 'bg-warning-600 text-black hover:opacity-90',
       info: 'bg-info-500 text-white hover:opacity-90',
       light: 'bg-gray-100 hover:bg-gray-200',
@@ -84,7 +85,9 @@ export class ButtonComponent {
     const variantClasses: Record<ButtonVariant, string> = {
       default: 'rounded',
       outline:
-        'border border-current bg-transparent hover:bg-current hover:text-white',
+        'border border-primary bg-white dark:bg-dark-200 !text-primary hover:!bg-primary hover:!text-white',
+      'outline-danger':
+        'border border-danger bg-white dark:bg-dark-200 !text-danger hover:!bg-danger hover:!text-white',
       rounded: 'rounded-full',
       light:
         'bg-primary-500/20 hover:!text-gray-50 !text-primary-500 hover:bg-primary-500',
@@ -103,11 +106,11 @@ export class ButtonComponent {
       full: 'w-full',
     };
 
-    return `${baseClasses} ${this.disabled && 'pointer-events-none opacity-70 '} ${themeClasses[this.theme]} ${variantClasses[this.variant]} ${sizeClasses[this.size]} ${widthClasses[this.width]}`;
+    return `${baseClasses} ${this.disabled() && 'pointer-events-none opacity-70 '} ${themeClasses[this.theme()]} ${variantClasses[this.variant()]} ${sizeClasses[this.size()]} ${widthClasses[this.width()]}`;
   }
 
   onClick(event: Event) {
-    if (!this.disabled) {
+    if (!this.disabled()) {
       this.clicked.emit(event);
     }
   }

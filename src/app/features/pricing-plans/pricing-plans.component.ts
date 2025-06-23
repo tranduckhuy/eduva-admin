@@ -1,25 +1,36 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  inject,
   LOCALE_ID,
   signal,
-  ViewChild,
+  effect,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import localeVi from '@angular/common/locales/vi';
 import { CurrencyPipe, registerLocaleData } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
+import { Select } from 'primeng/select';
 import { TooltipModule } from 'primeng/tooltip';
+import { ConfirmationService } from 'primeng/api';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 
 import { LeadingZeroPipe } from '../../shared/pipes/leading-zero.pipe';
-
 import { SearchInputComponent } from '../../shared/components/search-input/search-input.component';
 import { BadgeComponent } from '../../shared/components/badge/badge.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
-import { DialogComponent } from '../../shared/components/dialog/dialog.component';
+import { PricingPlanService } from './service/pricing-plan.service';
+import { PricingPlanParams } from './model/pricing-plan-params.model';
+import { PRICING_PLANS_LIMIT } from '../../shared/constants/common.constant';
 
 registerLocaleData(localeVi);
+
+interface StatusOption {
+  name: string;
+  code: number | undefined;
+}
+
 @Component({
   selector: 'app-pricing-plans',
   standalone: true,
@@ -32,7 +43,8 @@ registerLocaleData(localeVi);
     LeadingZeroPipe,
     TooltipModule,
     RouterLink,
-    DialogComponent,
+    FormsModule,
+    Select,
   ],
   templateUrl: './pricing-plans.component.html',
   styleUrl: './pricing-plans.component.css',
@@ -40,171 +52,111 @@ registerLocaleData(localeVi);
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PricingPlansComponent {
-  pricingPlans = [
-    {
-      id: 1,
-      name: 'Basic Monthly',
-      description: 'Gói cơ bản, phù hợp với trường nhỏ (thanh toán theo tháng)',
-      creditLimit: 500,
-      maxAccounts: 10,
-      storageLimit: 50, // GB
-      price: 1000000,
-      billingCycle: 'monthly',
-      status: 'active',
-    },
-    {
-      id: 2,
-      name: 'Standard Monthly',
-      description:
-        'Gói tiêu chuẩn, phù hợp với trường vừa (thanh toán theo tháng)',
-      creditLimit: 1500,
-      maxAccounts: 30,
-      storageLimit: 150, // GB
-      price: 2500000,
-      billingCycle: 'monthly',
-      status: 'active',
-    },
-    {
-      id: 3,
-      name: 'Professional Monthly',
-      description:
-        'Gói chuyên nghiệp, nhiều tính năng hơn (thanh toán theo tháng)',
-      creditLimit: 5000,
-      maxAccounts: 100,
-      storageLimit: 500, // GB
-      price: 6000000,
-      billingCycle: 'monthly',
-      status: 'active',
-    },
-    {
-      id: 4,
-      name: 'Enterprise Monthly',
-      description: 'Gói doanh nghiệp, dung lượng lớn (thanh toán theo tháng)',
-      creditLimit: 15000,
-      maxAccounts: 300,
-      storageLimit: 2000, // GB (2 TB)
-      price: 15000000,
-      billingCycle: 'monthly',
-      status: 'active',
-    },
-    {
-      id: 5,
-      name: 'Ultimate Monthly',
-      description: 'Gói tối ưu nhất, hỗ trợ toàn diện (thanh toán theo tháng)',
-      creditLimit: 30000,
-      maxAccounts: 500,
-      storageLimit: 5000, // GB (5 TB)
-      price: 25000000,
-      billingCycle: 'monthly',
-      status: 'active',
-    },
+  private readonly confirmationService = inject(ConfirmationService);
+  private readonly pricingPlanService = inject(PricingPlanService);
 
-    {
-      id: 6,
-      name: 'Basic Yearly',
-      description: 'Gói cơ bản, phù hợp với trường nhỏ (thanh toán theo năm)',
-      creditLimit: 500,
-      maxAccounts: 10,
-      storageLimit: 50, // GB
-      price: 11000000,
-      billingCycle: 'yearly',
-      status: 'active',
-    },
-    {
-      id: 7,
-      name: 'Standard Yearly',
-      description:
-        'Gói tiêu chuẩn, phù hợp với trường vừa (thanh toán theo năm)',
-      creditLimit: 1500,
-      maxAccounts: 30,
-      storageLimit: 150, // GB
-      price: 27000000,
-      billingCycle: 'yearly',
-      status: 'active',
-    },
-    {
-      id: 8,
-      name: 'Professional Yearly',
-      description:
-        'Gói chuyên nghiệp, nhiều tính năng hơn (thanh toán theo năm)',
-      creditLimit: 5000,
-      maxAccounts: 100,
-      storageLimit: 500, // GB
-      price: 66000000,
-      billingCycle: 'yearly',
-      status: 'active',
-    },
-    {
-      id: 9,
-      name: 'Enterprise Yearly',
-      description: 'Gói doanh nghiệp, dung lượng lớn (thanh toán theo năm)',
-      creditLimit: 15000,
-      maxAccounts: 300,
-      storageLimit: 2000, // GB
-      price: 165000000,
-      billingCycle: 'yearly',
-      status: 'active',
-    },
-    {
-      id: 10,
-      name: 'Ultimate Yearly',
-      description: 'Gói tối ưu nhất, hỗ trợ toàn diện (thanh toán theo năm)',
-      creditLimit: 30000,
-      maxAccounts: 500,
-      storageLimit: 5000, // GB
-      price: 275000000,
-      billingCycle: 'yearly',
-      status: 'active',
-    },
-  ];
-
-  totalRecords = signal<number>(0);
-  loading = signal<boolean>(false);
+  // Pagination & Sorting signals
   first = signal<number>(0);
-  rows = signal<number>(10);
+  rows = signal<number>(PRICING_PLANS_LIMIT);
+  sortField = signal<string | null>(null);
+  sortOrder = signal<number>(1); // 1 = asc, -1 = desc
+  statusSelect = signal<StatusOption | undefined>(undefined);
+  searchTerm = signal<string>('');
 
-  @ViewChild('unarchiveDialogRef') unarchiveDialogRef!: DialogComponent;
+  readonly statusSelectOptions = signal<StatusOption[]>([
+    { name: 'Đang hoạt động', code: 0 },
+    { name: 'Vô hiệu hóa', code: 1 },
+    { name: 'Tất cả', code: undefined },
+  ]);
 
-  ngOnInit(): void {
-    this.totalRecords.set(this.pricingPlans.length);
+  // Signals from service
+  pricingPlans = this.pricingPlanService.pricingPlans;
+  isLoading = this.pricingPlanService.isLoading;
+  totalPricingPlans = this.pricingPlanService.totalPricingPlans;
+
+  constructor() {
+    // Initial load
+    effect(
+      () => {
+        this.loadData();
+      },
+      { allowSignalWrites: true }
+    );
   }
 
-  loadProductsLazy(event: TableLazyLoadEvent) {}
+  private loadData() {
+    const params: PricingPlanParams = {
+      pageIndex: Math.floor(this.first() / this.rows()) + 1,
+      pageSize: this.rows(),
+      searchTerm: this.searchTerm(),
+      sortBy: this.sortField() ?? undefined,
+      sortDirection: this.sortOrder() === 1 ? 'asc' : 'desc',
+      activeOnly: this.getActiveOnlyStatus(),
+    };
 
-  onSearchTriggered(term: string) {}
-
-  next() {
-    this.first.set(this.first() + this.rows());
+    this.pricingPlanService.getPricingPlans(params).subscribe();
   }
 
-  prev() {
-    this.first.set(this.first() - this.rows());
+  private getActiveOnlyStatus(): boolean | undefined {
+    const statusCode = this.statusSelect()?.code;
+    if (statusCode === 0) return true;
+    if (statusCode === 1) return false;
+    return undefined;
   }
 
-  reset() {
-    this.first.set(0);
+  loadDataLazy(event: TableLazyLoadEvent) {
+    const first = event.first ?? 0;
+    const rows = event.rows ?? PRICING_PLANS_LIMIT;
+
+    // Handle sorting
+    if (event.sortField) {
+      this.sortField.set(
+        Array.isArray(event.sortField) ? event.sortField[0] : event.sortField
+      );
+      this.sortOrder.set(event.sortOrder ?? 1);
+    }
+
+    this.first.set(first);
+    this.rows.set(rows);
   }
 
-  pageChange(event: any) {
-    this.first.set(event.first);
-    this.rows.set(event.rows);
+  onStatusSelectChange(selected: StatusOption | undefined) {
+    this.statusSelect.set(selected);
+    this.first.set(0); // Reset to first page when filter changes
   }
 
-  isLastPage(): boolean {
-    return this.pricingPlans
-      ? this.first() + this.rows() >= this.pricingPlans.length
-      : true;
+  onSearchTriggered(term: string) {
+    this.searchTerm.set(term);
+    this.sortField.set(null);
+    this.sortOrder.set(1);
+    this.first.set(0); // Reset to first page when search changes
   }
 
-  isFirstPage(): boolean {
-    return this.pricingPlans ? this.first() === 0 : true;
+  openConfirmDialog(event: Event, pricingPlanId: string) {
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: 'Bạn có chắc chắn muốn vô hiệu hóa gói đăng ký này không?',
+      header: 'Vô hiệu hóa gói đăng ký',
+      icon: 'pi pi-info-circle',
+      rejectLabel: 'Hủy',
+      rejectButtonProps: {
+        label: 'Hủy',
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        label: 'Xác nhận',
+        severity: 'danger',
+      },
+      accept: () => {
+        this.disablePricingPlan(pricingPlanId);
+      },
+    });
   }
 
-  openUnarchiveDialog() {
-    this.unarchiveDialogRef.showDialog();
-  }
-
-  get pagedPricingPlans() {
-    return this.pricingPlans.slice(this.first(), this.first() + this.rows());
+  private disablePricingPlan(id: string) {
+    // Implement your disable logic here
+    // After disabling, reload the data
+    this.loadData();
   }
 }
