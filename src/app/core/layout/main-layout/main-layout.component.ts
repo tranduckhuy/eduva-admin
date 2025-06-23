@@ -38,7 +38,6 @@ import { GlobalModalHostComponent } from '../../../shared/components/global-moda
     NavbarComponent,
     LayoutHeadingComponent,
     GlobalModalHostComponent,
-    ConfirmDialogModule,
   ],
   template: `
     <div [ngClass]="isSidebarCollapsed() ? 'sidebar-collapsed' : ''">
@@ -75,7 +74,7 @@ import { GlobalModalHostComponent } from '../../../shared/components/global-moda
     </div>
 
     <p-toast />
-    <p-confirmDialog [baseZIndex]="1000" />
+    <p-confirmdialog [baseZIndex]="1000" />
     <app-global-modal-host />
   `,
   styleUrl: './main-layout.component.css',

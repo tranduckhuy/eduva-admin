@@ -57,7 +57,7 @@ export class NavbarComponent {
         {
           label: 'Trường học',
           icon: 'school',
-          link: '/admin/schools',
+          link: '/schools',
           type: 'link',
           isActive: false,
           submenuItems: [],
@@ -70,17 +70,17 @@ export class NavbarComponent {
           submenuItems: [
             {
               label: 'School admins',
-              link: '/admin/school-admins',
+              link: '/school-admins',
               active: true,
             },
-            { label: 'Giáo viên', link: '/admin/teachers', active: true },
-            { label: 'Học sinh', link: '/admin/students', active: true },
+            { label: 'Giáo viên', link: '/teachers', active: true },
+            { label: 'Học sinh', link: '/students', active: true },
           ],
         },
         {
           label: 'Gói đăng ký',
           icon: 'paid',
-          link: '/admin/pricing-plans',
+          link: '/pricing-plans',
           type: 'link',
           isActive: false,
           submenuItems: [],
@@ -88,7 +88,7 @@ export class NavbarComponent {
         {
           label: 'Hóa đơn',
           icon: 'receipt_long',
-          link: '/admin/invoices',
+          link: '/invoices',
           type: 'link',
           isActive: false,
           submenuItems: [],
@@ -142,7 +142,7 @@ export class NavbarComponent {
             { label: 'Change Password', link: '#!' },
             { label: 'Privacy Policy', link: '#!' },
             { label: 'Terms & Conditions', link: '#!' },
-            { label: 'Cấu hình hệ thống', link: '/admin/system-config' },
+            { label: 'Cấu hình hệ thống', link: '/system-config' },
           ],
         },
         {
