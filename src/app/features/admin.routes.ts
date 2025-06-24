@@ -9,6 +9,13 @@ export const adminRoutes: Routes = [
       ),
     children: [
       {
+        path: '',
+        loadChildren: () =>
+          import('./dashboard/dashboard.routes').then(
+            mod => mod.dashboardRoute
+          ),
+      },
+      {
         path: 'schools',
         loadChildren: () =>
           import('./schools/schools.routes').then(mod => mod.schoolsRoute),
