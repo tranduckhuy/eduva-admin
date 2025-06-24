@@ -6,9 +6,10 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { ApexFill, NgApexchartsModule } from 'ng-apexcharts';
 import {
   ApexAxisChartSeries,
+  ApexFill,
+  NgApexchartsModule,
   ApexChart,
   ApexXAxis,
   ApexYAxis,

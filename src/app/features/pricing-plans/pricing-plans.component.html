@@ -51,25 +51,27 @@
     currentPageReportTemplate="Hiển thị {first} đến {last} trên {totalRecords} gói đăng ký">
     <ng-template pTemplate="header">
       <tr>
-        <th class="!w-[5%] !text-center">STT</th>
-        <th class="!w-[15%]" pSortableColumn="name">
+        <th scope="col" class="!w-[5%] !text-center">STT</th>
+        <th scope="col" class="!w-[15%]" pSortableColumn="name">
           <span class="mr-2">Tên</span><p-sortIcon field="name" />
         </th>
-        <th pSortableColumn="storage">
+        <th scope="col" pSortableColumn="storage">
           Dung lượng<p-sortIcon field="storage" />
         </th>
-        <th pSortableColumn="users">
+        <th scope="col" pSortableColumn="users">
           <div class="flex items-center">
             <span class="mr-2">Số lượng<br />tài khoản</span>
             <p-sortIcon field="users" />
           </div>
         </th>
-        <th pSortableColumn="monthly">
+        <th scope="col" pSortableColumn="monthly">
           Gói tháng <p-sortIcon field="monthly" />
         </th>
-        <th pSortableColumn="yearly">Gói năm <p-sortIcon field="yearly" /></th>
-        <th class="!w-[10%] !text-center">Trạng thái</th>
-        <th class="!w-[15%] !text-center">Hành động</th>
+        <th scope="col" pSortableColumn="yearly">
+          Gói năm <p-sortIcon field="yearly" />
+        </th>
+        <th scope="col" class="!w-[10%] !text-center">Trạng thái</th>
+        <th scope="col" class="!w-[15%] !text-center">Hành động</th>
       </tr>
     </ng-template>
 

@@ -6,7 +6,6 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { NgApexchartsModule } from 'ng-apexcharts';
 import {
   ApexAxisChartSeries,
   ApexChart,
@@ -18,6 +17,7 @@ import {
   ApexPlotOptions,
   ApexFill,
   ApexLegend,
+  NgApexchartsModule,
 } from 'ng-apexcharts';
 
 import { Select } from 'primeng/select';
@@ -215,7 +215,7 @@ export class LessonCreationComponent implements OnInit {
     const now = new Date();
 
     for (let i = weeks; i >= 0; i--) {
-      const weekNumber = ((now.getWeek() - i + 52) % 52) + 1;
+      const weekNumber = ((getWeek(now) - i + 52) % 52) + 1;
       const aiCount = Math.floor(Math.random() * 30) + 10;
       const uploadedCount = Math.floor(Math.random() * 15) + 5;
 
@@ -333,18 +333,18 @@ declare global {
   }
 }
 
-Date.prototype.getWeek = function () {
-  const date = new Date(this.getTime());
-  date.setHours(0, 0, 0, 0);
-  date.setDate(date.getDate() + 3 - ((date.getDay() + 6) % 7));
-  const week1 = new Date(date.getFullYear(), 0, 4);
+function getWeek(date: Date): number {
+  const d = new Date(date.getTime());
+  d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() + 3 - ((d.getDay() + 6) % 7));
+  const week1 = new Date(d.getFullYear(), 0, 4);
   return (
     1 +
     Math.round(
-      ((date.getTime() - week1.getTime()) / 86400000 -
+      ((d.getTime() - week1.getTime()) / 86400000 -
         3 +
         ((week1.getDay() + 6) % 7)) /
         7
     )
   );
-};
+}
