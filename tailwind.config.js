@@ -146,6 +146,7 @@ module.exports = {
           900: '#23272e',
         },
         success: {
+          DEFAULT: '#22c03c ',
           50: '#e6f4e9',
           100: '#c1e6bd',
           200: '#8edc82',
@@ -168,6 +169,7 @@ module.exports = {
           700: '#d71c00',
         },
         warning: {
+          DEFAULT: '#ffc107',
           50: '#fff8e1',
           200: '#ffe082',
           400: '#ffca28',
