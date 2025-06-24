@@ -38,7 +38,7 @@
     </div>
   </div>
 
-  @if (isLoading()) {
+  @if (isLoadingGet()) {
     <app-table-skeleton [tableHead]="tableHeadSkeleton()" />
   } @else {
     <p-table

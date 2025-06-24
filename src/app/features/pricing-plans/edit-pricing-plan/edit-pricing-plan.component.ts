@@ -40,7 +40,7 @@ export class EditPricingPlanComponent implements OnInit {
   private readonly loadingService = inject(LoadingService);
   private readonly toastHandlingService = inject(ToastHandlingService);
 
-  isLoading = this.loadingService;
+  isLoading = this.loadingService.isLoading;
   pricingPlanDetail = this.pricingPlanService.pricingPlanDetail;
   originalData: PricingPlanRequest | null = null; // Store original data
 

@@ -83,7 +83,8 @@ export class PricingPlansComponent implements OnInit {
     { name: 'Tất cả', code: undefined },
   ]);
 
-  isLoading = this.loadingService.is('get-pricing-plans');
+  isLoadingGet = this.loadingService.is('get-pricing-plans');
+  isLoadingArchive = this.loadingService.is('archive-pricing-plan');
 
   // Signals from service
   pricingPlans = this.pricingPlanService.pricingPlans;
@@ -161,14 +162,8 @@ export class PricingPlansComponent implements OnInit {
         severity: 'danger',
       },
       accept: () => {
-        this.disablePricingPlan(pricingPlanId);
+        this.pricingPlanService.archivePricingPlan(pricingPlanId).subscribe();
       },
     });
-  }
-
-  private disablePricingPlan(id: string): void {
-    // Implement your disable logic here
-    // After disabling, reload the data
-    this.loadData();
   }
 }
