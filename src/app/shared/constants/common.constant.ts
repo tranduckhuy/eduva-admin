@@ -1,1 +1,1 @@
-export const PRICING_PLANS_LIMIT = 2;
+export const PRICING_PLANS_LIMIT = 10;

@@ -4,7 +4,7 @@ import {
   inject,
   LOCALE_ID,
   signal,
-  effect,
+  OnInit,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import localeVi from '@angular/common/locales/vi';
@@ -23,6 +23,8 @@ import { ButtonComponent } from '../../shared/components/button/button.component
 import { PricingPlanService } from './service/pricing-plan.service';
 import { PricingPlanParams } from './model/pricing-plan-params.model';
 import { PRICING_PLANS_LIMIT } from '../../shared/constants/common.constant';
+import { LoadingService } from '../../shared/services/core/loading/loading.service';
+import { TableSkeletonComponent } from '../../shared/components/skeleton/table-skeleton/table-skeleton.component';
 
 registerLocaleData(localeVi);
 
@@ -45,15 +47,17 @@ interface StatusOption {
     RouterLink,
     FormsModule,
     Select,
+    TableSkeletonComponent,
   ],
   templateUrl: './pricing-plans.component.html',
   styleUrl: './pricing-plans.component.css',
   providers: [{ provide: LOCALE_ID, useValue: 'vi-VN' }],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PricingPlansComponent {
+export class PricingPlansComponent implements OnInit {
   private readonly confirmationService = inject(ConfirmationService);
   private readonly pricingPlanService = inject(PricingPlanService);
+  private readonly loadingService = inject(LoadingService);
 
   // Pagination & Sorting signals
   first = signal<number>(0);
@@ -62,6 +66,16 @@ export class PricingPlansComponent {
   sortOrder = signal<number>(1); // 1 = asc, -1 = desc
   statusSelect = signal<StatusOption | undefined>(undefined);
   searchTerm = signal<string>('');
+  tableHeadSkeleton = signal([
+    'STT',
+    'Tên',
+    'Dung lượng',
+    'Số lượng tài khoản',
+    'Gói tháng',
+    'Gói năm ',
+    'Trạng thái',
+    'Hành động',
+  ]);
 
   readonly statusSelectOptions = signal<StatusOption[]>([
     { name: 'Đang hoạt động', code: 0 },
@@ -69,22 +83,18 @@ export class PricingPlansComponent {
     { name: 'Tất cả', code: undefined },
   ]);
 
+  isLoadingGet = this.loadingService.is('get-pricing-plans');
+  isLoadingArchive = this.loadingService.is('archive-pricing-plan');
+
   // Signals from service
   pricingPlans = this.pricingPlanService.pricingPlans;
-  isLoading = this.pricingPlanService.isLoading;
   totalPricingPlans = this.pricingPlanService.totalPricingPlans;
 
-  constructor() {
-    // Initial load
-    effect(
-      () => {
-        this.loadData();
-      },
-      { allowSignalWrites: true }
-    );
+  ngOnInit(): void {
+    this.loadData();
   }
 
-  private loadData() {
+  private loadData(): void {
     const params: PricingPlanParams = {
       pageIndex: Math.floor(this.first() / this.rows()) + 1,
       pageSize: this.rows(),
@@ -104,7 +114,7 @@ export class PricingPlansComponent {
     return undefined;
   }
 
-  loadDataLazy(event: TableLazyLoadEvent) {
+  loadDataLazy(event: TableLazyLoadEvent): void {
     const first = event.first ?? 0;
     const rows = event.rows ?? PRICING_PLANS_LIMIT;
 
@@ -118,21 +128,24 @@ export class PricingPlansComponent {
 
     this.first.set(first);
     this.rows.set(rows);
+    this.loadData();
   }
 
-  onStatusSelectChange(selected: StatusOption | undefined) {
+  onStatusSelectChange(selected: StatusOption | undefined): void {
     this.statusSelect.set(selected);
     this.first.set(0); // Reset to first page when filter changes
+    this.loadData();
   }
 
-  onSearchTriggered(term: string) {
+  onSearchTriggered(term: string): void {
     this.searchTerm.set(term);
     this.sortField.set(null);
     this.sortOrder.set(1);
     this.first.set(0); // Reset to first page when search changes
+    this.loadData();
   }
 
-  openConfirmDialog(event: Event, pricingPlanId: string) {
+  openConfirmDialog(event: Event, pricingPlanId: string): void {
     this.confirmationService.confirm({
       target: event.target as EventTarget,
       message: 'Bạn có chắc chắn muốn vô hiệu hóa gói đăng ký này không?',
@@ -149,14 +162,8 @@ export class PricingPlansComponent {
         severity: 'danger',
       },
       accept: () => {
-        this.disablePricingPlan(pricingPlanId);
+        this.pricingPlanService.archivePricingPlan(pricingPlanId).subscribe();
       },
     });
-  }
-
-  private disablePricingPlan(id: string) {
-    // Implement your disable logic here
-    // After disabling, reload the data
-    this.loadData();
   }
 }

@@ -1,4 +1,4 @@
-<form #createForm="ngForm" (ngSubmit)="onSubmit(createForm)">
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
   <div class="e-row e-g-4 e-g-md-6">
     <div class="e-col-8 e-col-lg-12">
       <div
@@ -11,55 +11,63 @@
         </div>
 
         <div class="e-row e-row-cols-2 e-row-cols-md-1 e-g-4">
-          <div class="e-col">
+          <div class="e-col-12">
             <app-form-control
               label="Tên gói"
               type="text"
               [name]="'name'"
               [required]="true"
               [placeholder]="'Nhập tên gói...'"
-              [submitted]="submitted"
-              #nameCtrl="ngModel"
-              [(ngModel)]="name">
+              [submitted]="submitted()"
+              formControlName="name">
             </app-form-control>
           </div>
           <div class="e-col">
             <app-form-control
-              label="Giá (vnd)"
+              label="Giá tháng"
               [type]="'number'"
-              [name]="'price'"
+              [name]="'priceMonthly'"
               [required]="true"
-              [min]="1"
-              [placeholder]="'Nhập giá gói...'"
-              [submitted]="submitted"
-              #priceCtrl="ngModel"
-              [(ngModel)]="price">
+              [min]="0"
+              [placeholder]="'Nhập giá gói tháng...'"
+              [submitted]="submitted()"
+              formControlName="priceMonthly">
             </app-form-control>
           </div>
           <div class="e-col">
             <app-form-control
-              label="Số lượng credit"
+              label="Giá năm"
               [type]="'number'"
-              [name]="'creditLimit'"
+              [name]="'pricePerYear'"
               [required]="true"
-              [min]="1"
-              [placeholder]="'Nhập số lượng credit...'"
-              [submitted]="submitted"
-              #creditLimitCtrl="ngModel"
-              [(ngModel)]="creditLimit">
+              [min]="0"
+              [placeholder]="'Nhập giá gói năm...'"
+              [submitted]="submitted()"
+              formControlName="pricePerYear">
             </app-form-control>
           </div>
           <div class="e-col">
             <app-form-control
               label="Số lượng tài khoản"
               [type]="'number'"
-              [name]="'maxAccounts'"
+              [name]="'maxUsers'"
               [required]="true"
               [min]="1"
               [placeholder]="'Nhập số lượng tài khoản...'"
-              [submitted]="submitted"
-              #maxAccountsCtrl="ngModel"
-              [(ngModel)]="maxAccounts">
+              [submitted]="submitted()"
+              formControlName="maxUsers">
+            </app-form-control>
+          </div>
+          <div class="e-col">
+            <app-form-control
+              label="Dung lượng (GB)"
+              [type]="'text'"
+              [name]="'storageLimitGB'"
+              [min]="0"
+              [required]="true"
+              [placeholder]="'Nhập dung lượng lưu trữ...'"
+              [submitted]="submitted()"
+              formControlName="storageLimitGB">
             </app-form-control>
           </div>
           <div class="e-col-12">
@@ -68,36 +76,8 @@
               [label]="'Mô tả'"
               [placeholder]="'Nhập mô tả...'"
               [name]="'description'"
-              [required]="true"
-              [submitted]="submitted"
-              #descriptionCtrl="ngModel"
-              [(ngModel)]="description">
-            </app-form-control>
-          </div>
-          <div class="e-col">
-            <app-form-control
-              label="Dung lượng (GB)"
-              [type]="'text'"
-              [name]="'storageLimit'"
-              [min]="1"
-              [required]="true"
-              [placeholder]="'Nhập dung lượng...'"
-              [submitted]="submitted"
-              #storageLimitCtrl="ngModel"
-              [(ngModel)]="storageLimit">
-            </app-form-control>
-          </div>
-          <div class="e-col">
-            <app-form-control
-              label="Loại gói"
-              [type]="'text'"
-              [options]="billingCycleOptions"
-              [name]="'billingCycle'"
-              [required]="true"
-              [placeholder]="'Chọn loại gói...'"
-              [submitted]="submitted"
-              #billingCycleCtrl="ngModel"
-              [(ngModel)]="billingCycle">
+              [submitted]="submitted()"
+              formControlName="description">
             </app-form-control>
           </div>
         </div>
@@ -106,13 +86,12 @@
 
     <div class="e-col-4 e-col-lg-12">
       <app-pricing-plan-card
-        [name]="name()"
-        [price]="price()"
-        [creditLimit]="creditLimit()"
-        [maxAccounts]="maxAccounts()"
-        [description]="description()"
-        [storageLimit]="storageLimit()"
-        [billingCycle]="billingCycle() === 'monthly' ? 'tháng' : 'năm'" />
+        [name]="form.get('name')?.value"
+        [maxUsers]="form.get('maxUsers')?.value"
+        [storageLimitGB]="form.get('storageLimitGB')?.value"
+        [priceMonthly]="form.get('priceMonthly')?.value"
+        [description]="form.get('description')?.value"
+        [pricePerYear]="form.get('pricePerYear')?.value" />
     </div>
   </div>
 </form>

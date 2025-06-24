@@ -1,118 +1,99 @@
-<div class="e-row e-g-4 e-g-md-6">
-  <div class="e-col-8 e-col-lg-12">
-    <div
-      class="rounded border border-gray-100 bg-white p-4 shadow-main dark:border-dark-500 dark:bg-dark-200">
-      <div class="mb-4 flex items-center justify-between">
-        <h2 class="text-base font-medium">Thông tin gói đăng ký</h2>
-        <app-button [variant]="'light'"
-          ><a routerLink="update">Chỉnh sửa</a></app-button
-        >
-      </div>
+<form [formGroup]="form">
+  <div class="e-row e-g-4 e-g-md-6">
+    <div class="e-col-8 e-col-lg-12">
+      <div
+        class="rounded border border-gray-100 bg-white p-4 shadow-main dark:border-dark-500 dark:bg-dark-200">
+        <div class="mb-4 flex items-center justify-between">
+          <h2 class="text-base font-medium">Thông tin gói đăng ký</h2>
+          <a [routerLink]="['/pricing-plans', pricingPlanId(), 'update']">
+            <app-button [variant]="'light'" [type]="'submit'"
+              >Chỉnh sửa</app-button
+            >
+          </a>
+        </div>
 
-      <div class="e-row e-row-cols-2 e-row-cols-md-1 e-g-4">
-        <div class="e-col">
-          <app-form-control
-            label="Tên gói"
-            type="text"
-            [name]="'name'"
-            [(ngModel)]="name"
-            [readOnly]="true">
-          </app-form-control>
-        </div>
-        <div class="e-col">
-          <app-form-control
-            label="Giá"
-            [type]="'number'"
-            [name]="'price'"
-            [(ngModel)]="price"
-            [readOnly]="true">
-          </app-form-control>
-        </div>
-        <div class="e-col">
-          <app-form-control
-            label="Số lượng credit"
-            [type]="'number'"
-            [name]="'creditLimit'"
-            [(ngModel)]="creditLimit"
-            [readOnly]="true">
-          </app-form-control>
-        </div>
-        <div class="e-col">
-          <app-form-control
-            label="Số lượng tài khoản"
-            [type]="'number'"
-            [name]="'maxAccounts'"
-            [(ngModel)]="maxAccounts"
-            [readOnly]="true">
-          </app-form-control>
-        </div>
-        <div class="e-col-12">
-          <app-form-control
-            [isTextarea]="true"
-            [label]="'Mô tả'"
-            [placeholder]="'Nhập mô tả...'"
-            [readOnly]="true"
-            [name]="'description'"
-            [(ngModel)]="description">
-          </app-form-control>
-        </div>
-        <div class="e-col">
-          <app-form-control
-            label="Dung lượng (GB)"
-            [type]="'text'"
-            [name]="'storageLimit'"
-            [(ngModel)]="storageLimit"
-            [readOnly]="true">
-          </app-form-control>
-        </div>
-        <div class="e-col">
-          <app-form-control
-            label="Loại gói"
-            [type]="'text'"
-            [name]="'billingCycle'"
-            [(ngModel)]="billingCycle"
-            [readOnly]="true">
-          </app-form-control>
-        </div>
-        <div class="e-col-4">
-          <app-form-control
-            label="Thời gian"
-            [type]="'text'"
-            [name]="'status'"
-            [(ngModel)]="status"
-            [readOnly]="true">
-          </app-form-control>
-        </div>
-        <div class="e-col-4">
-          <app-form-control
-            label="Ngày tạo"
-            type="text"
-            [name]="'createdAt'"
-            [(ngModel)]="createdAt"
-            [readOnly]="true">
-          </app-form-control>
-        </div>
-        <div class="e-col-4">
-          <app-form-control
-            label="Lần chỉnh sửa cuối cùng"
-            type="text"
-            [name]="'lastModifiedAt'"
-            [(ngModel)]="lastModifiedAt"
-            [readOnly]="true">
-          </app-form-control>
+        <div class="e-row e-row-cols-2 e-row-cols-md-1 e-g-4">
+          <div class="e-col-12">
+            <app-form-control
+              [readOnly]="true"
+              label="Tên gói"
+              type="text"
+              [name]="'name'"
+              [required]="true"
+              [placeholder]="'Nhập tên gói...'"
+              formControlName="name">
+            </app-form-control>
+          </div>
+          <div class="e-col">
+            <app-form-control
+              [readOnly]="true"
+              label="Giá tháng"
+              [type]="'number'"
+              [name]="'priceMonthly'"
+              [required]="true"
+              [min]="0"
+              [placeholder]="'Nhập giá gói tháng...'"
+              formControlName="priceMonthly">
+            </app-form-control>
+          </div>
+          <div class="e-col">
+            <app-form-control
+              [readOnly]="true"
+              label="Giá năm"
+              [type]="'number'"
+              [name]="'pricePerYear'"
+              [required]="true"
+              [min]="0"
+              [placeholder]="'Nhập giá gói năm...'"
+              formControlName="pricePerYear">
+            </app-form-control>
+          </div>
+          <div class="e-col">
+            <app-form-control
+              [readOnly]="true"
+              label="Số lượng tài khoản"
+              [type]="'number'"
+              [name]="'maxUsers'"
+              [required]="true"
+              [min]="1"
+              [placeholder]="'Nhập số lượng tài khoản...'"
+              formControlName="maxUsers">
+            </app-form-control>
+          </div>
+          <div class="e-col">
+            <app-form-control
+              [readOnly]="true"
+              label="Dung lượng (GB)"
+              [type]="'text'"
+              [name]="'storageLimitGB'"
+              [min]="0"
+              [required]="true"
+              [placeholder]="'Nhập dung lượng lưu trữ...'"
+              formControlName="storageLimitGB">
+            </app-form-control>
+          </div>
+          <div class="e-col-12">
+            <app-form-control
+              [readOnly]="true"
+              [isTextarea]="true"
+              [label]="'Mô tả'"
+              [placeholder]="'Nhập mô tả...'"
+              [name]="'description'"
+              formControlName="description">
+            </app-form-control>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="e-col-4 e-col-lg-12">
-    <app-pricing-plan-card
-      [name]="name()"
-      [price]="price()"
-      [creditLimit]="creditLimit()"
-      [maxAccounts]="maxAccounts()"
-      [description]="description()"
-      [storageLimit]="storageLimit()"
-      [billingCycle]="billingCycle()" />
+    <div class="e-col-4 e-col-lg-12">
+      <app-pricing-plan-card
+        [name]="form.get('name')?.value"
+        [maxUsers]="form.get('maxUsers')?.value"
+        [storageLimitGB]="form.get('storageLimitGB')?.value"
+        [priceMonthly]="form.get('priceMonthly')?.value"
+        [description]="form.get('description')?.value"
+        [pricePerYear]="form.get('pricePerYear')?.value" />
+    </div>
   </div>
-</div>
+</form>
