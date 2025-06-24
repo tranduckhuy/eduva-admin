@@ -63,7 +63,6 @@ export class PricingPlanCreateComponent {
       priceMonthly: this.form.value.priceMonthly,
       pricePerYear: this.form.value.pricePerYear,
     };
-    console.log(1);
 
     this.pricingPlanService.createPricingPlan(req).subscribe();
   }

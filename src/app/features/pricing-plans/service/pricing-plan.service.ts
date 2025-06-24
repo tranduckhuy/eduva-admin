@@ -30,6 +30,9 @@ export class PricingPlanService {
   private readonly totalPricingPlansSignal = signal<number>(0);
   totalPricingPlans = this.totalPricingPlansSignal.asReadonly();
 
+  private readonly pricingPlanDetailSignal = signal<PricingPlan | null>(null);
+  pricingPlanDetail = this.pricingPlanDetailSignal.asReadonly();
+
   getPricingPlans(
     params: PricingPlanParams
   ): Observable<EntityListResponse<PricingPlan> | null> {
@@ -58,11 +61,38 @@ export class PricingPlanService {
       );
   }
 
+  getPricingPlanDetailById(id: string): Observable<PricingPlan | null> {
+    return this.requestService
+      .get<PricingPlan | null>(`${this.PRICING_PLANS_API_URL}/${id}`)
+      .pipe(
+        map(res => {
+          if (res.statusCode === StatusCode.SUCCESS && res.data) {
+            this.pricingPlanDetailSignal.set(res.data);
+            return res.data;
+          } else {
+            this.resetPricingPlanDetail();
+            this.toastHandlingService.errorGeneral();
+            return null;
+          }
+        }),
+        catchError((err: HttpErrorResponse) => {
+          if (err.error.statusCode && StatusCode.PLAN_NOT_FOUND) {
+            this.router.navigateByUrl('pricing-plans');
+            this.toastHandlingService.error(
+              'Không tìm thấy dữ liệu',
+              'Gói đăng ký không tồn tại!'
+            );
+          } else {
+            this.toastHandlingService.errorGeneral();
+          }
+          return of(null);
+        })
+      );
+  }
+
   createPricingPlan(req: PricingPlanRequest): Observable<void> {
     return this.requestService.post<void>(this.PRICING_PLANS_API_URL, req).pipe(
       map(res => {
-        console.log(123);
-
         if (res.statusCode === StatusCode.SUCCESS) {
           this.router.navigateByUrl('pricing-plans');
           this.toastHandlingService.success(
@@ -92,8 +122,45 @@ export class PricingPlanService {
     );
   }
 
+  updatePricingPlan(req: PricingPlanRequest, id: string): Observable<void> {
+    return this.requestService
+      .put<void>(`${this.PRICING_PLANS_API_URL}/${id}`, req)
+      .pipe(
+        map(res => {
+          if (res.statusCode === StatusCode.SUCCESS) {
+            this.toastHandlingService.success(
+              'Thành công',
+              'Gói đăng ký cập nhật thông tin thành công!'
+            );
+            return;
+          } else {
+            this.toastHandlingService.errorGeneral();
+            return;
+          }
+        }),
+        catchError((err: HttpErrorResponse) => {
+          if (
+            err.error.statusCode &&
+            StatusCode.PROVIDED_INFORMATION_IS_INVALID
+          ) {
+            this.toastHandlingService.error(
+              'Thông tin cung cấp không hợp lệ',
+              'Tên gói đăng ký đã tồn tại. Vui lòng chọn tên khác!'
+            );
+          } else {
+            this.toastHandlingService.errorGeneral();
+          }
+          return of(void 0);
+        })
+      );
+  }
+
   private resetPricingPlans(): void {
     this.pricingPlansSignal.set([]);
     this.totalPricingPlansSignal.set(0);
+  }
+
+  private resetPricingPlanDetail(): void {
+    this.pricingPlanDetailSignal.set(null);
   }
 }

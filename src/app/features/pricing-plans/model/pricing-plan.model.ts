@@ -5,7 +5,7 @@ type Status =
   | 3; // Archived
 
 export interface PricingPlan {
-  description: string;
+  description?: string;
   id: string;
   maxUsers: number;
   name: string;

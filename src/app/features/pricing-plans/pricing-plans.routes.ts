@@ -41,8 +41,8 @@ export const pricingPlansRoute: Routes = [
         mod => mod.PricingPlanComponent
       ),
     data: {
-      heading: 'Chi tiết pricing plan',
-      breadcrumb: 'Chi tiết pricing plan',
+      heading: 'Chi tiết gói đăng ký',
+      breadcrumb: 'Chi tiết gói đăng ký',
     },
   },
 ];
