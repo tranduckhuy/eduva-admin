@@ -1,16 +1,24 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { FormsModule, NgForm } from '@angular/forms';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 import { FormControlComponent } from '../../../shared/components/form-control/form-control.component';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { PricingPlanCardComponent } from '../pricing-plan-card/pricing-plan-card.component';
+import { PricingPlanService } from '../service/pricing-plan.service';
+import { LoadingService } from '../../../shared/services/core/loading/loading.service';
+import { PricingPlanRequest } from '../model/pricing-plan-request.model';
 
 @Component({
   selector: 'app-pricing-plan-create',
   standalone: true,
   imports: [
     FormControlComponent,
-    FormsModule,
+    ReactiveFormsModule,
     ButtonComponent,
     PricingPlanCardComponent,
   ],
@@ -19,26 +27,44 @@ import { PricingPlanCardComponent } from '../pricing-plan-card/pricing-plan-card
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PricingPlanCreateComponent {
-  name = signal<string>('');
-  description = signal<string>('');
-  creditLimit = signal<number>(0);
-  storageLimit = signal<number>(0);
-  maxAccounts = signal<number>(0);
-  price = signal<number>(0);
-  billingCycle = signal<string>('monthly');
+  private readonly fb = inject(FormBuilder);
+  private readonly pricingPlanService = inject(PricingPlanService);
+  private readonly loadingService = inject(LoadingService);
 
-  billingCycleOptions = [
-    { label: 'Tháng', value: 'monthly' },
-    { label: 'Năm', value: 'yearly' },
-  ];
+  isLoading = this.loadingService;
 
-  submitted = false;
+  form!: FormGroup;
 
-  onSubmit(form: NgForm) {
-    this.submitted = true;
-    if (form.invalid) {
-      Object.values(form.controls).forEach(control => control.markAsTouched());
+  submitted = signal<boolean>(false);
+
+  constructor() {
+    this.form = this.fb.group({
+      name: [''],
+      description: [''],
+      maxUsers: [0],
+      storageLimitGB: [0],
+      priceMonthly: [0],
+      pricePerYear: [0],
+    });
+  }
+
+  onSubmit() {
+    this.submitted.set(true);
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
     }
-    // Submit logic
+
+    const req: PricingPlanRequest = {
+      name: this.form.value.name,
+      description: this.form.value.description,
+      maxUsers: this.form.value.maxUsers,
+      storageLimitGB: this.form.value.storageLimitGB,
+      priceMonthly: this.form.value.priceMonthly,
+      pricePerYear: this.form.value.pricePerYear,
+    };
+    console.log(1);
+
+    this.pricingPlanService.createPricingPlan(req).subscribe();
   }
 }
