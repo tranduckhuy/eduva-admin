@@ -7,7 +7,7 @@ import {
   SHOW_LOADING,
 } from '../services/core/request/request.service';
 
-import { type RequestOptions } from '../models/api/request-options.model';
+import { type RequestOptions } from '../models/api/response/request-options.model';
 
 /**
  * Utility function to convert an object into HttpParams

@@ -20,6 +20,7 @@ import { ButtonComponent } from '../../shared/components/button/button.component
 import { SCHOOLS_LIMIT } from '../../shared/constants/common.constant';
 import { LoadingService } from '../../shared/services/core/loading/loading.service';
 import { EntityListParams } from '../../shared/models/common/entity-list-params';
+import { TableSkeletonComponent } from '../../shared/components/skeleton/table-skeleton/table-skeleton.component';
 
 interface StatusOption {
   name: string;
@@ -39,6 +40,7 @@ interface StatusOption {
     SelectModule,
     FormsModule,
     RouterLink,
+    TableSkeletonComponent,
   ],
   templateUrl: './schools.component.html',
   styleUrl: './schools.component.css',

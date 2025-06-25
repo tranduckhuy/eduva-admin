@@ -1,3 +1,6 @@
+import { School } from '../../../features/schools/model/school-model';
+import { Status } from '../common/entity-status';
+
 type UserRole =
   | 'SystemAdmin'
   | 'SchoolAdmin'
@@ -7,11 +10,12 @@ type UserRole =
 
 export interface User {
   id: string;
-  fullname: string;
+  fullName: string;
   phoneNumber: string;
   email: string;
+  status: Status;
   avatarUrl: string;
-  schoolId?: string;
+  school: School;
   roles: UserRole[];
   creditBalance: number;
 }

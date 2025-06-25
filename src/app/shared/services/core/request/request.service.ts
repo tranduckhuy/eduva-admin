@@ -13,8 +13,8 @@ import {
   buildHttpContext,
 } from '../../../utils/request-utils';
 
-import { type BaseResponse } from '../../../models/api/base-response.model';
-import { type RequestOptions } from '../../../models/api/request-options.model';
+import { type BaseResponse } from '../../../models/api/response/base-response.model';
+import { type RequestOptions } from '../../../models/api/response/request-options.model';
 
 export const BYPASS_AUTH = new HttpContextToken<boolean>(() => false);
 export const SHOW_LOADING = new HttpContextToken<boolean>(() => true);

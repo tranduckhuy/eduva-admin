@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { map, Observable, catchError, of } from 'rxjs';
+import { map, Observable, catchError, of, EMPTY } from 'rxjs';
 
 import { environment } from '../../../../environments/environment';
 
@@ -9,7 +9,7 @@ import { RequestService } from '../../../shared/services/core/request/request.se
 import { ToastHandlingService } from '../../../shared/services/core/toast/toast-handling.service';
 import { StatusCode } from '../../../shared/constants/status-code.constant';
 import { PricingPlan } from '../model/pricing-plan.model';
-import { EntityListResponse } from '../../../shared/models/api/response/entity-list-respone.model';
+import { EntityListResponse } from '../../../shared/models/api/response/entity-list-response.model';
 import { PricingPlanRequest } from '../model/pricing-plan-request.model';
 import { HttpErrorResponse } from '@angular/common/http';
 import { EntityListParams } from '../../../shared/models/common/entity-list-params';
@@ -57,7 +57,10 @@ export class PricingPlanService {
             return null;
           }
         }),
-        catchError(() => of(null))
+        catchError(() => {
+          this.toastHandlingService.errorGeneral();
+          return EMPTY;
+        })
       );
   }
 
@@ -75,17 +78,9 @@ export class PricingPlanService {
             return null;
           }
         }),
-        catchError((err: HttpErrorResponse) => {
-          if (err.error.statusCode && StatusCode.PLAN_NOT_FOUND) {
-            this.router.navigateByUrl('pricing-plans');
-            this.toastHandlingService.error(
-              'Không tìm thấy dữ liệu',
-              'Gói đăng ký không tồn tại!'
-            );
-          } else {
-            this.toastHandlingService.errorGeneral();
-          }
-          return of(null);
+        catchError(() => {
+          this.toastHandlingService.errorGeneral();
+          return EMPTY;
         })
       );
   }
@@ -99,10 +94,8 @@ export class PricingPlanService {
             'Thành công',
             'Gói đăng ký đã được tạo mới thành công!'
           );
-          return;
         } else {
           this.toastHandlingService.errorGeneral();
-          return;
         }
       }),
       catchError((err: HttpErrorResponse) => {
@@ -132,10 +125,8 @@ export class PricingPlanService {
               'Thành công',
               'Gói đăng ký cập nhật thông tin thành công!'
             );
-            return;
           } else {
             this.toastHandlingService.errorGeneral();
-            return;
           }
         }),
         catchError((err: HttpErrorResponse) => {
@@ -167,13 +158,14 @@ export class PricingPlanService {
               'Thành công',
               'Kích hoạt gói đăng ký thành công!'
             );
-            return;
           } else {
             this.toastHandlingService.errorGeneral();
-            return;
           }
         }),
-        catchError(() => of(void 0))
+        catchError(() => {
+          this.toastHandlingService.errorGeneral();
+          return EMPTY;
+        })
       );
   }
 
@@ -189,13 +181,14 @@ export class PricingPlanService {
               'Thành công',
               'Vô hiệu hóa gói đăng ký thành công!'
             );
-            return;
           } else {
             this.toastHandlingService.errorGeneral();
-            return;
           }
         }),
-        catchError(() => of(void 0))
+        catchError(() => {
+          this.toastHandlingService.errorGeneral();
+          return EMPTY;
+        })
       );
   }
 
