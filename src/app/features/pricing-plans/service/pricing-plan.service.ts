@@ -10,9 +10,9 @@ import { ToastHandlingService } from '../../../shared/services/core/toast/toast-
 import { StatusCode } from '../../../shared/constants/status-code.constant';
 import { PricingPlan } from '../model/pricing-plan.model';
 import { EntityListResponse } from '../../../shared/models/api/response/entity-list-respone.model';
-import { PricingPlanParams } from '../model/pricing-plan-params.model';
 import { PricingPlanRequest } from '../model/pricing-plan-request.model';
 import { HttpErrorResponse } from '@angular/common/http';
+import { EntityListParams } from '../../../shared/models/common/entity-list-params';
 @Injectable({
   providedIn: 'root',
 })
@@ -34,7 +34,7 @@ export class PricingPlanService {
   pricingPlanDetail = this.pricingPlanDetailSignal.asReadonly();
 
   getPricingPlans(
-    params: PricingPlanParams
+    params: EntityListParams
   ): Observable<EntityListResponse<PricingPlan> | null> {
     return this.requestService
       .get<EntityListResponse<PricingPlan> | null>(

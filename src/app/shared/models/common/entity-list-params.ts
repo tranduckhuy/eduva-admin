@@ -1,4 +1,4 @@
-export interface PricingPlanParams {
+export interface EntityListParams {
   activeOnly?: boolean;
   pageIndex: number;
   pageSize: number;
