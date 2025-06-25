@@ -38,6 +38,13 @@ export const adminRoutes: Routes = [
           import('./students/students.routes').then(mod => mod.studentsRoute),
       },
       {
+        path: 'content-moderators',
+        loadChildren: () =>
+          import('./content-moderators/content-moderators.routes').then(
+            mod => mod.contentModeratorsRoute
+          ),
+      },
+      {
         path: 'invoices',
         loadChildren: () =>
           import('./invoices/invoices.routes').then(mod => mod.invoicesRoute),

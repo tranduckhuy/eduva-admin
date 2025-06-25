@@ -75,6 +75,11 @@ export class NavbarComponent {
             },
             { label: 'Giáo viên', link: '/teachers', active: true },
             { label: 'Học sinh', link: '/students', active: true },
+            {
+              label: 'Kiểm duyệt nội dung',
+              link: '/content-moderators',
+              active: true,
+            },
           ],
         },
         {
