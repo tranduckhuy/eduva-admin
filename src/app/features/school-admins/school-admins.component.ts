@@ -107,7 +107,7 @@ export class SchoolAdminsComponent {
   private getActiveOnlyStatus(): boolean | undefined {
     const statusCode = this.statusSelect()?.code;
     if (statusCode === 0) return true;
-    if (statusCode === 3) return false;
+    if (statusCode === 1) return false;
     return undefined;
   }
 

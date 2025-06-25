@@ -1,77 +1,35 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  inject,
   input,
-  LOCALE_ID,
-  signal,
+  OnInit,
 } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import localeVi from '@angular/common/locales/vi';
-import { DatePipe, registerLocaleData } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 import { FormControlComponent } from '../../../shared/components/form-control/form-control.component';
-
-import { Teacher } from '../../../shared/models/entities/teacher.model';
-
-registerLocaleData(localeVi);
+import { ButtonComponent } from '../../../shared/components/button/button.component';
+import { UserService } from '../../../shared/services/api/user/user.service';
+import { LoadingService } from '../../../shared/services/core/loading/loading.service';
 
 @Component({
   selector: 'app-teacher',
   standalone: true,
-  imports: [FormControlComponent, FormsModule],
+  imports: [FormControlComponent, ButtonComponent, RouterLink],
   templateUrl: './teacher.component.html',
   styleUrl: './teacher.component.css',
-  providers: [DatePipe, { provide: LOCALE_ID, useValue: 'vi' }],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TeacherComponent {
-  teacher: Teacher = {
-    id: 1,
-    name: 'Nguyễn Văn An',
-    username: 'ngvanan',
-    avatarUrl: 'https://randomuser.me/api/portraits/men/1.jpg',
-    dob: '1980-05-12',
-    email: 'ngvanan@example.com',
-    phoneNumber: '0901234567',
-    schoolId: 'SCH001',
-    schoolName: 'Trường THPT A',
-    status: 'active',
-    createdAt: new Date('2020-01-15'),
-    lastModifiedAt: new Date('2023-04-10'),
-  };
+  private readonly userService = inject(UserService);
+  private readonly loadingService = inject(LoadingService);
 
   teacherId = input.required<string>();
 
-  name = signal<string>('');
-  dob = signal<string>('');
-  username = signal<string>('');
-  address = signal<string>('');
-  email = signal<string>('');
-  phoneNumber = signal<string>('');
-  avatarUrl = signal<string>('');
-  status = signal<string>('');
-  createdAt = signal<string>('');
-  lastModifiedAt = signal<string>('');
-
-  constructor(private readonly datePipe: DatePipe) {}
-
-  formatDateVi(date: Date | string): string {
-    return this.datePipe.transform(date, 'medium', undefined, 'vi') ?? '';
-  }
+  isLoading = this.loadingService;
+  teacherDetail = this.userService.userDetail;
 
   ngOnInit(): void {
-    this.name.set(this.teacher.name);
-    this.username.set(this.teacher.username);
-    this.email.set(this.teacher.email);
-    this.teacher.dob && this.dob.set(this.teacher.dob);
-    this.phoneNumber.set(this.teacher.phoneNumber);
-    this.avatarUrl.set(this.teacher.avatarUrl);
-    this.status.set(
-      this.teacher.status === 'active' ? 'Đang hoạt động' : 'Vô hiệu hóa'
-    );
-    this.createdAt.set(this.formatDateVi(new Date(this.teacher.createdAt!)));
-    this.lastModifiedAt.set(
-      this.formatDateVi(new Date(this.teacher.lastModifiedAt!))
-    );
+    this.userService.getUserDetailById(this.teacherId()).subscribe();
   }
 }
