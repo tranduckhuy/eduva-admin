@@ -60,10 +60,7 @@ export class AuthService {
             this.userService.getCurrentProfile().subscribe(user => {
               if (!user) {
                 this.toastHandlingService.errorGeneral();
-                return;
-              }
-
-              if (user.roles.includes('SystemAdmin')) {
+              } else if (user.roles.includes('SystemAdmin')) {
                 this.router.navigateByUrl('/');
               }
             });

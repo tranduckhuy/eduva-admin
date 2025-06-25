@@ -9,7 +9,7 @@ import { RequestService } from '../../../shared/services/core/request/request.se
 import { ToastHandlingService } from '../../../shared/services/core/toast/toast-handling.service';
 import { StatusCode } from '../../../shared/constants/status-code.constant';
 import { PricingPlan } from '../model/pricing-plan.model';
-import { EntityListResponse } from '../../../shared/models/api/response/entity-list-respone.model';
+import { EntityListResponse } from '../../../shared/models/api/response/entity-list-response.model';
 import { PricingPlanRequest } from '../model/pricing-plan-request.model';
 import { HttpErrorResponse } from '@angular/common/http';
 import { EntityListParams } from '../../../shared/models/common/entity-list-params';
@@ -94,10 +94,8 @@ export class PricingPlanService {
             'Thành công',
             'Gói đăng ký đã được tạo mới thành công!'
           );
-          return;
         } else {
           this.toastHandlingService.errorGeneral();
-          return;
         }
       }),
       catchError((err: HttpErrorResponse) => {
@@ -127,10 +125,8 @@ export class PricingPlanService {
               'Thành công',
               'Gói đăng ký cập nhật thông tin thành công!'
             );
-            return;
           } else {
             this.toastHandlingService.errorGeneral();
-            return;
           }
         }),
         catchError((err: HttpErrorResponse) => {
@@ -162,10 +158,8 @@ export class PricingPlanService {
               'Thành công',
               'Kích hoạt gói đăng ký thành công!'
             );
-            return;
           } else {
             this.toastHandlingService.errorGeneral();
-            return;
           }
         }),
         catchError(() => {
@@ -187,10 +181,8 @@ export class PricingPlanService {
               'Thành công',
               'Vô hiệu hóa gói đăng ký thành công!'
             );
-            return;
           } else {
             this.toastHandlingService.errorGeneral();
-            return;
           }
         }),
         catchError(() => {

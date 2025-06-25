@@ -10,7 +10,7 @@ import { ToastHandlingService } from '../../core/toast/toast-handling.service';
 import { StatusCode } from '../../../constants/status-code.constant';
 
 import { type User } from '../../../models/entities/user.model';
-import { EntityListResponse } from '../../../models/api/response/entity-list-respone.model';
+import { EntityListResponse } from '../../../models/api/response/entity-list-response.model';
 import { UserListParams } from '../../../models/common/user-list-params';
 
 @Injectable({
@@ -110,10 +110,8 @@ export class UserService {
               'Thành công',
               'Kích hoạt người dùng thành công!'
             );
-            return;
           } else {
             this.toastHandlingService.errorGeneral();
-            return;
           }
         }),
         catchError(() => {
@@ -135,10 +133,8 @@ export class UserService {
               'Thành công',
               'Vô hiệu người dùng thành công!'
             );
-            return;
           } else {
             this.toastHandlingService.errorGeneral();
-            return;
           }
         }),
         catchError(() => {

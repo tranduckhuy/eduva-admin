@@ -9,7 +9,7 @@ import { RequestService } from '../../../shared/services/core/request/request.se
 import { ToastHandlingService } from '../../../shared/services/core/toast/toast-handling.service';
 import { StatusCode } from '../../../shared/constants/status-code.constant';
 import { EntityListParams } from '../../../shared/models/common/entity-list-params';
-import { EntityListResponse } from '../../../shared/models/api/response/entity-list-respone.model';
+import { EntityListResponse } from '../../../shared/models/api/response/entity-list-response.model';
 import { SchoolDetail } from '../model/school-detail-model';
 
 @Injectable({
@@ -91,10 +91,8 @@ export class SchoolService {
               'Thành công',
               'Kích hoạt trường học thành công!'
             );
-            return;
           } else {
             this.toastHandlingService.errorGeneral();
-            return;
           }
         }),
         catchError(() => {
@@ -116,10 +114,8 @@ export class SchoolService {
               'Thành công',
               'Vô hiệu hóa trường học thành công!'
             );
-            return;
           } else {
             this.toastHandlingService.errorGeneral();
-            return;
           }
         }),
         catchError(() => {
