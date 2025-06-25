@@ -85,6 +85,7 @@ export class PricingPlansComponent implements OnInit {
 
   isLoadingGet = this.loadingService.is('get-pricing-plans');
   isLoadingArchive = this.loadingService.is('archive-pricing-plan');
+  isLoadingActive = this.loadingService.is('active-pricing-plan');
 
   // Signals from service
   pricingPlans = this.pricingPlanService.pricingPlans;
@@ -145,7 +146,7 @@ export class PricingPlansComponent implements OnInit {
     this.loadData();
   }
 
-  openConfirmDialog(event: Event, pricingPlanId: string): void {
+  openConfirmArchiveDialog(event: Event, pricingPlanId: string): void {
     this.confirmationService.confirm({
       target: event.target as EventTarget,
       message: 'Bạn có chắc chắn muốn vô hiệu hóa gói đăng ký này không?',
@@ -162,7 +163,31 @@ export class PricingPlansComponent implements OnInit {
         severity: 'danger',
       },
       accept: () => {
-        this.pricingPlanService.archivePricingPlan(pricingPlanId).subscribe();
+        this.pricingPlanService.archivePricingPlan(pricingPlanId).subscribe({
+          next: () => this.loadData(),
+        });
+      },
+    });
+  }
+  openConfirmActiveDialog(event: Event, pricingPlanId: string): void {
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: 'Bạn có chắc chắn muốn kích hoạt gói đăng ký này không?',
+      header: 'Kích hoạt gói đăng ký',
+      icon: 'pi pi-exclamation-triangle',
+      rejectLabel: 'Hủy',
+      rejectButtonProps: {
+        label: 'Hủy',
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        label: 'Xác nhận',
+      },
+      accept: () => {
+        this.pricingPlanService.activatePricingPlan(pricingPlanId).subscribe({
+          next: () => this.loadData(),
+        });
       },
     });
   }
