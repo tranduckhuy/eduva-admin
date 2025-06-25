@@ -6,7 +6,7 @@ type Status =
 
 export interface PricingPlan {
   description?: string;
-  id: string;
+  id: number;
   maxUsers: number;
   name: string;
   priceMonthly: number;

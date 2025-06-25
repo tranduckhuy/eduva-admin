@@ -103,16 +103,6 @@
                 >visibility</app-button
               >
             </a>
-            <a [routerLink]="['/schools', school.id, 'update']">
-              <app-button
-                pTooltip="Chỉnh sửa"
-                tooltipPosition="top"
-                [variant]="'light'"
-                [size]="'xs'"
-                class="material-symbols-outlined rounded-full px-[7px] pb-[6px] pt-[8px] text-lg leading-none"
-                >edit</app-button
-              >
-            </a>
             @if (school.status === 0) {
               <app-button
                 pTooltip="Vô hiệu hóa"

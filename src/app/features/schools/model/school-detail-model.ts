@@ -5,7 +5,7 @@ export interface SchoolDetail {
   name: string;
   contactEmail: string;
   contactPhone: string;
-  address?: string;
+  address: string;
   websiteUrl?: string;
   status: Status;
   schoolAdminId: string;

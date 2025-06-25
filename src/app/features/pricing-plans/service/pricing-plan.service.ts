@@ -176,6 +176,7 @@ export class PricingPlanService {
         catchError(() => of(void 0))
       );
   }
+
   archivePricingPlan(id: string): Observable<void> {
     return this.requestService
       .put<void>(`${this.PRICING_PLANS_API_URL}/${id}/archive`, '', {
