@@ -11,17 +11,6 @@ export const schoolsRoute: Routes = [
     },
   },
   {
-    path: ':schoolId/update',
-    loadComponent: () =>
-      import('./edit-school/edit-school.component').then(
-        mod => mod.EditSchoolComponent
-      ),
-    data: {
-      heading: 'Cập nhật trường học',
-      breadcrumb: 'Cập nhật trường học',
-    },
-  },
-  {
     path: ':schoolId',
     loadComponent: () =>
       import('./school/school.component').then(mod => mod.SchoolComponent),

@@ -19,7 +19,6 @@
               label="Tên gói"
               type="text"
               [name]="'name'"
-              [required]="true"
               [placeholder]="'Nhập tên gói...'"
               formControlName="name">
             </app-form-control>
@@ -30,8 +29,6 @@
               label="Giá tháng"
               [type]="'number'"
               [name]="'priceMonthly'"
-              [required]="true"
-              [min]="0"
               [placeholder]="'Nhập giá gói tháng...'"
               formControlName="priceMonthly">
             </app-form-control>
@@ -42,8 +39,6 @@
               label="Giá năm"
               [type]="'number'"
               [name]="'pricePerYear'"
-              [required]="true"
-              [min]="0"
               [placeholder]="'Nhập giá gói năm...'"
               formControlName="pricePerYear">
             </app-form-control>
@@ -54,8 +49,6 @@
               label="Số lượng tài khoản"
               [type]="'number'"
               [name]="'maxUsers'"
-              [required]="true"
-              [min]="1"
               [placeholder]="'Nhập số lượng tài khoản...'"
               formControlName="maxUsers">
             </app-form-control>
@@ -66,8 +59,6 @@
               label="Dung lượng (GB)"
               [type]="'text'"
               [name]="'storageLimitGB'"
-              [min]="0"
-              [required]="true"
               [placeholder]="'Nhập dung lượng lưu trữ...'"
               formControlName="storageLimitGB">
             </app-form-control>

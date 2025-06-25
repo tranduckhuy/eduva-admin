@@ -3,15 +3,26 @@
   <div class="mb-5 flex flex-wrap items-center justify-between gap-4">
     <app-search-input (search)="onSearchTriggered($event)" class="md:w-64" />
 
-    <div class="flex gap-3 sm:flex-row sm:items-center sm:gap-4">
+    <div class="flex flex-wrap gap-3 sm:flex-row sm:items-center sm:gap-4">
+      <!-- Time filter -->
+      <p-select
+        [options]="timeFilterOptions()"
+        [ngModel]="selectedTimeFilter()"
+        (ngModelChange)="onTimeFilterChange($event)"
+        optionLabel="name"
+        placeholder="Sắp xếp theo thời gian"
+        class="!dark:bg-dark-200 flex h-11 items-center sm:w-56" />
+
+      <!-- Status filter -->
       <p-select
         [options]="statusSelectOptions()"
         [ngModel]="statusSelect()"
         (ngModelChange)="onStatusSelectChange($event)"
         optionLabel="name"
         placeholder="Chọn trạng thái hoạt động"
-        class="!dark:bg-dark-200 flex h-11 w-full items-center sm:w-56" />
+        class="!dark:bg-dark-200 flex h-11 items-center sm:w-56" />
 
+      <!--  Export button -->
       <div class="flex gap-2">
         <a routerLink="create">
           <app-button [variant]="'outline'" class="flex items-center">
@@ -23,6 +34,7 @@
           </app-button>
         </a>
 
+        <!--  Create button -->
         <a routerLink="create">
           <app-button [variant]="'outline'" class="flex items-center">
             <span

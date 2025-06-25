@@ -21,10 +21,10 @@ import { SearchInputComponent } from '../../shared/components/search-input/searc
 import { BadgeComponent } from '../../shared/components/badge/badge.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { PricingPlanService } from './service/pricing-plan.service';
-import { PricingPlanParams } from './model/pricing-plan-params.model';
 import { PRICING_PLANS_LIMIT } from '../../shared/constants/common.constant';
 import { LoadingService } from '../../shared/services/core/loading/loading.service';
 import { TableSkeletonComponent } from '../../shared/components/skeleton/table-skeleton/table-skeleton.component';
+import { EntityListParams } from '../../shared/models/common/entity-list-params';
 
 registerLocaleData(localeVi);
 
@@ -65,6 +65,9 @@ export class PricingPlansComponent implements OnInit {
   sortField = signal<string | null>(null);
   sortOrder = signal<number>(1); // 1 = asc, -1 = desc
   statusSelect = signal<StatusOption | undefined>(undefined);
+  selectedTimeFilter = signal<
+    { name: string; value: string | undefined } | undefined
+  >(undefined);
   searchTerm = signal<string>('');
   tableHeadSkeleton = signal([
     'STT',
@@ -79,15 +82,21 @@ export class PricingPlansComponent implements OnInit {
 
   readonly statusSelectOptions = signal<StatusOption[]>([
     { name: 'Đang hoạt động', code: 0 },
-    { name: 'Vô hiệu hóa', code: 1 },
+    { name: 'Vô hiệu hóa', code: 3 },
     { name: 'Tất cả', code: undefined },
   ]);
 
+  readonly timeFilterOptions = signal([
+    { name: 'Mới nhất', value: 'desc' },
+    { name: 'Cũ nhất', value: 'asc' },
+    { name: 'Tất cả', value: undefined },
+  ]);
+
+  // Signals from service
   isLoadingGet = this.loadingService.is('get-pricing-plans');
   isLoadingArchive = this.loadingService.is('archive-pricing-plan');
   isLoadingActive = this.loadingService.is('active-pricing-plan');
 
-  // Signals from service
   pricingPlans = this.pricingPlanService.pricingPlans;
   totalPricingPlans = this.pricingPlanService.totalPricingPlans;
 
@@ -96,7 +105,7 @@ export class PricingPlansComponent implements OnInit {
   }
 
   private loadData(): void {
-    const params: PricingPlanParams = {
+    const params: EntityListParams = {
       pageIndex: Math.floor(this.first() / this.rows()) + 1,
       pageSize: this.rows(),
       searchTerm: this.searchTerm(),
@@ -111,8 +120,25 @@ export class PricingPlansComponent implements OnInit {
   private getActiveOnlyStatus(): boolean | undefined {
     const statusCode = this.statusSelect()?.code;
     if (statusCode === 0) return true;
-    if (statusCode === 1) return false;
+    if (statusCode === 3) return false;
     return undefined;
+  }
+
+  onTimeFilterChange(
+    selected: { name: string; value: string | undefined } | undefined
+  ): void {
+    this.selectedTimeFilter.set(selected);
+
+    if (selected?.value) {
+      this.sortField.set('createdAt');
+      this.sortOrder.set(selected.value === 'desc' ? -1 : 1);
+    } else {
+      this.sortField.set(null);
+      this.sortOrder.set(1);
+    }
+
+    this.first.set(0);
+    this.loadData();
   }
 
   loadDataLazy(event: TableLazyLoadEvent): void {
