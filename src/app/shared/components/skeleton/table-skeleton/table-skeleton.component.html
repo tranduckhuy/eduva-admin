@@ -2,7 +2,7 @@
   <ng-template #header>
     <tr>
       @for (item of tableHead(); track item) {
-        <th>{{ item }}</th>
+        <th scope="col">{{ item }}</th>
       }
     </tr>
   </ng-template>
