@@ -68,7 +68,7 @@ export class EditPricingPlanComponent implements OnInit {
         if (detail) {
           this.originalData = {
             name: detail.name,
-            description: detail.description || '',
+            description: detail.description ?? '',
             maxUsers: detail.maxUsers,
             storageLimitGB: detail.storageLimitGB,
             priceMonthly: detail.priceMonthly,

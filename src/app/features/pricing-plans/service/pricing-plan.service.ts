@@ -155,6 +155,27 @@ export class PricingPlanService {
       );
   }
 
+  activatePricingPlan(id: string): Observable<void> {
+    return this.requestService
+      .put<void>(`${this.PRICING_PLANS_API_URL}/${id}/activate`, '', {
+        loadingKey: 'activate-pricing-plan',
+      })
+      .pipe(
+        map(res => {
+          if (res.statusCode === StatusCode.SUCCESS) {
+            this.toastHandlingService.success(
+              'Thành công',
+              'Kích hoạt gói đăng ký thành công!'
+            );
+            return;
+          } else {
+            this.toastHandlingService.errorGeneral();
+            return;
+          }
+        }),
+        catchError(() => of(void 0))
+      );
+  }
   archivePricingPlan(id: string): Observable<void> {
     return this.requestService
       .put<void>(`${this.PRICING_PLANS_API_URL}/${id}/archive`, '', {
