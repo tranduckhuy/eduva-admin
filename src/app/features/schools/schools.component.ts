@@ -158,7 +158,7 @@ export class SchoolsComponent {
     this.loadData();
   }
 
-  openConfirmArchiveDialog(event: Event, pricingPlanId: string): void {
+  openConfirmArchiveDialog(event: Event, schoolId: string): void {
     this.confirmationService.confirm({
       target: event.target as EventTarget,
       message: 'Bạn có chắc chắn muốn vô hiệu hóa trường học này không?',
@@ -175,13 +175,13 @@ export class SchoolsComponent {
         severity: 'danger',
       },
       accept: () => {
-        // this.pricingPlanService.archivePricingPlan(pricingPlanId).subscribe({
-        //   next: () => this.loadData(),
-        // });
+        this.schoolService.archiveSchool(schoolId).subscribe({
+          next: () => this.loadData(),
+        });
       },
     });
   }
-  openConfirmActiveDialog(event: Event, pricingPlanId: string): void {
+  openConfirmActiveDialog(event: Event, schoolId: string): void {
     this.confirmationService.confirm({
       target: event.target as EventTarget,
       message: 'Bạn có chắc chắn muốn kích hoạt trường học này không?',
@@ -197,9 +197,9 @@ export class SchoolsComponent {
         label: 'Xác nhận',
       },
       accept: () => {
-        // this.pricingPlanService.activatePricingPlan(pricingPlanId).subscribe({
-        //   next: () => this.loadData(),
-        // });
+        this.schoolService.activateSchool(schoolId).subscribe({
+          next: () => this.loadData(),
+        });
       },
     });
   }

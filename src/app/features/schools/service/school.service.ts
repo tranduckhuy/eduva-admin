@@ -56,6 +56,49 @@ export class SchoolService {
       );
   }
 
+  activateSchool(id: string): Observable<void> {
+    return this.requestService
+      .put<void>(`${this.SCHOOLS_API_URL}/${id}/activate`, '', {
+        loadingKey: 'activate-school',
+      })
+      .pipe(
+        map(res => {
+          if (res.statusCode === StatusCode.SUCCESS) {
+            this.toastHandlingService.success(
+              'Thành công',
+              'Kích hoạt trường học thành công!'
+            );
+            return;
+          } else {
+            this.toastHandlingService.errorGeneral();
+            return;
+          }
+        }),
+        catchError(() => of(void 0))
+      );
+  }
+  archiveSchool(id: string): Observable<void> {
+    return this.requestService
+      .put<void>(`${this.SCHOOLS_API_URL}/${id}/archive`, '', {
+        loadingKey: 'archive-school',
+      })
+      .pipe(
+        map(res => {
+          if (res.statusCode === StatusCode.SUCCESS) {
+            this.toastHandlingService.success(
+              'Thành công',
+              'Vô hiệu hóa trường học thành công!'
+            );
+            return;
+          } else {
+            this.toastHandlingService.errorGeneral();
+            return;
+          }
+        }),
+        catchError(() => of(void 0))
+      );
+  }
+
   private resetSchools(): void {
     this.schoolsSignal.set([]);
     this.totalSchoolsSignal.set(0);
