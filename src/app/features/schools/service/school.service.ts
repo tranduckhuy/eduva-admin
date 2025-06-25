@@ -1,7 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { Router } from '@angular/router';
 
-import { catchError, map, Observable, of } from 'rxjs';
+import { catchError, EMPTY, map, Observable } from 'rxjs';
 
 import { environment } from '../../../../environments/environment';
 
@@ -11,7 +10,6 @@ import { ToastHandlingService } from '../../../shared/services/core/toast/toast-
 import { StatusCode } from '../../../shared/constants/status-code.constant';
 import { EntityListParams } from '../../../shared/models/common/entity-list-params';
 import { EntityListResponse } from '../../../shared/models/api/response/entity-list-respone.model';
-import { HttpErrorResponse } from '@angular/common/http';
 import { SchoolDetail } from '../model/school-detail-model';
 
 @Injectable({
@@ -20,7 +18,6 @@ import { SchoolDetail } from '../model/school-detail-model';
 export class SchoolService {
   private readonly requestService = inject(RequestService);
   private readonly toastHandlingService = inject(ToastHandlingService);
-  private readonly router = inject(Router);
 
   private readonly BASE_API_URL = environment.baseApiUrl;
   private readonly SCHOOLS_API_URL = `${this.BASE_API_URL}/schools`;
@@ -31,7 +28,7 @@ export class SchoolService {
   private readonly totalSchoolsSignal = signal<number>(0);
   totalSchools = this.totalSchoolsSignal.asReadonly();
 
-  private readonly schoolDetailSignal = signal<School | null>(null);
+  private readonly schoolDetailSignal = signal<SchoolDetail | null>(null);
   schoolDetail = this.schoolDetailSignal.asReadonly();
 
   getSchools(
@@ -54,7 +51,10 @@ export class SchoolService {
             return null;
           }
         }),
-        catchError(() => of(null))
+        catchError(() => {
+          this.toastHandlingService.errorGeneral();
+          return EMPTY;
+        })
       );
   }
 
@@ -72,17 +72,9 @@ export class SchoolService {
             return null;
           }
         }),
-        catchError((err: HttpErrorResponse) => {
-          if (err.error.statusCode && StatusCode.SCHOOL_NOT_FOUND) {
-            this.router.navigateByUrl('schools');
-            this.toastHandlingService.error(
-              'Không tìm thấy dữ liệu',
-              'Trường học không tồn tại!'
-            );
-          } else {
-            this.toastHandlingService.errorGeneral();
-          }
-          return of(null);
+        catchError(() => {
+          this.toastHandlingService.errorGeneral();
+          return EMPTY;
         })
       );
   }
@@ -105,7 +97,10 @@ export class SchoolService {
             return;
           }
         }),
-        catchError(() => of(void 0))
+        catchError(() => {
+          this.toastHandlingService.errorGeneral();
+          return EMPTY;
+        })
       );
   }
 
@@ -127,7 +122,10 @@ export class SchoolService {
             return;
           }
         }),
-        catchError(() => of(void 0))
+        catchError(() => {
+          this.toastHandlingService.errorGeneral();
+          return EMPTY;
+        })
       );
   }
 

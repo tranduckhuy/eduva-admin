@@ -13,17 +13,6 @@ export const schoolAdminsRoute: Routes = [
     },
   },
   {
-    path: ':schoolId/update',
-    loadComponent: () =>
-      import('./edit-school-admin/edit-school-admin.component').then(
-        mod => mod.EditSchoolAdminComponent
-      ),
-    data: {
-      heading: 'Cập nhật trường học',
-      breadcrumb: 'Cập nhật trường học',
-    },
-  },
-  {
     path: ':schoolAdminId',
     loadComponent: () =>
       import('./school-admin/school-admin.component').then(

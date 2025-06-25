@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { map, Observable, catchError, of } from 'rxjs';
+import { map, Observable, catchError, of, EMPTY } from 'rxjs';
 
 import { environment } from '../../../../environments/environment';
 
@@ -57,7 +57,10 @@ export class PricingPlanService {
             return null;
           }
         }),
-        catchError(() => of(null))
+        catchError(() => {
+          this.toastHandlingService.errorGeneral();
+          return EMPTY;
+        })
       );
   }
 
@@ -75,17 +78,9 @@ export class PricingPlanService {
             return null;
           }
         }),
-        catchError((err: HttpErrorResponse) => {
-          if (err.error.statusCode && StatusCode.PLAN_NOT_FOUND) {
-            this.router.navigateByUrl('pricing-plans');
-            this.toastHandlingService.error(
-              'Không tìm thấy dữ liệu',
-              'Gói đăng ký không tồn tại!'
-            );
-          } else {
-            this.toastHandlingService.errorGeneral();
-          }
-          return of(null);
+        catchError(() => {
+          this.toastHandlingService.errorGeneral();
+          return EMPTY;
         })
       );
   }
@@ -173,7 +168,10 @@ export class PricingPlanService {
             return;
           }
         }),
-        catchError(() => of(void 0))
+        catchError(() => {
+          this.toastHandlingService.errorGeneral();
+          return EMPTY;
+        })
       );
   }
 
@@ -195,7 +193,10 @@ export class PricingPlanService {
             return;
           }
         }),
-        catchError(() => of(void 0))
+        catchError(() => {
+          this.toastHandlingService.errorGeneral();
+          return EMPTY;
+        })
       );
   }
 

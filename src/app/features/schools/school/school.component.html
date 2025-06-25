@@ -1,106 +1,101 @@
-<form [formGroup]="form">
+<div
+  class="rounded border border-gray-100 bg-white p-6 shadow-main dark:border-dark-500 dark:bg-dark-200">
+  <div class="mb-2 flex items-center justify-between">
+    <h2 class="text-base font-medium">Thông tin trường học</h2>
+  </div>
   <div
-    class="rounded border border-gray-100 bg-white p-6 shadow-main dark:border-dark-500 dark:bg-dark-200">
-    <div class="mb-2 flex items-center justify-between">
-      <h2 class="text-base font-medium">Thông tin trường học</h2>
-      <app-button [variant]="'light'"
-        ><a routerLink="update">Chỉnh sửa</a></app-button
-      >
-    </div>
-    <div
-      class="rounded border border-gray-200 p-6 dark:border-dark-500 dark:bg-dark-200">
-      <div class="e-row e-row-cols-2 e-row-cols-md-1 e-g-4">
-        <div class="e-col">
-          <app-form-control
-            label="Tên trường"
-            type="text"
-            [name]="'name'"
-            formControlName="name"
-            [readOnly]="true">
-          </app-form-control>
-        </div>
-        <div class="e-col">
-          <app-form-control
-            label="Email liên hệ"
-            type="email"
-            [name]="'contactEmail'"
-            formControlName="contactEmail"
-            [readOnly]="true">
-          </app-form-control>
-        </div>
-        <div class="e-col">
-          <app-form-control
-            label="Số điện thoại"
-            type="tel"
-            [name]="'contactPhone'"
-            formControlName="contactPhone"
-            [readOnly]="true">
-          </app-form-control>
-        </div>
-        <div class="e-col">
-          <app-form-control
-            label="Trạng thái hoạt động"
-            type="text"
-            [name]="'status'"
-            formControlName="status"
-            [readOnly]="true">
-          </app-form-control>
-        </div>
-        <div class="e-col">
-          <app-form-control
-            label="Địa chỉ trường học"
-            type="text"
-            [name]="'address'"
-            formControlName="address"
-            [readOnly]="true">
-          </app-form-control>
-        </div>
-        <div class="e-col">
-          <app-form-control
-            label="Địa chỉ website"
-            type="url"
-            [name]="'websiteUrl'"
-            formControlName="websiteUrl"
-            [readOnly]="true">
-          </app-form-control>
-        </div>
+    class="rounded border border-gray-200 p-6 dark:border-dark-500 dark:bg-dark-200">
+    <div class="e-row e-row-cols-2 e-row-cols-md-1 e-g-4">
+      <div class="e-col">
+        <app-form-control
+          label="Tên trường"
+          type="text"
+          [name]="'name'"
+          [value]="schoolDetail()?.name ?? ''"
+          [readOnly]="true">
+        </app-form-control>
       </div>
+      <div class="e-col">
+        <app-form-control
+          label="Email liên hệ"
+          type="email"
+          [name]="'contactEmail'"
+          [value]="schoolDetail()?.contactEmail ?? ''"
+          [readOnly]="true">
+        </app-form-control>
+      </div>
+      <div class="e-col">
+        <app-form-control
+          label="Số điện thoại"
+          type="tel"
+          [name]="'contactPhone'"
+          [value]="schoolDetail()?.contactPhone ?? ''"
+          [readOnly]="true">
+        </app-form-control>
+      </div>
+      <div class="e-col">
+        <app-form-control
+          label="Trạng thái hoạt động"
+          type="text"
+          [name]="'status'"
+          [value]="
+            schoolDetail()?.status === 0 ? 'Đang hoạt động' : 'Vô hiệu hóa'
+          "
+          [readOnly]="true">
+        </app-form-control>
+      </div>
+      <div class="e-col">
+        <app-form-control
+          label="Địa chỉ trường học"
+          type="text"
+          [name]="'address'"
+          [value]="schoolDetail()?.address ?? ''"
+          [readOnly]="true">
+        </app-form-control>
+      </div>
+      <div class="e-col">
+        <app-form-control
+          label="Địa chỉ website"
+          type="url"
+          [name]="'websiteUrl'"
+          [value]="schoolDetail()?.websiteUrl ?? ''"
+          [readOnly]="true">
+        </app-form-control>
+      </div>
+    </div>
 
-      <div class="e-row e-row-cols-1 !mt-6"></div>
-    </div>
+    <div class="e-row e-row-cols-1 !mt-6"></div>
+  </div>
+</div>
+<div
+  class="mt-10 rounded border border-gray-100 bg-white p-6 shadow-main dark:border-dark-500 dark:bg-dark-200">
+  <div class="mb-2 flex items-center justify-between">
+    <h2 class="text-base font-medium">Thông tin quản lý</h2>
+    <a [routerLink]="['/school-admins', schoolDetail()?.schoolAdminId]"
+      ><app-button [variant]="'light'">Xem chi tiết</app-button></a
+    >
   </div>
   <div
-    class="mt-10 rounded border border-gray-100 bg-white p-6 shadow-main dark:border-dark-500 dark:bg-dark-200">
-    <div class="mb-2 flex items-center justify-between">
-      <h2 class="text-base font-medium">Thông tin quản lý</h2>
-      <app-button [variant]="'light'"
-        ><a [routerLink]="['/school-admins', form.get('schoolAdminId')?.value]"
-          >Xem chi tiết</a
-        ></app-button
-      >
-    </div>
-    <div
-      class="rounded border border-gray-200 p-6 dark:border-dark-500 dark:bg-dark-200">
-      <div class="e-row e-row-cols-2 e-row-cols-md-1 e-g-4">
-        <div class="e-col">
-          <app-form-control
-            label="Tên"
-            type="text"
-            [name]="'schoolAdminFullName'"
-            formControlName="schoolAdminFullName"
-            [readOnly]="true">
-          </app-form-control>
-        </div>
-        <div class="e-col">
-          <app-form-control
-            label="Email liên hệ"
-            type="email"
-            [name]="'schoolAdminEmail'"
-            formControlName="schoolAdminEmail"
-            [readOnly]="true">
-          </app-form-control>
-        </div>
+    class="rounded border border-gray-200 p-6 dark:border-dark-500 dark:bg-dark-200">
+    <div class="e-row e-row-cols-2 e-row-cols-md-1 e-g-4">
+      <div class="e-col">
+        <app-form-control
+          label="Tên"
+          type="text"
+          [name]="'schoolAdminFullName'"
+          [value]="schoolDetail()?.schoolAdminFullName ?? ''"
+          [readOnly]="true">
+        </app-form-control>
+      </div>
+      <div class="e-col">
+        <app-form-control
+          label="Email liên hệ"
+          type="email"
+          [name]="'schoolAdminEmail'"
+          [value]="schoolDetail()?.schoolAdminEmail ?? ''"
+          [readOnly]="true">
+        </app-form-control>
       </div>
     </div>
   </div>
-</form>
+</div>

@@ -31,7 +31,7 @@ export class PricingPlanCardComponent {
   storageLimitGB = input<number>(0);
   maxUsers = input<number>(0);
   priceMonthly = input<number>(0);
-  pricePerYear = input<string>('');
+  pricePerYear = input<number>(0);
   pricingPlanOptions = signal<string[]>([
     'Dashboard nâng cao',
     'Tạo bài giảng âm thanh',
