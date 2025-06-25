@@ -11,6 +11,8 @@ import { ToastHandlingService } from '../../../shared/services/core/toast/toast-
 import { StatusCode } from '../../../shared/constants/status-code.constant';
 import { EntityListParams } from '../../../shared/models/common/entity-list-params';
 import { EntityListResponse } from '../../../shared/models/api/response/entity-list-respone.model';
+import { HttpErrorResponse } from '@angular/common/http';
+import { SchoolDetail } from '../model/school-detail-model';
 
 @Injectable({
   providedIn: 'root',
@@ -56,6 +58,35 @@ export class SchoolService {
       );
   }
 
+  getSchoolDetailById(id: string): Observable<SchoolDetail | null> {
+    return this.requestService
+      .get<SchoolDetail | null>(`${this.SCHOOLS_API_URL}/${id}`)
+      .pipe(
+        map(res => {
+          if (res.statusCode === StatusCode.SUCCESS && res.data) {
+            this.schoolDetailSignal.set(res.data);
+            return res.data;
+          } else {
+            this.resetSchool();
+            this.toastHandlingService.errorGeneral();
+            return null;
+          }
+        }),
+        catchError((err: HttpErrorResponse) => {
+          if (err.error.statusCode && StatusCode.SCHOOL_NOT_FOUND) {
+            this.router.navigateByUrl('schools');
+            this.toastHandlingService.error(
+              'Không tìm thấy dữ liệu',
+              'Trường học không tồn tại!'
+            );
+          } else {
+            this.toastHandlingService.errorGeneral();
+          }
+          return of(null);
+        })
+      );
+  }
+
   activateSchool(id: string): Observable<void> {
     return this.requestService
       .put<void>(`${this.SCHOOLS_API_URL}/${id}/activate`, '', {
@@ -77,6 +108,7 @@ export class SchoolService {
         catchError(() => of(void 0))
       );
   }
+
   archiveSchool(id: string): Observable<void> {
     return this.requestService
       .put<void>(`${this.SCHOOLS_API_URL}/${id}/archive`, '', {
@@ -102,5 +134,9 @@ export class SchoolService {
   private resetSchools(): void {
     this.schoolsSignal.set([]);
     this.totalSchoolsSignal.set(0);
+  }
+
+  private resetSchool(): void {
+    this.schoolDetailSignal.set(null);
   }
 }

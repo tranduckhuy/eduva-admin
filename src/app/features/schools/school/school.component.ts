@@ -1,78 +1,74 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  inject,
   input,
-  LOCALE_ID,
   OnInit,
-  signal,
 } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import localeVi from '@angular/common/locales/vi';
-import { DatePipe, registerLocaleData } from '@angular/common';
 
 import { FormControlComponent } from '../../../shared/components/form-control/form-control.component';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
-
-const school = {
-  id: 1,
-  name: 'Trường Tiểu học Nguyễn Văn Trỗi',
-  code: 'THNVTR01',
-  address: '123 Đường Lý Thường Kiệt, Quận 10, TP. Hồ Chí Minh',
-  contactEmail: 'contact@thnguyenvantroithi.edu.vn',
-  phoneNumber: '028-38451234',
-  websiteUrl: 'https://thnguyenvantroithi.edu.vn',
-  status: 'active',
-  createdAt: '2022-01-10T08:30:00',
-  createdBy: 'admin',
-  lastModifiedAt: '2023-02-15T10:00:00',
-  lastModifiedBy: 'admin',
-};
-
-registerLocaleData(localeVi);
+import { SchoolService } from '../service/school.service';
+import { LoadingService } from '../../../shared/services/core/loading/loading.service';
 
 @Component({
   selector: 'app-school',
   standalone: true,
-  imports: [FormControlComponent, FormsModule, ButtonComponent, RouterLink],
+  imports: [
+    FormControlComponent,
+    ReactiveFormsModule,
+    ButtonComponent,
+    RouterLink,
+  ],
   templateUrl: './school.component.html',
   styleUrl: './school.component.css',
-  providers: [DatePipe, { provide: LOCALE_ID, useValue: 'vi' }],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SchoolComponent implements OnInit {
+  private readonly fb = inject(FormBuilder);
+  private readonly schoolService = inject(SchoolService);
+  private readonly loadingService = inject(LoadingService);
+
   schoolId = input.required<string>();
 
-  name = signal<string>('');
-  code = signal<string>('');
-  address = signal<string>('');
-  contactEmail = signal<string>('');
-  phoneNumber = signal<string>('');
-  websiteUrl = signal<string>('');
-  status = signal<string>('');
-  createdAt = signal<string>('');
-  lastModifiedAt = signal<string>('');
+  isLoading = this.loadingService;
+  schoolDetail = this.schoolService.schoolDetail;
 
-  schoolAdminName = signal<string>('Nguyễn Văn A');
-  schoolAdminEmail = signal<string>('nguyenvana@gmail.com');
-
-  constructor(private readonly datePipe: DatePipe) {}
-
-  formatDateVi(date: Date | string): string {
-    return this.datePipe.transform(date, 'medium', undefined, 'vi') ?? '';
+  constructor() {
+    this.form = this.fb.group({
+      name: [''],
+      contactEmail: [''],
+      contactPhone: [''],
+      address: [''],
+      websiteUrl: [''],
+      status: [0],
+      schoolAdminId: [''],
+      schoolAdminFullName: [''],
+      schoolAdminEmail: [''],
+    });
   }
 
+  form!: FormGroup;
+
   ngOnInit(): void {
-    this.name.set(school.name);
-    this.code.set(school.code);
-    this.contactEmail.set(school.contactEmail);
-    this.address.set(school.address);
-    this.phoneNumber.set(school.phoneNumber);
-    this.websiteUrl.set(school.websiteUrl);
-    this.status.set(
-      school.status === 'active' ? 'Đang hoạt động' : 'Vô hiệu hóa'
-    );
-    this.createdAt.set(this.formatDateVi(new Date(school.createdAt)));
-    this.lastModifiedAt.set(this.formatDateVi(new Date(school.lastModifiedAt)));
+    this.schoolService
+      .getSchoolDetailById(this.schoolId())
+      .subscribe(detail => {
+        if (detail) {
+          this.form.patchValue({
+            name: detail.name,
+            contactEmail: detail.contactEmail,
+            contactPhone: detail.contactPhone,
+            address: detail.address,
+            websiteUrl: detail.websiteUrl,
+            status: detail.status === 0 ? 'Đang hoạt động' : 'Vô hiệu hóa',
+            schoolAdminId: detail.schoolAdminId,
+            schoolAdminFullName: detail.schoolAdminFullName,
+            schoolAdminEmail: detail.schoolAdminEmail,
+          });
+        }
+      });
   }
 }
