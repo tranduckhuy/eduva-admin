@@ -3,15 +3,9 @@ import {
   Component,
   inject,
   input,
-  OnInit,
   signal,
 } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 import { FormControlComponent } from '../../../shared/components/form-control/form-control.component';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
