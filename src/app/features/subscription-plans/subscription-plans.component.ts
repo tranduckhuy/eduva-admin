@@ -20,11 +20,12 @@ import { LeadingZeroPipe } from '../../shared/pipes/leading-zero.pipe';
 import { SearchInputComponent } from '../../shared/components/search-input/search-input.component';
 import { BadgeComponent } from '../../shared/components/badge/badge.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
-import { PricingPlanService } from './service/pricing-plan.service';
-import { PRICING_PLANS_LIMIT } from '../../shared/constants/common.constant';
 import { LoadingService } from '../../shared/services/core/loading/loading.service';
 import { TableSkeletonComponent } from '../../shared/components/skeleton/table-skeleton/table-skeleton.component';
 import { EntityListParams } from '../../shared/models/common/entity-list-params';
+import { SUBSCRIPTION_PLANS_LIMIT } from '../../shared/constants/common.constant';
+import { SubscriptionPlanService } from './service/subscription-plan.service';
+import { StorageFormatPipe } from '../../shared/pipes/storage-format.pipe';
 
 registerLocaleData(localeVi);
 
@@ -34,7 +35,7 @@ interface StatusOption {
 }
 
 @Component({
-  selector: 'app-pricing-plans',
+  selector: 'app-subscription-plans',
   standalone: true,
   imports: [
     CurrencyPipe,
@@ -43,25 +44,26 @@ interface StatusOption {
     ButtonComponent,
     TableModule,
     LeadingZeroPipe,
+    StorageFormatPipe,
     TooltipModule,
     RouterLink,
     FormsModule,
     Select,
     TableSkeletonComponent,
   ],
-  templateUrl: './pricing-plans.component.html',
-  styleUrl: './pricing-plans.component.css',
+  templateUrl: './subscription-plans.component.html',
+  styleUrl: './subscription-plans.component.css',
   providers: [{ provide: LOCALE_ID, useValue: 'vi-VN' }],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PricingPlansComponent implements OnInit {
+export class SubscriptionPlansComponent implements OnInit {
   private readonly confirmationService = inject(ConfirmationService);
-  private readonly pricingPlanService = inject(PricingPlanService);
+  private readonly subscriptionPlanService = inject(SubscriptionPlanService);
   private readonly loadingService = inject(LoadingService);
 
   // Pagination & Sorting signals
   first = signal<number>(0);
-  rows = signal<number>(PRICING_PLANS_LIMIT);
+  rows = signal<number>(SUBSCRIPTION_PLANS_LIMIT);
   sortField = signal<string | null>(null);
   sortOrder = signal<number>(0); // 1 = asc, -1 = desc
   statusSelect = signal<StatusOption | undefined>(undefined);
@@ -92,12 +94,12 @@ export class PricingPlansComponent implements OnInit {
   ]);
 
   // Signals from service
-  isLoadingGet = this.loadingService.is('get-pricing-plans');
-  isLoadingArchive = this.loadingService.is('archive-pricing-plan');
-  isLoadingActive = this.loadingService.is('active-pricing-plan');
+  isLoadingGet = this.loadingService.is('get-subscription-plans');
+  isLoadingArchive = this.loadingService.is('archive-subscription-plan');
+  isLoadingActive = this.loadingService.is('active-subscription-plan');
 
-  pricingPlans = this.pricingPlanService.pricingPlans;
-  totalPricingPlans = this.pricingPlanService.totalPricingPlans;
+  subscriptionPlans = this.subscriptionPlanService.subscriptionPlans;
+  totalSubscriptionPlans = this.subscriptionPlanService.totalSubscriptionPlans;
 
   ngOnInit(): void {
     this.loadData();
@@ -113,7 +115,7 @@ export class PricingPlansComponent implements OnInit {
       activeOnly: this.getActiveOnlyStatus(),
     };
 
-    this.pricingPlanService.getPricingPlans(params).subscribe();
+    this.subscriptionPlanService.getSubscriptionPlans(params).subscribe();
   }
 
   private getActiveOnlyStatus(): boolean | undefined {
@@ -142,7 +144,7 @@ export class PricingPlansComponent implements OnInit {
 
   loadDataLazy(event: TableLazyLoadEvent): void {
     const first = event.first ?? 0;
-    const rows = event.rows ?? PRICING_PLANS_LIMIT;
+    const rows = event.rows ?? SUBSCRIPTION_PLANS_LIMIT;
 
     // Handle sorting
     if (event.sortField) {
@@ -171,7 +173,7 @@ export class PricingPlansComponent implements OnInit {
     this.loadData();
   }
 
-  openConfirmArchiveDialog(event: Event, pricingPlanId: string): void {
+  openConfirmArchiveDialog(event: Event, subscriptionPlanId: string): void {
     this.confirmationService.confirm({
       target: event.target as EventTarget,
       message: 'Bạn có chắc chắn muốn vô hiệu hóa gói đăng ký này không?',
@@ -188,13 +190,15 @@ export class PricingPlansComponent implements OnInit {
         severity: 'danger',
       },
       accept: () => {
-        this.pricingPlanService.archivePricingPlan(pricingPlanId).subscribe({
-          next: () => this.loadData(),
-        });
+        this.subscriptionPlanService
+          .archiveSubscriptionPlan(subscriptionPlanId)
+          .subscribe({
+            next: () => this.loadData(),
+          });
       },
     });
   }
-  openConfirmActiveDialog(event: Event, pricingPlanId: string): void {
+  openConfirmActiveDialog(event: Event, subscriptionPlanId: string): void {
     this.confirmationService.confirm({
       target: event.target as EventTarget,
       message: 'Bạn có chắc chắn muốn kích hoạt gói đăng ký này không?',
@@ -210,9 +214,11 @@ export class PricingPlansComponent implements OnInit {
         label: 'Xác nhận',
       },
       accept: () => {
-        this.pricingPlanService.activatePricingPlan(pricingPlanId).subscribe({
-          next: () => this.loadData(),
-        });
+        this.subscriptionPlanService
+          .activateSubscriptionPlan(subscriptionPlanId)
+          .subscribe({
+            next: () => this.loadData(),
+          });
       },
     });
   }

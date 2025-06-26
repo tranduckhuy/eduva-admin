@@ -91,9 +91,9 @@ export class CreditPacksComponent {
   ]);
 
   // Signals from service
-  isLoadingGet = this.loadingService.is('get-pricing-plans');
-  isLoadingArchive = this.loadingService.is('archive-pricing-plan');
-  isLoadingActive = this.loadingService.is('active-pricing-plan');
+  isLoadingGet = this.loadingService.is('get-credit-packs');
+  isLoadingArchive = this.loadingService.is('archive-credit-pack');
+  isLoadingActive = this.loadingService.is('active-credit-pack');
 
   creditPacks = this.creditPackService.creditPacks;
   totalCreditPacks = this.creditPackService.totalCreditPack;

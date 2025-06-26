@@ -4,9 +4,11 @@
       class="rounded border border-gray-100 bg-white p-4 pb-6 shadow-main dark:border-dark-500 dark:bg-dark-200">
       <div class="mb-4 flex items-center justify-between">
         <h2 class="text-base font-medium">Thông tin gói credit</h2>
-        <app-button [variant]="'light'" [type]="'submit'"
-          >Lưu thông tin</app-button
-        >
+        <a [routerLink]="['/credit-packs', creditPackId(), 'update']">
+          <app-button [variant]="'light'" [type]="'submit'"
+            >Chỉnh sửa</app-button
+          >
+        </a>
       </div>
 
       <div class="e-row e-row-cols-1 e-g-4">
@@ -15,6 +17,7 @@
             label="Tên gói"
             type="text"
             [name]="'name'"
+            [readOnly]="true"
             [value]="creditPackDetail()?.name ?? ''">
           </app-form-control>
         </div>
@@ -23,6 +26,7 @@
             label="Giá gói (vnd)"
             [type]="'number'"
             [name]="'price'"
+            [readOnly]="true"
             [value]="creditPackDetail()?.price + ''">
           </app-form-control>
         </div>
@@ -31,6 +35,7 @@
             label="Số lượng credit"
             [type]="'number'"
             [name]="'credits'"
+            [readOnly]="true"
             [value]="creditPackDetail()?.credits + ''">
           </app-form-control>
         </div>
@@ -39,6 +44,7 @@
             label="Credit tặng thêm"
             [type]="'number'"
             [name]="'bonusCredits'"
+            [readOnly]="true"
             [value]="creditPackDetail()?.bonusCredits + ''">
           </app-form-control>
         </div>

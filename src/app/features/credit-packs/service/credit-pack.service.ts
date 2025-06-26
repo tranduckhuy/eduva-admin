@@ -150,14 +150,14 @@ export class CreditPackService {
   activateCreditPack(id: string): Observable<void> {
     return this.requestService
       .put<void>(`${this.CREDIT_PACKS_API_URL}/${id}/activate`, '', {
-        loadingKey: 'activate-pricing-plan',
+        loadingKey: 'activate-credit-pack',
       })
       .pipe(
         map(res => {
           if (res.statusCode === StatusCode.SUCCESS) {
             this.toastHandlingService.success(
               'Thành công',
-              'Kích hoạt gói đăng ký thành công!'
+              'Kích hoạt gói credit thành công!'
             );
           } else {
             this.toastHandlingService.errorGeneral();
@@ -173,14 +173,14 @@ export class CreditPackService {
   archiveCreditPack(id: string): Observable<void> {
     return this.requestService
       .put<void>(`${this.CREDIT_PACKS_API_URL}/${id}/archive`, '', {
-        loadingKey: 'archive-pricing-plan',
+        loadingKey: 'archive-credit-pack',
       })
       .pipe(
         map(res => {
           if (res.statusCode === StatusCode.SUCCESS) {
             this.toastHandlingService.success(
               'Thành công',
-              'Vô hiệu hóa gói đăng ký thành công!'
+              'Vô hiệu hóa gói credit thành công!'
             );
           } else {
             this.toastHandlingService.errorGeneral();

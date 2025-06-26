@@ -15,34 +15,34 @@ import {
 
 import { FormControlComponent } from '../../../shared/components/form-control/form-control.component';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
-import { PricingPlanCardComponent } from '../pricing-plan-card/pricing-plan-card.component';
-import { PricingPlanService } from '../service/pricing-plan.service';
 import { LoadingService } from '../../../shared/services/core/loading/loading.service';
-import { PricingPlanRequest } from '../model/pricing-plan-request.model';
 import { ToastHandlingService } from '../../../shared/services/core/toast/toast-handling.service';
+import { SubscriptionPlanService } from '../service/subscription-plan.service';
+import { SubscriptionPlanRequest } from '../model/subscription-plan-request.model';
+import { SubscriptionPlanCardComponent } from '../subscription-plan-card/subscription-plan-card.component';
 
 @Component({
-  selector: 'app-edit-pricing-plan',
+  selector: 'app-edit-subscription-plan',
   standalone: true,
   imports: [
     FormControlComponent,
     ButtonComponent,
-    PricingPlanCardComponent,
+    SubscriptionPlanCardComponent,
     ReactiveFormsModule,
   ],
-  templateUrl: './edit-pricing-plan.component.html',
-  styleUrl: './edit-pricing-plan.component.css',
+  templateUrl: './edit-subscription-plan.component.html',
+  styleUrl: './edit-subscription-plan.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EditPricingPlanComponent implements OnInit {
+export class EditSubscriptionPlanComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
-  private readonly pricingPlanService = inject(PricingPlanService);
+  private readonly subscriptionPlanService = inject(SubscriptionPlanService);
   private readonly loadingService = inject(LoadingService);
   private readonly toastHandlingService = inject(ToastHandlingService);
 
   isLoading = this.loadingService.isLoading;
-  pricingPlanDetail = this.pricingPlanService.pricingPlanDetail;
-  originalData: PricingPlanRequest | null = null; // Store original data
+  subscriptionPlanDetail = this.subscriptionPlanService.subscriptionPlanDetail;
+  originalData: SubscriptionPlanRequest | null = null; // Store original data
 
   constructor() {
     this.form = this.fb.group({
@@ -57,13 +57,13 @@ export class EditPricingPlanComponent implements OnInit {
 
   form!: FormGroup;
 
-  pricingPlanId = input.required<string>();
+  subscriptionPlanId = input.required<string>();
 
   submitted = signal<boolean>(false);
 
   ngOnInit(): void {
-    this.pricingPlanService
-      .getPricingPlanDetailById(this.pricingPlanId())
+    this.subscriptionPlanService
+      .getSubscriptionPlanDetailById(this.subscriptionPlanId())
       .subscribe(detail => {
         if (detail) {
           this.originalData = {
@@ -86,7 +86,7 @@ export class EditPricingPlanComponent implements OnInit {
     const currentValues = this.form.value;
     return Object.keys(this.originalData).some(
       key =>
-        this.originalData![key as keyof PricingPlanRequest] !==
+        this.originalData![key as keyof SubscriptionPlanRequest] !==
         currentValues[key]
     );
   }
@@ -106,7 +106,7 @@ export class EditPricingPlanComponent implements OnInit {
       return;
     }
 
-    const req: PricingPlanRequest = {
+    const req: SubscriptionPlanRequest = {
       name: this.form.value.name,
       description: this.form.value.description,
       maxUsers: this.form.value.maxUsers,
@@ -115,8 +115,8 @@ export class EditPricingPlanComponent implements OnInit {
       pricePerYear: this.form.value.pricePerYear,
     };
 
-    this.pricingPlanService
-      .updatePricingPlan(req, this.pricingPlanId())
+    this.subscriptionPlanService
+      .updateSubscriptionPlan(req, this.subscriptionPlanId())
       .subscribe();
   }
 }

@@ -40,7 +40,7 @@
         >Số lượng tài khoản: {{ maxUsers() }}</span
       >
     </li>
-    @for (option of pricingPlanOptions(); track option) {
+    @for (option of subscriptionPlanOptions(); track option) {
       <li class="flex items-center gap-4">
         <span class="material-symbols-outlined text-success-500"> check </span>
         <span class="text-[15px] font-medium dark:text-dark-100">{{

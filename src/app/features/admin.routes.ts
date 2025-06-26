@@ -50,10 +50,10 @@ export const adminRoutes: Routes = [
           import('./invoices/invoices.routes').then(mod => mod.invoicesRoute),
       },
       {
-        path: 'pricing-plans',
+        path: 'subscription-plans',
         loadChildren: () =>
-          import('./pricing-plans/pricing-plans.routes').then(
-            mod => mod.pricingPlansRoute
+          import('./subscription-plans/subscription-plans.routes').then(
+            mod => mod.subscriptionPlansRoute
           ),
       },
       {

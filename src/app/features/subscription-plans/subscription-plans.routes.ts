@@ -1,11 +1,11 @@
 import { Routes } from '@angular/router';
 
-export const pricingPlansRoute: Routes = [
+export const subscriptionPlansRoute: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('./pricing-plans.component').then(
-        mod => mod.PricingPlansComponent
+      import('./subscription-plans.component').then(
+        mod => mod.SubscriptionPlansComponent
       ),
     data: {
       heading: 'Danh sách gói đăng ký',
@@ -13,10 +13,10 @@ export const pricingPlansRoute: Routes = [
     },
   },
   {
-    path: ':pricingPlanId/update',
+    path: ':subscriptionPlanId/update',
     loadComponent: () =>
-      import('./edit-pricing-plan/edit-pricing-plan.component').then(
-        mod => mod.EditPricingPlanComponent
+      import('./edit-subscription-plan/edit-subscription-plan.component').then(
+        mod => mod.EditSubscriptionPlanComponent
       ),
     data: {
       heading: 'Cập nhật gói đăng ký',
@@ -26,19 +26,19 @@ export const pricingPlansRoute: Routes = [
   {
     path: 'create',
     loadComponent: () =>
-      import('./pricing-plan-create/pricing-plan-create.component').then(
-        mod => mod.PricingPlanCreateComponent
-      ),
+      import(
+        './subscription-plan-create/subscription-plan-create.component'
+      ).then(mod => mod.SubscriptionPlanCreateComponent),
     data: {
       heading: 'Tạo gói đăng ký',
       breadcrumb: 'Tạo gói đăng ký',
     },
   },
   {
-    path: ':pricingPlanId',
+    path: ':subscriptionPlanId',
     loadComponent: () =>
-      import('./pricing-plan/pricing-plan.component').then(
-        mod => mod.PricingPlanComponent
+      import('./subscription-plan/subscription-plan.component').then(
+        mod => mod.SubscriptionPlanComponent
       ),
     data: {
       heading: 'Chi tiết gói đăng ký',

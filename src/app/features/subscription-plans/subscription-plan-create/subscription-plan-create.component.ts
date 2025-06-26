@@ -8,27 +8,27 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 import { FormControlComponent } from '../../../shared/components/form-control/form-control.component';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
-import { PricingPlanCardComponent } from '../pricing-plan-card/pricing-plan-card.component';
-import { PricingPlanService } from '../service/pricing-plan.service';
+import { SubscriptionPlanCardComponent } from '../subscription-plan-card/subscription-plan-card.component';
+import { SubscriptionPlanService } from '../service/subscription-plan.service';
 import { LoadingService } from '../../../shared/services/core/loading/loading.service';
-import { PricingPlanRequest } from '../model/pricing-plan-request.model';
+import { SubscriptionPlanRequest } from '../model/subscription-plan-request.model';
 
 @Component({
-  selector: 'app-pricing-plan-create',
+  selector: 'app-subscription-plan-create',
   standalone: true,
   imports: [
     FormControlComponent,
     ReactiveFormsModule,
     ButtonComponent,
-    PricingPlanCardComponent,
+    SubscriptionPlanCardComponent,
   ],
-  templateUrl: './pricing-plan-create.component.html',
-  styleUrl: './pricing-plan-create.component.css',
+  templateUrl: './subscription-plan-create.component.html',
+  styleUrl: './subscription-plan-create.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PricingPlanCreateComponent {
+export class SubscriptionPlanCreateComponent {
   private readonly fb = inject(FormBuilder);
-  private readonly pricingPlanService = inject(PricingPlanService);
+  private readonly SubscriptionPlanService = inject(SubscriptionPlanService);
   private readonly loadingService = inject(LoadingService);
 
   isLoading = this.loadingService;
@@ -55,7 +55,7 @@ export class PricingPlanCreateComponent {
       return;
     }
 
-    const req: PricingPlanRequest = {
+    const req: SubscriptionPlanRequest = {
       name: this.form.value.name,
       description: this.form.value.description,
       maxUsers: this.form.value.maxUsers,
@@ -64,6 +64,6 @@ export class PricingPlanCreateComponent {
       pricePerYear: this.form.value.pricePerYear,
     };
 
-    this.pricingPlanService.createPricingPlan(req).subscribe();
+    this.SubscriptionPlanService.createSubscriptionPlan(req).subscribe();
   }
 }

@@ -115,6 +115,16 @@
           </td>
           <td class="!text-center">
             <div class="flex items-center justify-center gap-2">
+              <a [routerLink]="['/credit-packs', credit.id]">
+                <app-button
+                  pTooltip="Xem chi tiết"
+                  tooltipPosition="top"
+                  [variant]="'light'"
+                  [size]="'xs'"
+                  class="material-symbols-outlined rounded-full px-[7px] pb-[6px] pt-[8px] text-lg leading-none"
+                  >visibility</app-button
+                >
+              </a>
               <a [routerLink]="['/credit-packs', credit.id, 'update']">
                 <app-button
                   pTooltip="Chỉnh sửa"

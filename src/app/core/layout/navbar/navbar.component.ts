@@ -90,7 +90,7 @@ export class NavbarComponent {
           submenuItems: [
             {
               label: 'Gói đăng ký',
-              link: '/pricing-plans',
+              link: '/subscription-plans',
               active: true,
             },
             { label: 'Gói credit', link: '/credit-packs', active: true },

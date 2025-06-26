@@ -4,7 +4,7 @@ type Status =
   | 2 // Deleted
   | 3; // Archived
 
-export interface PricingPlan {
+export interface SubscriptionPlan {
   description?: string;
   id: number;
   maxUsers: number;

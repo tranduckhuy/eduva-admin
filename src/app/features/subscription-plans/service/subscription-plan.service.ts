@@ -1,4 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 
 import { map, Observable, catchError, of, EMPTY } from 'rxjs';
@@ -8,51 +9,52 @@ import { environment } from '../../../../environments/environment';
 import { RequestService } from '../../../shared/services/core/request/request.service';
 import { ToastHandlingService } from '../../../shared/services/core/toast/toast-handling.service';
 import { StatusCode } from '../../../shared/constants/status-code.constant';
-import { PricingPlan } from '../model/pricing-plan.model';
 import { EntityListResponse } from '../../../shared/models/api/response/entity-list-response.model';
-import { PricingPlanRequest } from '../model/pricing-plan-request.model';
-import { HttpErrorResponse } from '@angular/common/http';
 import { EntityListParams } from '../../../shared/models/common/entity-list-params';
+import { SubscriptionPlan } from '../model/subscription-plan.model';
+import { SubscriptionPlanRequest } from '../model/subscription-plan-request.model';
+
 @Injectable({
   providedIn: 'root',
 })
-export class PricingPlanService {
+export class SubscriptionPlanService {
   private readonly requestService = inject(RequestService);
   private readonly toastHandlingService = inject(ToastHandlingService);
   private readonly router = inject(Router);
 
   private readonly BASE_API_URL = environment.baseApiUrl;
-  private readonly PRICING_PLANS_API_URL = `${this.BASE_API_URL}/subscription-plans`;
+  private readonly SUBSCRIPTION_PLANS_API_URL = `${this.BASE_API_URL}/subscription-plans`;
 
-  private readonly pricingPlansSignal = signal<PricingPlan[]>([]);
-  pricingPlans = this.pricingPlansSignal.asReadonly();
+  private readonly subscriptionPlansSignal = signal<SubscriptionPlan[]>([]);
+  subscriptionPlans = this.subscriptionPlansSignal.asReadonly();
 
-  private readonly totalPricingPlansSignal = signal<number>(0);
-  totalPricingPlans = this.totalPricingPlansSignal.asReadonly();
+  private readonly totalSubscriptionPlansSignal = signal<number>(0);
+  totalSubscriptionPlans = this.totalSubscriptionPlansSignal.asReadonly();
 
-  private readonly pricingPlanDetailSignal = signal<PricingPlan | null>(null);
-  pricingPlanDetail = this.pricingPlanDetailSignal.asReadonly();
+  private readonly subscriptionPlanDetailSignal =
+    signal<SubscriptionPlan | null>(null);
+  subscriptionPlanDetail = this.subscriptionPlanDetailSignal.asReadonly();
 
-  getPricingPlans(
+  getSubscriptionPlans(
     params: EntityListParams
-  ): Observable<EntityListResponse<PricingPlan> | null> {
+  ): Observable<EntityListResponse<SubscriptionPlan> | null> {
     return this.requestService
-      .get<EntityListResponse<PricingPlan> | null>(
-        this.PRICING_PLANS_API_URL,
+      .get<EntityListResponse<SubscriptionPlan> | null>(
+        this.SUBSCRIPTION_PLANS_API_URL,
         params,
         {
-          loadingKey: 'get-pricing-plans',
+          loadingKey: 'get-subscription-plans',
         }
       )
       .pipe(
         map(res => {
           if (res.statusCode === StatusCode.SUCCESS && res.data) {
             const { data, count } = res.data;
-            this.pricingPlansSignal.set(data);
-            this.totalPricingPlansSignal.set(count);
+            this.subscriptionPlansSignal.set(data);
+            this.totalSubscriptionPlansSignal.set(count);
             return res.data;
           } else {
-            this.resetPricingPlans();
+            this.resetSubscriptionPlans();
             this.toastHandlingService.errorGeneral();
             return null;
           }
@@ -64,16 +66,18 @@ export class PricingPlanService {
       );
   }
 
-  getPricingPlanDetailById(id: string): Observable<PricingPlan | null> {
+  getSubscriptionPlanDetailById(
+    id: string
+  ): Observable<SubscriptionPlan | null> {
     return this.requestService
-      .get<PricingPlan | null>(`${this.PRICING_PLANS_API_URL}/${id}`)
+      .get<SubscriptionPlan | null>(`${this.SUBSCRIPTION_PLANS_API_URL}/${id}`)
       .pipe(
         map(res => {
           if (res.statusCode === StatusCode.SUCCESS && res.data) {
-            this.pricingPlanDetailSignal.set(res.data);
+            this.subscriptionPlanDetailSignal.set(res.data);
             return res.data;
           } else {
-            this.resetPricingPlanDetail();
+            this.resetSubscriptionPlanDetail();
             this.toastHandlingService.errorGeneral();
             return null;
           }
@@ -85,39 +89,44 @@ export class PricingPlanService {
       );
   }
 
-  createPricingPlan(req: PricingPlanRequest): Observable<void> {
-    return this.requestService.post<void>(this.PRICING_PLANS_API_URL, req).pipe(
-      map(res => {
-        if (res.statusCode === StatusCode.SUCCESS) {
-          this.router.navigateByUrl('pricing-plans');
-          this.toastHandlingService.success(
-            'Thành công',
-            'Gói đăng ký đã được tạo mới thành công!'
-          );
-        } else {
-          this.toastHandlingService.errorGeneral();
-        }
-      }),
-      catchError((err: HttpErrorResponse) => {
-        if (
-          err.error.statusCode &&
-          StatusCode.PROVIDED_INFORMATION_IS_INVALID
-        ) {
-          this.toastHandlingService.error(
-            'Thông tin cung cấp không hợp lệ',
-            'Tên gói đăng ký đã tồn tại. Vui lòng chọn tên khác!'
-          );
-        } else {
-          this.toastHandlingService.errorGeneral();
-        }
-        return of(void 0);
-      })
-    );
+  createSubscriptionPlan(req: SubscriptionPlanRequest): Observable<void> {
+    return this.requestService
+      .post<void>(this.SUBSCRIPTION_PLANS_API_URL, req)
+      .pipe(
+        map(res => {
+          if (res.statusCode === StatusCode.SUCCESS) {
+            this.router.navigateByUrl('subscription-plans');
+            this.toastHandlingService.success(
+              'Thành công',
+              'Gói đăng ký đã được tạo mới thành công!'
+            );
+          } else {
+            this.toastHandlingService.errorGeneral();
+          }
+        }),
+        catchError((err: HttpErrorResponse) => {
+          if (
+            err.error.statusCode &&
+            StatusCode.PROVIDED_INFORMATION_IS_INVALID
+          ) {
+            this.toastHandlingService.error(
+              'Thông tin cung cấp không hợp lệ',
+              'Tên gói đăng ký đã tồn tại. Vui lòng chọn tên khác!'
+            );
+          } else {
+            this.toastHandlingService.errorGeneral();
+          }
+          return of(void 0);
+        })
+      );
   }
 
-  updatePricingPlan(req: PricingPlanRequest, id: string): Observable<void> {
+  updateSubscriptionPlan(
+    req: SubscriptionPlanRequest,
+    id: string
+  ): Observable<void> {
     return this.requestService
-      .put<void>(`${this.PRICING_PLANS_API_URL}/${id}`, req)
+      .put<void>(`${this.SUBSCRIPTION_PLANS_API_URL}/${id}`, req)
       .pipe(
         map(res => {
           if (res.statusCode === StatusCode.SUCCESS) {
@@ -146,10 +155,10 @@ export class PricingPlanService {
       );
   }
 
-  activatePricingPlan(id: string): Observable<void> {
+  activateSubscriptionPlan(id: string): Observable<void> {
     return this.requestService
-      .put<void>(`${this.PRICING_PLANS_API_URL}/${id}/activate`, '', {
-        loadingKey: 'activate-pricing-plan',
+      .put<void>(`${this.SUBSCRIPTION_PLANS_API_URL}/${id}/activate`, '', {
+        loadingKey: 'activate-subscription-plan',
       })
       .pipe(
         map(res => {
@@ -169,10 +178,10 @@ export class PricingPlanService {
       );
   }
 
-  archivePricingPlan(id: string): Observable<void> {
+  archiveSubscriptionPlan(id: string): Observable<void> {
     return this.requestService
-      .put<void>(`${this.PRICING_PLANS_API_URL}/${id}/archive`, '', {
-        loadingKey: 'archive-pricing-plan',
+      .put<void>(`${this.SUBSCRIPTION_PLANS_API_URL}/${id}/archive`, '', {
+        loadingKey: 'archive-subscription-plan',
       })
       .pipe(
         map(res => {
@@ -192,12 +201,12 @@ export class PricingPlanService {
       );
   }
 
-  private resetPricingPlans(): void {
-    this.pricingPlansSignal.set([]);
-    this.totalPricingPlansSignal.set(0);
+  private resetSubscriptionPlans(): void {
+    this.subscriptionPlansSignal.set([]);
+    this.totalSubscriptionPlansSignal.set(0);
   }
 
-  private resetPricingPlanDetail(): void {
-    this.pricingPlanDetailSignal.set(null);
+  private resetSubscriptionPlanDetail(): void {
+    this.subscriptionPlanDetailSignal.set(null);
   }
 }

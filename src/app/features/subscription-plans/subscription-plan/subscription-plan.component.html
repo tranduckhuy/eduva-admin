@@ -4,7 +4,12 @@
       class="rounded border border-gray-100 bg-white p-4 shadow-main dark:border-dark-500 dark:bg-dark-200">
       <div class="mb-4 flex items-center justify-between">
         <h2 class="text-base font-medium">Thông tin gói đăng ký</h2>
-        <a [routerLink]="['/pricing-plans', pricingPlanId(), 'update']">
+        <a
+          [routerLink]="[
+            '/subscription-plans',
+            subscriptionPlanId(),
+            'update',
+          ]">
           <app-button [variant]="'light'" [type]="'submit'"
             >Chỉnh sửa</app-button
           >
@@ -18,7 +23,7 @@
             label="Tên gói"
             type="text"
             [name]="'name'"
-            [value]="pricingPlanDetail()?.name ?? ''">
+            [value]="subscriptionPlanDetail()?.name ?? ''">
           </app-form-control>
         </div>
         <div class="e-col">
@@ -27,7 +32,7 @@
             label="Giá tháng"
             [type]="'number'"
             [name]="'priceMonthly'"
-            [value]="pricingPlanDetail()?.priceMonthly + ''">
+            [value]="subscriptionPlanDetail()?.priceMonthly + ''">
           </app-form-control>
         </div>
         <div class="e-col">
@@ -36,7 +41,7 @@
             label="Giá năm"
             [type]="'number'"
             [name]="'pricePerYear'"
-            [value]="pricingPlanDetail()?.pricePerYear + ''">
+            [value]="subscriptionPlanDetail()?.pricePerYear + ''">
           </app-form-control>
         </div>
         <div class="e-col">
@@ -45,7 +50,7 @@
             label="Số lượng tài khoản"
             [type]="'number'"
             [name]="'maxUsers'"
-            [value]="pricingPlanDetail()?.maxUsers + ''">
+            [value]="subscriptionPlanDetail()?.maxUsers + ''">
           </app-form-control>
         </div>
         <div class="e-col">
@@ -54,7 +59,7 @@
             label="Dung lượng (GB)"
             [type]="'text'"
             [name]="'storageLimitGB'"
-            [value]="pricingPlanDetail()?.maxUsers + ''">
+            [value]="subscriptionPlanDetail()?.maxUsers + ''">
           </app-form-control>
         </div>
         <div class="e-col-12">
@@ -62,7 +67,7 @@
             [readOnly]="true"
             [isTextarea]="true"
             [label]="'Mô tả'"
-            [value]="pricingPlanDetail()?.description ?? ''"
+            [value]="subscriptionPlanDetail()?.description ?? ''"
             [name]="'description'">
           </app-form-control>
         </div>
@@ -71,12 +76,11 @@
   </div>
 
   <div class="e-col-4 e-col-lg-12">
-    <app-pricing-plan-card
-      [name]="pricingPlanDetail()?.name ?? ''"
-      [maxUsers]="pricingPlanDetail()?.maxUsers ?? 0"
-      [storageLimitGB]="pricingPlanDetail()?.storageLimitGB ?? 0"
-      [description]="pricingPlanDetail()?.description ?? ''"
-      [priceMonthly]="pricingPlanDetail()?.priceMonthly ?? 0"
-      [pricePerYear]="pricingPlanDetail()?.pricePerYear ?? 0" />
+    <app-subscription-plan-card
+      [maxUsers]="subscriptionPlanDetail()?.maxUsers ?? 0"
+      [storageLimitGB]="subscriptionPlanDetail()?.storageLimitGB ?? 0"
+      [description]="subscriptionPlanDetail()?.description ?? ''"
+      [priceMonthly]="subscriptionPlanDetail()?.priceMonthly ?? 0"
+      [pricePerYear]="subscriptionPlanDetail()?.pricePerYear ?? 0" />
   </div>
 </div>

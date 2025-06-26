@@ -52,7 +52,7 @@
     <app-table-skeleton [tableHead]="tableHeadSkeleton()" />
   } @else {
     <p-table
-      [value]="pricingPlans()"
+      [value]="subscriptionPlans()"
       [tableStyle]="{ 'min-width': '50rem' }"
       [paginator]="true"
       [lazy]="true"
@@ -60,7 +60,7 @@
       [first]="first()"
       [showCurrentPageReport]="true"
       (onLazyLoad)="loadDataLazy($event)"
-      [totalRecords]="totalPricingPlans()"
+      [totalRecords]="totalSubscriptionPlans()"
       currentPageReportTemplate="Hiển thị {first} đến {last} trên {totalRecords} gói đăng ký">
       <ng-template pTemplate="header">
         <tr>
@@ -95,33 +95,33 @@
         </tr>
       </ng-template>
 
-      <ng-template pTemplate="body" let-pricing let-i="rowIndex">
+      <ng-template pTemplate="body" let-subscription let-i="rowIndex">
         <tr>
           <td class="!text-center">{{ i + 1 | leadingZero }}</td>
-          <td>{{ pricing.name }}</td>
-          <td>{{ pricing.storageLimitGB }} GB</td>
-          <td>{{ pricing.maxUsers }}</td>
+          <td>{{ subscription.name }}</td>
+          <td>{{ subscription.storageLimitGB | storageFormat }}</td>
+          <td>{{ subscription.maxUsers }}</td>
           <td>
             {{
-              pricing.priceMonthly
+              subscription.priceMonthly
                 | currency: 'VND' : 'symbol' : '1.0-0' : 'vi-VN'
             }}
           </td>
           <td>
             {{
-              pricing.pricePerYear
+              subscription.pricePerYear
                 | currency: 'VND' : 'symbol' : '1.0-0' : 'vi-VN'
             }}
           </td>
           <td class="!text-center">
             <app-badge
-              [variant]="pricing.status === 0 ? 'success' : 'destructive'">
-              {{ pricing.status === 0 ? 'Đang hoạt động' : 'Vô hiệu hóa' }}
+              [variant]="subscription.status === 0 ? 'success' : 'destructive'">
+              {{ subscription.status === 0 ? 'Đang hoạt động' : 'Vô hiệu hóa' }}
             </app-badge>
           </td>
           <td class="!text-center">
             <div class="flex items-center justify-center gap-2">
-              <a [routerLink]="['/pricing-plans', pricing.id]">
+              <a [routerLink]="['/subscription-plans', subscription.id]">
                 <app-button
                   pTooltip="Xem chi tiết"
                   tooltipPosition="top"
@@ -131,7 +131,12 @@
                   >visibility</app-button
                 >
               </a>
-              <a [routerLink]="['/pricing-plans', pricing.id, 'update']">
+              <a
+                [routerLink]="[
+                  '/subscription-plans',
+                  subscription.id,
+                  'update',
+                ]">
                 <app-button
                   pTooltip="Chỉnh sửa"
                   tooltipPosition="top"
@@ -141,22 +146,22 @@
                   >edit</app-button
                 >
               </a>
-              @if (pricing.status === 0) {
+              @if (subscription.status === 0) {
                 <app-button
                   pTooltip="Vô hiệu hóa"
                   tooltipPosition="top"
                   [loading]="isLoadingArchive()"
-                  (clicked)="openConfirmArchiveDialog($event, pricing.id)"
+                  (clicked)="openConfirmArchiveDialog($event, subscription.id)"
                   [variant]="'light-danger'"
                   class="material-symbols-outlined rounded-full px-[7px] py-[7px] text-lg leading-none"
                   >archive</app-button
                 >
-              } @else if (pricing.status === 3) {
+              } @else if (subscription.status === 3) {
                 <app-button
                   pTooltip="Kích hoạt"
                   tooltipPosition="top"
                   [loading]="isLoadingActive()"
-                  (clicked)="openConfirmActiveDialog($event, pricing.id)"
+                  (clicked)="openConfirmActiveDialog($event, subscription.id)"
                   [variant]="'light'"
                   class="material-symbols-outlined rounded-full px-[7px] py-[7px] text-lg leading-none"
                   >unarchive</app-button

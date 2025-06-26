@@ -9,35 +9,35 @@ import { RouterLink } from '@angular/router';
 
 import { FormControlComponent } from '../../../shared/components/form-control/form-control.component';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
-import { PricingPlanCardComponent } from '../pricing-plan-card/pricing-plan-card.component';
-import { PricingPlanService } from '../service/pricing-plan.service';
+import { SubscriptionPlanCardComponent } from '../subscription-plan-card/subscription-plan-card.component';
+import { SubscriptionPlanService } from '../service/subscription-plan.service';
 import { LoadingService } from '../../../shared/services/core/loading/loading.service';
 
 @Component({
-  selector: 'app-pricing-plan',
+  selector: 'app-subscription-plan',
   standalone: true,
   imports: [
     FormControlComponent,
     ButtonComponent,
-    PricingPlanCardComponent,
+    SubscriptionPlanCardComponent,
     RouterLink,
   ],
-  templateUrl: './pricing-plan.component.html',
-  styleUrl: './pricing-plan.component.css',
+  templateUrl: './subscription-plan.component.html',
+  styleUrl: './subscription-plan.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PricingPlanComponent implements OnInit {
-  private readonly pricingPlanService = inject(PricingPlanService);
+export class SubscriptionPlanComponent implements OnInit {
+  private readonly subscriptionPlanService = inject(SubscriptionPlanService);
   private readonly loadingService = inject(LoadingService);
 
   isLoading = this.loadingService;
-  pricingPlanDetail = this.pricingPlanService.pricingPlanDetail;
+  subscriptionPlanDetail = this.subscriptionPlanService.subscriptionPlanDetail;
 
-  pricingPlanId = input.required<string>();
+  subscriptionPlanId = input.required<string>();
 
   ngOnInit(): void {
-    this.pricingPlanService
-      .getPricingPlanDetailById(this.pricingPlanId())
+    this.subscriptionPlanService
+      .getSubscriptionPlanDetailById(this.subscriptionPlanId())
       .subscribe();
   }
 }

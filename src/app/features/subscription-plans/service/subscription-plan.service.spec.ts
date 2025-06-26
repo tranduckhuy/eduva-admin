@@ -7,22 +7,22 @@ import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of, throwError } from 'rxjs';
 
-import { PricingPlanService } from './pricing-plan.service';
+import { SubscriptionPlanService } from './subscription-plan.service';
 import { RequestService } from '../../../shared/services/core/request/request.service';
 import { ToastHandlingService } from '../../../shared/services/core/toast/toast-handling.service';
 import { StatusCode } from '../../../shared/constants/status-code.constant';
-import { PricingPlan } from '../model/pricing-plan.model';
-import { PricingPlanRequest } from '../model/pricing-plan-request.model';
+import { SubscriptionPlan } from '../model/subscription-plan.model';
+import { SubscriptionPlanRequest } from '../model/subscription-plan-request.model';
 import { EntityListParams } from '../../../shared/models/common/entity-list-params';
 
-describe('PricingPlanService', () => {
-  let service: PricingPlanService;
+describe('SubscriptionPlanService', () => {
+  let service: SubscriptionPlanService;
   let httpMock: HttpTestingController;
   let requestService: RequestService;
   let toastService: ToastHandlingService;
   let router: Router;
 
-  const mockPricingPlans: PricingPlan[] = [
+  const mockSubscriptionPlans: SubscriptionPlan[] = [
     {
       id: 1,
       description: 'Description 1',
@@ -45,7 +45,7 @@ describe('PricingPlanService', () => {
     },
   ];
 
-  const mockPricingPlanDetail: PricingPlan = {
+  const mockSubscriptionPlanDetail: SubscriptionPlan = {
     id: 1,
     description: 'Description 1',
     maxUsers: 1,
@@ -56,7 +56,7 @@ describe('PricingPlanService', () => {
     storageLimitGB: 1,
   };
 
-  const mockPricingPlanRequest: PricingPlanRequest = {
+  const mockSubscriptionPlanRequest: SubscriptionPlanRequest = {
     description: 'Description 1',
     maxUsers: 1,
     name: 'Name 1',
@@ -68,10 +68,14 @@ describe('PricingPlanService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, RouterTestingModule],
-      providers: [PricingPlanService, RequestService, ToastHandlingService],
+      providers: [
+        SubscriptionPlanService,
+        RequestService,
+        ToastHandlingService,
+      ],
     });
 
-    service = TestBed.inject(PricingPlanService);
+    service = TestBed.inject(SubscriptionPlanService);
     httpMock = TestBed.inject(HttpTestingController);
     requestService = TestBed.inject(RequestService);
     toastService = TestBed.inject(ToastHandlingService);
@@ -86,27 +90,29 @@ describe('PricingPlanService', () => {
     expect(service).toBeTruthy();
   });
 
-  describe('getPricingPlans', () => {
-    it('should fetch pricing plans and update signals on success', () => {
+  describe('getSubscriptionPlans', () => {
+    it('should fetch Subscription plans and update signals on success', () => {
       const params: EntityListParams = { pageIndex: 1, pageSize: 10 };
       const mockResponse = {
         statusCode: StatusCode.SUCCESS,
         data: {
-          data: mockPricingPlans,
-          count: mockPricingPlans.length,
+          data: mockSubscriptionPlans,
+          count: mockSubscriptionPlans.length,
         },
       };
 
       spyOn(requestService, 'get').and.returnValue(of(mockResponse));
 
-      service.getPricingPlans(params).subscribe(response => {
+      service.getSubscriptionPlans(params).subscribe(response => {
         expect(response).toEqual(mockResponse.data);
-        expect(service.pricingPlans()).toEqual(mockPricingPlans);
-        expect(service.totalPricingPlans()).toEqual(mockPricingPlans.length);
+        expect(service.subscriptionPlans()).toEqual(mockSubscriptionPlans);
+        expect(service.totalSubscriptionPlans()).toEqual(
+          mockSubscriptionPlans.length
+        );
       });
     });
 
-    it('should reset pricing plans and show error on non-success status', () => {
+    it('should reset Subscription plans and show error on non-success status', () => {
       const params: EntityListParams = { pageIndex: 1, pageSize: 10 };
       const mockResponse = {
         statusCode: StatusCode.SYSTEM_ERROR,
@@ -114,12 +120,12 @@ describe('PricingPlanService', () => {
       };
 
       spyOn(requestService, 'get').and.returnValue(of(mockResponse));
-      spyOn(service as any, 'resetPricingPlans').and.callThrough();
+      spyOn(service as any, 'resetSubscriptionPlans').and.callThrough();
       spyOn(toastService, 'errorGeneral');
 
-      service.getPricingPlans(params).subscribe(response => {
+      service.getSubscriptionPlans(params).subscribe(response => {
         expect(response).toBeNull();
-        expect((service as any).resetPricingPlans).toHaveBeenCalled();
+        expect((service as any).resetSubscriptionPlans).toHaveBeenCalled();
         expect(toastService.errorGeneral).toHaveBeenCalled();
       });
     });
@@ -129,32 +135,34 @@ describe('PricingPlanService', () => {
       const error = new Error('Test error');
 
       spyOn(requestService, 'get').and.returnValue(throwError(error));
-      spyOn(service as any, 'resetPricingPlans').and.callThrough();
+      spyOn(service as any, 'resetSubscriptionPlans').and.callThrough();
 
-      service.getPricingPlans(params).subscribe(response => {
+      service.getSubscriptionPlans(params).subscribe(response => {
         expect(response).toBeNull();
-        expect((service as any).resetPricingPlans).toHaveBeenCalled();
+        expect((service as any).resetSubscriptionPlans).toHaveBeenCalled();
       });
     });
   });
 
-  describe('getPricingPlanDetailById', () => {
-    it('should fetch pricing plan detail and update signal on success', () => {
+  describe('getSubscriptionPlanDetailById', () => {
+    it('should fetch Subscription plan detail and update signal on success', () => {
       const id = '1';
       const mockResponse = {
         statusCode: StatusCode.SUCCESS,
-        data: mockPricingPlanDetail,
+        data: mockSubscriptionPlanDetail,
       };
 
       spyOn(requestService, 'get').and.returnValue(of(mockResponse));
 
-      service.getPricingPlanDetailById(id).subscribe(response => {
-        expect(response).toEqual(mockPricingPlanDetail);
-        expect(service.pricingPlanDetail()).toEqual(mockPricingPlanDetail);
+      service.getSubscriptionPlanDetailById(id).subscribe(response => {
+        expect(response).toEqual(mockSubscriptionPlanDetail);
+        expect(service.subscriptionPlanDetail()).toEqual(
+          mockSubscriptionPlanDetail
+        );
       });
     });
 
-    it('should reset pricing plan detail and show error on non-success status', () => {
+    it('should reset Subscription plan detail and show error on non-success status', () => {
       const id = '1';
       const mockResponse = {
         statusCode: StatusCode.SYSTEM_ERROR,
@@ -162,17 +170,17 @@ describe('PricingPlanService', () => {
       };
 
       spyOn(requestService, 'get').and.returnValue(of(mockResponse));
-      spyOn(service as any, 'resetPricingPlanDetail').and.callThrough();
+      spyOn(service as any, 'resetSubscriptionPlanDetail').and.callThrough();
       spyOn(toastService, 'errorGeneral');
 
-      service.getPricingPlanDetailById(id).subscribe(response => {
+      service.getSubscriptionPlanDetailById(id).subscribe(response => {
         expect(response).toBeNull();
-        expect((service as any).resetPricingPlanDetail).toHaveBeenCalled();
+        expect((service as any).resetSubscriptionPlanDetail).toHaveBeenCalled();
         expect(toastService.errorGeneral).toHaveBeenCalled();
       });
     });
 
-    it('should handle 404 error and navigate to pricing-plans', () => {
+    it('should handle 404 error and navigate to Subscription-plans', () => {
       const id = '1';
       const error = {
         error: {
@@ -184,9 +192,9 @@ describe('PricingPlanService', () => {
       spyOn(router, 'navigateByUrl');
       spyOn(toastService, 'error');
 
-      service.getPricingPlanDetailById(id).subscribe(response => {
+      service.getSubscriptionPlanDetailById(id).subscribe(response => {
         expect(response).toBeNull();
-        expect(router.navigateByUrl).toHaveBeenCalledWith('pricing-plans');
+        expect(router.navigateByUrl).toHaveBeenCalledWith('Subscription-plans');
         expect(toastService.error).toHaveBeenCalledWith(
           'Không tìm thấy dữ liệu',
           'Gói đăng ký không tồn tại!'
@@ -201,15 +209,15 @@ describe('PricingPlanService', () => {
       spyOn(requestService, 'get').and.returnValue(throwError(error));
       spyOn(toastService, 'errorGeneral');
 
-      service.getPricingPlanDetailById(id).subscribe(response => {
+      service.getSubscriptionPlanDetailById(id).subscribe(response => {
         expect(response).toBeNull();
         expect(toastService.errorGeneral).toHaveBeenCalled();
       });
     });
   });
 
-  describe('createPricingPlan', () => {
-    it('should create pricing plan and navigate on success', () => {
+  describe('createSubscriptionPlan', () => {
+    it('should create Subscription plan and navigate on success', () => {
       const mockResponse = {
         statusCode: StatusCode.SUCCESS,
       };
@@ -218,13 +226,17 @@ describe('PricingPlanService', () => {
       spyOn(router, 'navigateByUrl');
       spyOn(toastService, 'success');
 
-      service.createPricingPlan(mockPricingPlanRequest).subscribe(() => {
-        expect(router.navigateByUrl).toHaveBeenCalledWith('pricing-plans');
-        expect(toastService.success).toHaveBeenCalledWith(
-          'Thành công',
-          'Gói đăng ký đã được tạo mới thành công!'
-        );
-      });
+      service
+        .createSubscriptionPlan(mockSubscriptionPlanRequest)
+        .subscribe(() => {
+          expect(router.navigateByUrl).toHaveBeenCalledWith(
+            'Subscription-plans'
+          );
+          expect(toastService.success).toHaveBeenCalledWith(
+            'Thành công',
+            'Gói đăng ký đã được tạo mới thành công!'
+          );
+        });
     });
 
     it('should show error message on failure', () => {
@@ -235,9 +247,11 @@ describe('PricingPlanService', () => {
       spyOn(requestService, 'post').and.returnValue(of(mockResponse));
       spyOn(toastService, 'errorGeneral');
 
-      service.createPricingPlan(mockPricingPlanRequest).subscribe(() => {
-        expect(toastService.errorGeneral).toHaveBeenCalled();
-      });
+      service
+        .createSubscriptionPlan(mockSubscriptionPlanRequest)
+        .subscribe(() => {
+          expect(toastService.errorGeneral).toHaveBeenCalled();
+        });
     });
 
     it('should handle invalid information error', () => {
@@ -250,12 +264,14 @@ describe('PricingPlanService', () => {
       spyOn(requestService, 'post').and.returnValue(throwError(error));
       spyOn(toastService, 'error');
 
-      service.createPricingPlan(mockPricingPlanRequest).subscribe(() => {
-        expect(toastService.error).toHaveBeenCalledWith(
-          'Thông tin cung cấp không hợp lệ',
-          'Tên gói đăng ký đã tồn tại. Vui lòng chọn tên khác!'
-        );
-      });
+      service
+        .createSubscriptionPlan(mockSubscriptionPlanRequest)
+        .subscribe(() => {
+          expect(toastService.error).toHaveBeenCalledWith(
+            'Thông tin cung cấp không hợp lệ',
+            'Tên gói đăng ký đã tồn tại. Vui lòng chọn tên khác!'
+          );
+        });
     });
 
     it('should handle other errors', () => {
@@ -264,13 +280,15 @@ describe('PricingPlanService', () => {
       spyOn(requestService, 'post').and.returnValue(throwError(error));
       spyOn(toastService, 'errorGeneral');
 
-      service.createPricingPlan(mockPricingPlanRequest).subscribe(() => {
-        expect(toastService.errorGeneral).toHaveBeenCalled();
-      });
+      service
+        .createSubscriptionPlan(mockSubscriptionPlanRequest)
+        .subscribe(() => {
+          expect(toastService.errorGeneral).toHaveBeenCalled();
+        });
     });
   });
 
-  describe('updatePricingPlan', () => {
+  describe('updateSubscriptionPlan', () => {
     it('should show success message on successful update', () => {
       const id = '1';
       const mockResponse = {
@@ -280,12 +298,14 @@ describe('PricingPlanService', () => {
       spyOn(requestService, 'put').and.returnValue(of(mockResponse));
       spyOn(toastService, 'success');
 
-      service.updatePricingPlan(mockPricingPlanRequest, id).subscribe(() => {
-        expect(toastService.success).toHaveBeenCalledWith(
-          'Thành công',
-          'Gói đăng ký cập nhật thông tin thành công!'
-        );
-      });
+      service
+        .updateSubscriptionPlan(mockSubscriptionPlanRequest, id)
+        .subscribe(() => {
+          expect(toastService.success).toHaveBeenCalledWith(
+            'Thành công',
+            'Gói đăng ký cập nhật thông tin thành công!'
+          );
+        });
     });
 
     it('should show error message on failure', () => {
@@ -297,9 +317,11 @@ describe('PricingPlanService', () => {
       spyOn(requestService, 'put').and.returnValue(of(mockResponse));
       spyOn(toastService, 'errorGeneral');
 
-      service.updatePricingPlan(mockPricingPlanRequest, id).subscribe(() => {
-        expect(toastService.errorGeneral).toHaveBeenCalled();
-      });
+      service
+        .updateSubscriptionPlan(mockSubscriptionPlanRequest, id)
+        .subscribe(() => {
+          expect(toastService.errorGeneral).toHaveBeenCalled();
+        });
     });
 
     it('should handle invalid information error', () => {
@@ -313,12 +335,14 @@ describe('PricingPlanService', () => {
       spyOn(requestService, 'put').and.returnValue(throwError(error));
       spyOn(toastService, 'error');
 
-      service.updatePricingPlan(mockPricingPlanRequest, id).subscribe(() => {
-        expect(toastService.error).toHaveBeenCalledWith(
-          'Thông tin cung cấp không hợp lệ',
-          'Tên gói đăng ký đã tồn tại. Vui lòng chọn tên khác!'
-        );
-      });
+      service
+        .updateSubscriptionPlan(mockSubscriptionPlanRequest, id)
+        .subscribe(() => {
+          expect(toastService.error).toHaveBeenCalledWith(
+            'Thông tin cung cấp không hợp lệ',
+            'Tên gói đăng ký đã tồn tại. Vui lòng chọn tên khác!'
+          );
+        });
     });
 
     it('should handle other errors', () => {
@@ -328,13 +352,15 @@ describe('PricingPlanService', () => {
       spyOn(requestService, 'put').and.returnValue(throwError(error));
       spyOn(toastService, 'errorGeneral');
 
-      service.updatePricingPlan(mockPricingPlanRequest, id).subscribe(() => {
-        expect(toastService.errorGeneral).toHaveBeenCalled();
-      });
+      service
+        .updateSubscriptionPlan(mockSubscriptionPlanRequest, id)
+        .subscribe(() => {
+          expect(toastService.errorGeneral).toHaveBeenCalled();
+        });
     });
   });
 
-  describe('activatePricingPlan', () => {
+  describe('activateSubscriptionPlan', () => {
     it('should show success message on successful activation', () => {
       const id = '1';
       const mockResponse = {
@@ -344,7 +370,7 @@ describe('PricingPlanService', () => {
       spyOn(requestService, 'put').and.returnValue(of(mockResponse));
       spyOn(toastService, 'success');
 
-      service.activatePricingPlan(id).subscribe(() => {
+      service.activateSubscriptionPlan(id).subscribe(() => {
         expect(toastService.success).toHaveBeenCalledWith(
           'Thành công',
           'Kích hoạt gói đăng ký thành công!'
@@ -361,7 +387,7 @@ describe('PricingPlanService', () => {
       spyOn(requestService, 'put').and.returnValue(of(mockResponse));
       spyOn(toastService, 'errorGeneral');
 
-      service.activatePricingPlan(id).subscribe(() => {
+      service.activateSubscriptionPlan(id).subscribe(() => {
         expect(toastService.errorGeneral).toHaveBeenCalled();
       });
     });
@@ -372,11 +398,11 @@ describe('PricingPlanService', () => {
 
       spyOn(requestService, 'put').and.returnValue(throwError(error));
 
-      service.activatePricingPlan(id).subscribe();
+      service.activateSubscriptionPlan(id).subscribe();
     });
   });
 
-  describe('archivePricingPlan', () => {
+  describe('archiveSubscriptionPlan', () => {
     it('should show success message on successful archiving', () => {
       const id = '1';
       const mockResponse = {
@@ -386,7 +412,7 @@ describe('PricingPlanService', () => {
       spyOn(requestService, 'put').and.returnValue(of(mockResponse));
       spyOn(toastService, 'success');
 
-      service.archivePricingPlan(id).subscribe(() => {
+      service.archiveSubscriptionPlan(id).subscribe(() => {
         expect(toastService.success).toHaveBeenCalledWith(
           'Thành công',
           'Vô hiệu hóa gói đăng ký thành công!'
@@ -403,7 +429,7 @@ describe('PricingPlanService', () => {
       spyOn(requestService, 'put').and.returnValue(of(mockResponse));
       spyOn(toastService, 'errorGeneral');
 
-      service.archivePricingPlan(id).subscribe(() => {
+      service.archiveSubscriptionPlan(id).subscribe(() => {
         expect(toastService.errorGeneral).toHaveBeenCalled();
       });
     });
@@ -414,27 +440,31 @@ describe('PricingPlanService', () => {
 
       spyOn(requestService, 'put').and.returnValue(throwError(error));
 
-      service.archivePricingPlan(id).subscribe();
+      service.archiveSubscriptionPlan(id).subscribe();
     });
   });
 
   describe('reset methods', () => {
-    it('should reset pricing plans signal', () => {
-      (service as any).pricingPlansSignal.set(mockPricingPlans);
-      (service as any).totalPricingPlansSignal.set(mockPricingPlans.length);
+    it('should reset Subscription plans signal', () => {
+      (service as any).SubscriptionPlansSignal.set(mockSubscriptionPlans);
+      (service as any).totalSubscriptionPlansSignal.set(
+        mockSubscriptionPlans.length
+      );
 
-      (service as any).resetPricingPlans();
+      (service as any).resetSubscriptionPlans();
 
-      expect(service.pricingPlans()).toEqual([]);
-      expect(service.totalPricingPlans()).toEqual(0);
+      expect(service.subscriptionPlans()).toEqual([]);
+      expect(service.totalSubscriptionPlans()).toEqual(0);
     });
 
-    it('should reset pricing plan detail signal', () => {
-      (service as any).pricingPlanDetailSignal.set(mockPricingPlanDetail);
+    it('should reset Subscription plan detail signal', () => {
+      (service as any).SubscriptionPlanDetailSignal.set(
+        mockSubscriptionPlanDetail
+      );
 
-      (service as any).resetPricingPlanDetail();
+      (service as any).resetSubscriptionPlanDetail();
 
-      expect(service.pricingPlanDetail()).toBeNull();
+      expect(service.subscriptionPlanDetail()).toBeNull();
     });
   });
 });

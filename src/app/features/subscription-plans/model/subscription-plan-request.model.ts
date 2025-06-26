@@ -1,4 +1,4 @@
-export interface PricingPlanRequest {
+export interface SubscriptionPlanRequest {
   description: string;
   maxUsers: number;
   name: string;
