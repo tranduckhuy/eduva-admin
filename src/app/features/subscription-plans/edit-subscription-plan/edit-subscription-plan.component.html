@@ -1,0 +1,102 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="e-row e-g-4 e-g-md-6">
+    <div class="e-col-8 e-col-lg-12">
+      <div
+        class="rounded border border-gray-100 bg-white p-4 shadow-main dark:border-dark-500 dark:bg-dark-200">
+        <div class="mb-4 flex items-center justify-between">
+          <h2 class="text-base font-medium">Thông tin gói đăng ký</h2>
+          <app-button
+            [variant]="'light'"
+            [type]="'submit'"
+            [loading]="isLoading()"
+            [loadingPosition]="'left'"
+            >Lưu thông tin</app-button
+          >
+        </div>
+
+        <div class="e-row e-row-cols-2 e-row-cols-md-1 e-g-4">
+          <div class="e-col-12">
+            <app-form-control
+              label="Tên gói"
+              type="text"
+              [name]="'name'"
+              [required]="true"
+              [maxLength]="25"
+              [placeholder]="'Nhập tên gói...'"
+              [submitted]="submitted()"
+              formControlName="name">
+            </app-form-control>
+          </div>
+          <div class="e-col">
+            <app-form-control
+              label="Giá tháng"
+              [type]="'number'"
+              [name]="'priceMonthly'"
+              [required]="true"
+              [min]="0"
+              [placeholder]="'Nhập giá gói tháng...'"
+              [submitted]="submitted()"
+              formControlName="priceMonthly">
+            </app-form-control>
+          </div>
+          <div class="e-col">
+            <app-form-control
+              label="Giá năm"
+              [type]="'number'"
+              [name]="'pricePerYear'"
+              [required]="true"
+              [min]="0"
+              [placeholder]="'Nhập giá gói năm...'"
+              [submitted]="submitted()"
+              formControlName="pricePerYear">
+            </app-form-control>
+          </div>
+          <div class="e-col">
+            <app-form-control
+              label="Số lượng tài khoản"
+              [type]="'number'"
+              [name]="'maxUsers'"
+              [required]="true"
+              [min]="1"
+              [placeholder]="'Nhập số lượng tài khoản...'"
+              [submitted]="submitted()"
+              formControlName="maxUsers">
+            </app-form-control>
+          </div>
+          <div class="e-col">
+            <app-form-control
+              label="Dung lượng (GB)"
+              [type]="'text'"
+              [name]="'storageLimitGB'"
+              [min]="100"
+              [required]="true"
+              [placeholder]="'Nhập dung lượng lưu trữ...'"
+              [submitted]="submitted()"
+              formControlName="storageLimitGB">
+            </app-form-control>
+          </div>
+          <div class="e-col-12">
+            <app-form-control
+              [isTextarea]="true"
+              [label]="'Mô tả'"
+              [placeholder]="'Nhập mô tả...'"
+              [name]="'description'"
+              [submitted]="submitted()"
+              formControlName="description">
+            </app-form-control>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="e-col-4 e-col-lg-12">
+      <app-subscription-plan-card
+        [name]="form.get('name')?.value"
+        [maxUsers]="form.get('maxUsers')?.value"
+        [storageLimitGB]="form.get('storageLimitGB')?.value"
+        [priceMonthly]="form.get('priceMonthly')?.value"
+        [description]="form.get('description')?.value"
+        [pricePerYear]="form.get('pricePerYear')?.value" />
+    </div>
+  </div>
+</form>

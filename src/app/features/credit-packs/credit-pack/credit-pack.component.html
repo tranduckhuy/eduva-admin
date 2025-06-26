@@ -1,0 +1,62 @@
+<div class="e-row e-g-4 e-g-md-6">
+  <div class="e-col-8 e-col-lg-12">
+    <div
+      class="rounded border border-gray-100 bg-white p-4 pb-6 shadow-main dark:border-dark-500 dark:bg-dark-200">
+      <div class="mb-4 flex items-center justify-between">
+        <h2 class="text-base font-medium">Thông tin gói credit</h2>
+        <a [routerLink]="['/credit-packs', creditPackId(), 'update']">
+          <app-button [variant]="'light'" [type]="'submit'"
+            >Chỉnh sửa</app-button
+          >
+        </a>
+      </div>
+
+      <div class="e-row e-row-cols-1 e-g-4">
+        <div class="e-col-12">
+          <app-form-control
+            label="Tên gói"
+            type="text"
+            [name]="'name'"
+            [readOnly]="true"
+            [value]="creditPackDetail()?.name ?? ''">
+          </app-form-control>
+        </div>
+        <div class="e-col">
+          <app-form-control
+            label="Giá gói (vnd)"
+            [type]="'number'"
+            [name]="'price'"
+            [readOnly]="true"
+            [value]="creditPackDetail()?.price + ''">
+          </app-form-control>
+        </div>
+        <div class="e-col">
+          <app-form-control
+            label="Số lượng credit"
+            [type]="'number'"
+            [name]="'credits'"
+            [readOnly]="true"
+            [value]="creditPackDetail()?.credits + ''">
+          </app-form-control>
+        </div>
+        <div class="e-col">
+          <app-form-control
+            label="Credit tặng thêm"
+            [type]="'number'"
+            [name]="'bonusCredits'"
+            [readOnly]="true"
+            [value]="creditPackDetail()?.bonusCredits + ''">
+          </app-form-control>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="e-col-4 e-col-lg-12">
+    <app-credit-pack-card
+      [name]="creditPackDetail()?.name ?? ''"
+      [price]="creditPackDetail()?.price ?? 0"
+      [credits]="creditPackDetail()?.credits ?? 0"
+      [bonusCredits]="creditPackDetail()?.bonusCredits ?? 0" />
+  </div>
+</div>

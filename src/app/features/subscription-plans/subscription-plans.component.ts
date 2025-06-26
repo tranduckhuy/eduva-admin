@@ -2,25 +2,32 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
+  LOCALE_ID,
   signal,
+  OnInit,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import localeVi from '@angular/common/locales/vi';
+import { CurrencyPipe, registerLocaleData } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-import { SelectModule } from 'primeng/select';
+import { Select } from 'primeng/select';
 import { TooltipModule } from 'primeng/tooltip';
 import { ConfirmationService } from 'primeng/api';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 
-import { USERS_LIMIT } from '../../shared/constants/common.constant';
 import { LeadingZeroPipe } from '../../shared/pipes/leading-zero.pipe';
-import { UserService } from '../../shared/services/api/user/user.service';
-import { UserListParams } from '../../shared/models/common/user-list-params';
+import { SearchInputComponent } from '../../shared/components/search-input/search-input.component';
 import { BadgeComponent } from '../../shared/components/badge/badge.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { LoadingService } from '../../shared/services/core/loading/loading.service';
-import { SearchInputComponent } from '../../shared/components/search-input/search-input.component';
 import { TableSkeletonComponent } from '../../shared/components/skeleton/table-skeleton/table-skeleton.component';
+import { EntityListParams } from '../../shared/models/common/entity-list-params';
+import { SUBSCRIPTION_PLANS_LIMIT } from '../../shared/constants/common.constant';
+import { SubscriptionPlanService } from './service/subscription-plan.service';
+import { StorageFormatPipe } from '../../shared/pipes/storage-format.pipe';
+
+registerLocaleData(localeVi);
 
 interface StatusOption {
   name: string;
@@ -28,32 +35,35 @@ interface StatusOption {
 }
 
 @Component({
-  selector: 'app-school-admins',
+  selector: 'app-subscription-plans',
   standalone: true,
   imports: [
+    CurrencyPipe,
     SearchInputComponent,
     BadgeComponent,
     ButtonComponent,
     TableModule,
     LeadingZeroPipe,
-    RouterLink,
+    StorageFormatPipe,
     TooltipModule,
+    RouterLink,
     FormsModule,
-    SelectModule,
+    Select,
     TableSkeletonComponent,
   ],
-  templateUrl: './school-admins.component.html',
-  styleUrl: './school-admins.component.css',
+  templateUrl: './subscription-plans.component.html',
+  styleUrl: './subscription-plans.component.css',
+  providers: [{ provide: LOCALE_ID, useValue: 'vi-VN' }],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SchoolAdminsComponent {
+export class SubscriptionPlansComponent implements OnInit {
   private readonly confirmationService = inject(ConfirmationService);
-  private readonly userService = inject(UserService);
+  private readonly subscriptionPlanService = inject(SubscriptionPlanService);
   private readonly loadingService = inject(LoadingService);
 
   // Pagination & Sorting signals
   first = signal<number>(0);
-  rows = signal<number>(USERS_LIMIT);
+  rows = signal<number>(SUBSCRIPTION_PLANS_LIMIT);
   sortField = signal<string | null>(null);
   sortOrder = signal<number>(0); // 1 = asc, -1 = desc
   statusSelect = signal<StatusOption | undefined>(undefined);
@@ -63,9 +73,11 @@ export class SchoolAdminsComponent {
   searchTerm = signal<string>('');
   tableHeadSkeleton = signal([
     'STT',
-    'School Admin',
-    'Số điện thoại',
-    'Email',
+    'Tên',
+    'Dung lượng',
+    'Số lượng tài khoản',
+    'Gói tháng',
+    'Gói năm ',
     'Trạng thái',
     'Hành động',
   ]);
@@ -82,16 +94,19 @@ export class SchoolAdminsComponent {
   ]);
 
   // Signals from service
-  isLoadingGet = this.loadingService.is('get-Schools');
-  isLoadingArchive = this.loadingService.is('archive-school');
-  isLoadingActive = this.loadingService.is('active-school');
+  isLoadingGet = this.loadingService.is('get-subscription-plans');
+  isLoadingArchive = this.loadingService.is('archive-subscription-plan');
+  isLoadingActive = this.loadingService.is('active-subscription-plan');
 
-  users = this.userService.users;
-  totalUsers = this.userService.totalUsers;
+  subscriptionPlans = this.subscriptionPlanService.subscriptionPlans;
+  totalSubscriptionPlans = this.subscriptionPlanService.totalSubscriptionPlans;
+
+  ngOnInit(): void {
+    this.loadData();
+  }
 
   private loadData(): void {
-    const params: UserListParams = {
-      role: 1,
+    const params: EntityListParams = {
       pageIndex: Math.floor(this.first() / this.rows()) + 1,
       pageSize: this.rows(),
       searchTerm: this.searchTerm(),
@@ -100,13 +115,13 @@ export class SchoolAdminsComponent {
       activeOnly: this.getActiveOnlyStatus(),
     };
 
-    this.userService.getUsers(params).subscribe();
+    this.subscriptionPlanService.getSubscriptionPlans(params).subscribe();
   }
 
   private getActiveOnlyStatus(): boolean | undefined {
     const statusCode = this.statusSelect()?.code;
     if (statusCode === 0) return true;
-    if (statusCode === 1) return false;
+    if (statusCode === 3) return false;
     return undefined;
   }
 
@@ -129,7 +144,7 @@ export class SchoolAdminsComponent {
 
   loadDataLazy(event: TableLazyLoadEvent): void {
     const first = event.first ?? 0;
-    const rows = event.rows ?? USERS_LIMIT;
+    const rows = event.rows ?? SUBSCRIPTION_PLANS_LIMIT;
 
     // Handle sorting
     if (event.sortField) {
@@ -158,11 +173,11 @@ export class SchoolAdminsComponent {
     this.loadData();
   }
 
-  openConfirmArchiveDialog(event: Event, userId: string): void {
+  openConfirmArchiveDialog(event: Event, subscriptionPlanId: string): void {
     this.confirmationService.confirm({
       target: event.target as EventTarget,
-      message: 'Bạn có chắc chắn muốn vô hiệu hóa người dùng này không?',
-      header: 'Vô hiệu hóa người dùng',
+      message: 'Bạn có chắc chắn muốn vô hiệu hóa gói đăng ký này không?',
+      header: 'Vô hiệu hóa gói đăng ký',
       icon: 'pi pi-info-circle',
       rejectLabel: 'Hủy',
       rejectButtonProps: {
@@ -175,17 +190,19 @@ export class SchoolAdminsComponent {
         severity: 'danger',
       },
       accept: () => {
-        this.userService.archiveUser(userId).subscribe({
-          next: () => this.loadData(),
-        });
+        this.subscriptionPlanService
+          .archiveSubscriptionPlan(subscriptionPlanId)
+          .subscribe({
+            next: () => this.loadData(),
+          });
       },
     });
   }
-  openConfirmActiveDialog(event: Event, userId: string): void {
+  openConfirmActiveDialog(event: Event, subscriptionPlanId: string): void {
     this.confirmationService.confirm({
       target: event.target as EventTarget,
-      message: 'Bạn có chắc chắn muốn kích hoạt người dùng này không?',
-      header: 'Kích hoạt người dùng',
+      message: 'Bạn có chắc chắn muốn kích hoạt gói đăng ký này không?',
+      header: 'Kích hoạt gói đăng ký',
       icon: 'pi pi-exclamation-triangle',
       rejectLabel: 'Hủy',
       rejectButtonProps: {
@@ -197,9 +214,11 @@ export class SchoolAdminsComponent {
         label: 'Xác nhận',
       },
       accept: () => {
-        this.userService.activateUser(userId).subscribe({
-          next: () => this.loadData(),
-        });
+        this.subscriptionPlanService
+          .activateSubscriptionPlan(subscriptionPlanId)
+          .subscribe({
+            next: () => this.loadData(),
+          });
       },
     });
   }

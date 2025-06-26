@@ -83,12 +83,18 @@ export class NavbarComponent {
           ],
         },
         {
-          label: 'Gói đăng ký',
+          label: 'Gói thanh toán',
           icon: 'paid',
-          link: '/pricing-plans',
-          type: 'link',
+          type: 'accordion',
           isActive: false,
-          submenuItems: [],
+          submenuItems: [
+            {
+              label: 'Gói đăng ký',
+              link: '/subscription-plans',
+              active: true,
+            },
+            { label: 'Gói credit', link: '/credit-packs', active: true },
+          ],
         },
         {
           label: 'Hóa đơn',

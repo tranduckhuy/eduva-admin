@@ -66,7 +66,7 @@ export class DashboardComponent {
     ],
   });
   storageStatCard = signal<StatCard>({
-    title: 'Dung lượng (GB)',
+    title: 'Dung lượng',
     description: 'Dung lượng đã sử dụng',
     value: 5000,
     icon: 'database',

@@ -1,24 +1,27 @@
+import { CurrencyPipe, registerLocaleData } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   inject,
+  LOCALE_ID,
   signal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import localeVi from '@angular/common/locales/vi';
 
-import { SelectModule } from 'primeng/select';
+import { Select } from 'primeng/select';
 import { TooltipModule } from 'primeng/tooltip';
 import { ConfirmationService } from 'primeng/api';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 
-import { USERS_LIMIT } from '../../shared/constants/common.constant';
-import { LeadingZeroPipe } from '../../shared/pipes/leading-zero.pipe';
-import { UserService } from '../../shared/services/api/user/user.service';
-import { UserListParams } from '../../shared/models/common/user-list-params';
+import { CreditPackService } from './service/credit-pack.service';
 import { BadgeComponent } from '../../shared/components/badge/badge.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
+import { LeadingZeroPipe } from '../../shared/pipes/leading-zero.pipe';
 import { LoadingService } from '../../shared/services/core/loading/loading.service';
+import { CREDIT_PACKS_LIMIT } from '../../shared/constants/common.constant';
+import { EntityListParams } from '../../shared/models/common/entity-list-params';
 import { SearchInputComponent } from '../../shared/components/search-input/search-input.component';
 import { TableSkeletonComponent } from '../../shared/components/skeleton/table-skeleton/table-skeleton.component';
 
@@ -27,33 +30,38 @@ interface StatusOption {
   code: number | undefined;
 }
 
+registerLocaleData(localeVi);
+
 @Component({
-  selector: 'app-school-admins',
+  selector: 'app-credit-packs',
   standalone: true,
   imports: [
+    CurrencyPipe,
     SearchInputComponent,
     BadgeComponent,
     ButtonComponent,
     TableModule,
     LeadingZeroPipe,
-    RouterLink,
     TooltipModule,
+    RouterLink,
     FormsModule,
-    SelectModule,
+    Select,
     TableSkeletonComponent,
   ],
-  templateUrl: './school-admins.component.html',
-  styleUrl: './school-admins.component.css',
+  templateUrl: './credit-packs.component.html',
+  styleUrl: './credit-packs.component.css',
+  providers: [{ provide: LOCALE_ID, useValue: 'vi-VN' }],
+
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SchoolAdminsComponent {
+export class CreditPacksComponent {
   private readonly confirmationService = inject(ConfirmationService);
-  private readonly userService = inject(UserService);
+  private readonly creditPackService = inject(CreditPackService);
   private readonly loadingService = inject(LoadingService);
 
   // Pagination & Sorting signals
   first = signal<number>(0);
-  rows = signal<number>(USERS_LIMIT);
+  rows = signal<number>(CREDIT_PACKS_LIMIT);
   sortField = signal<string | null>(null);
   sortOrder = signal<number>(0); // 1 = asc, -1 = desc
   statusSelect = signal<StatusOption | undefined>(undefined);
@@ -63,9 +71,10 @@ export class SchoolAdminsComponent {
   searchTerm = signal<string>('');
   tableHeadSkeleton = signal([
     'STT',
-    'School Admin',
-    'Số điện thoại',
-    'Email',
+    'Tên',
+    'Giá',
+    'Số lượng credit',
+    'Credit tặng thêm',
     'Trạng thái',
     'Hành động',
   ]);
@@ -82,16 +91,15 @@ export class SchoolAdminsComponent {
   ]);
 
   // Signals from service
-  isLoadingGet = this.loadingService.is('get-Schools');
-  isLoadingArchive = this.loadingService.is('archive-school');
-  isLoadingActive = this.loadingService.is('active-school');
+  isLoadingGet = this.loadingService.is('get-credit-packs');
+  isLoadingArchive = this.loadingService.is('archive-credit-pack');
+  isLoadingActive = this.loadingService.is('active-credit-pack');
 
-  users = this.userService.users;
-  totalUsers = this.userService.totalUsers;
+  creditPacks = this.creditPackService.creditPacks;
+  totalCreditPacks = this.creditPackService.totalCreditPack;
 
   private loadData(): void {
-    const params: UserListParams = {
-      role: 1,
+    const params: EntityListParams = {
       pageIndex: Math.floor(this.first() / this.rows()) + 1,
       pageSize: this.rows(),
       searchTerm: this.searchTerm(),
@@ -100,13 +108,13 @@ export class SchoolAdminsComponent {
       activeOnly: this.getActiveOnlyStatus(),
     };
 
-    this.userService.getUsers(params).subscribe();
+    this.creditPackService.getCreditPacks(params).subscribe();
   }
 
   private getActiveOnlyStatus(): boolean | undefined {
     const statusCode = this.statusSelect()?.code;
     if (statusCode === 0) return true;
-    if (statusCode === 1) return false;
+    if (statusCode === 3) return false;
     return undefined;
   }
 
@@ -129,7 +137,7 @@ export class SchoolAdminsComponent {
 
   loadDataLazy(event: TableLazyLoadEvent): void {
     const first = event.first ?? 0;
-    const rows = event.rows ?? USERS_LIMIT;
+    const rows = event.rows ?? CREDIT_PACKS_LIMIT;
 
     // Handle sorting
     if (event.sortField) {
@@ -158,11 +166,11 @@ export class SchoolAdminsComponent {
     this.loadData();
   }
 
-  openConfirmArchiveDialog(event: Event, userId: string): void {
+  openConfirmArchiveDialog(event: Event, creditPackId: string): void {
     this.confirmationService.confirm({
       target: event.target as EventTarget,
-      message: 'Bạn có chắc chắn muốn vô hiệu hóa người dùng này không?',
-      header: 'Vô hiệu hóa người dùng',
+      message: 'Bạn có chắc chắn muốn vô hiệu hóa gói credit này không?',
+      header: 'Vô hiệu hóa gói credit',
       icon: 'pi pi-info-circle',
       rejectLabel: 'Hủy',
       rejectButtonProps: {
@@ -175,17 +183,17 @@ export class SchoolAdminsComponent {
         severity: 'danger',
       },
       accept: () => {
-        this.userService.archiveUser(userId).subscribe({
+        this.creditPackService.archiveCreditPack(creditPackId).subscribe({
           next: () => this.loadData(),
         });
       },
     });
   }
-  openConfirmActiveDialog(event: Event, userId: string): void {
+  openConfirmActiveDialog(event: Event, creditPackId: string): void {
     this.confirmationService.confirm({
       target: event.target as EventTarget,
-      message: 'Bạn có chắc chắn muốn kích hoạt người dùng này không?',
-      header: 'Kích hoạt người dùng',
+      message: 'Bạn có chắc chắn muốn kích hoạt gói credit này không?',
+      header: 'Kích hoạt gói credit',
       icon: 'pi pi-exclamation-triangle',
       rejectLabel: 'Hủy',
       rejectButtonProps: {
@@ -197,7 +205,7 @@ export class SchoolAdminsComponent {
         label: 'Xác nhận',
       },
       accept: () => {
-        this.userService.activateUser(userId).subscribe({
+        this.creditPackService.activateCreditPack(creditPackId).subscribe({
           next: () => this.loadData(),
         });
       },
