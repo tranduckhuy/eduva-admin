@@ -55,7 +55,7 @@ export class SchoolAdminsComponent {
   first = signal<number>(0);
   rows = signal<number>(USERS_LIMIT);
   sortField = signal<string | null>(null);
-  sortOrder = signal<number>(1); // 1 = asc, -1 = desc
+  sortOrder = signal<number>(0); // 1 = asc, -1 = desc
   statusSelect = signal<StatusOption | undefined>(undefined);
   selectedTimeFilter = signal<
     { name: string; value: string | undefined } | undefined
@@ -79,7 +79,6 @@ export class SchoolAdminsComponent {
   readonly timeFilterOptions = signal([
     { name: 'Mới nhất', value: 'desc' },
     { name: 'Cũ nhất', value: 'asc' },
-    { name: 'Tất cả', value: undefined },
   ]);
 
   // Signals from service
@@ -96,7 +95,7 @@ export class SchoolAdminsComponent {
       pageIndex: Math.floor(this.first() / this.rows()) + 1,
       pageSize: this.rows(),
       searchTerm: this.searchTerm(),
-      sortBy: this.sortField() ?? undefined,
+      sortBy: this.sortField() ?? 'createdAt',
       sortDirection: this.sortOrder() === 1 ? 'asc' : 'desc',
       activeOnly: this.getActiveOnlyStatus(),
     };

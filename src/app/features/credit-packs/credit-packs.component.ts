@@ -1,40 +1,39 @@
+import { CurrencyPipe, registerLocaleData } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   inject,
   LOCALE_ID,
   signal,
-  OnInit,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import localeVi from '@angular/common/locales/vi';
-import { CurrencyPipe, registerLocaleData } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import localeVi from '@angular/common/locales/vi';
 
 import { Select } from 'primeng/select';
 import { TooltipModule } from 'primeng/tooltip';
 import { ConfirmationService } from 'primeng/api';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 
-import { LeadingZeroPipe } from '../../shared/pipes/leading-zero.pipe';
-import { SearchInputComponent } from '../../shared/components/search-input/search-input.component';
+import { CreditPackService } from './service/credit-pack.service';
 import { BadgeComponent } from '../../shared/components/badge/badge.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
-import { PricingPlanService } from './service/pricing-plan.service';
-import { PRICING_PLANS_LIMIT } from '../../shared/constants/common.constant';
+import { LeadingZeroPipe } from '../../shared/pipes/leading-zero.pipe';
 import { LoadingService } from '../../shared/services/core/loading/loading.service';
-import { TableSkeletonComponent } from '../../shared/components/skeleton/table-skeleton/table-skeleton.component';
+import { CREDIT_PACKS_LIMIT } from '../../shared/constants/common.constant';
 import { EntityListParams } from '../../shared/models/common/entity-list-params';
-
-registerLocaleData(localeVi);
+import { SearchInputComponent } from '../../shared/components/search-input/search-input.component';
+import { TableSkeletonComponent } from '../../shared/components/skeleton/table-skeleton/table-skeleton.component';
 
 interface StatusOption {
   name: string;
   code: number | undefined;
 }
 
+registerLocaleData(localeVi);
+
 @Component({
-  selector: 'app-pricing-plans',
+  selector: 'app-credit-packs',
   standalone: true,
   imports: [
     CurrencyPipe,
@@ -49,19 +48,20 @@ interface StatusOption {
     Select,
     TableSkeletonComponent,
   ],
-  templateUrl: './pricing-plans.component.html',
-  styleUrl: './pricing-plans.component.css',
+  templateUrl: './credit-packs.component.html',
+  styleUrl: './credit-packs.component.css',
   providers: [{ provide: LOCALE_ID, useValue: 'vi-VN' }],
+
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PricingPlansComponent implements OnInit {
+export class CreditPacksComponent {
   private readonly confirmationService = inject(ConfirmationService);
-  private readonly pricingPlanService = inject(PricingPlanService);
+  private readonly creditPackService = inject(CreditPackService);
   private readonly loadingService = inject(LoadingService);
 
   // Pagination & Sorting signals
   first = signal<number>(0);
-  rows = signal<number>(PRICING_PLANS_LIMIT);
+  rows = signal<number>(CREDIT_PACKS_LIMIT);
   sortField = signal<string | null>(null);
   sortOrder = signal<number>(0); // 1 = asc, -1 = desc
   statusSelect = signal<StatusOption | undefined>(undefined);
@@ -72,10 +72,9 @@ export class PricingPlansComponent implements OnInit {
   tableHeadSkeleton = signal([
     'STT',
     'Tên',
-    'Dung lượng',
-    'Số lượng tài khoản',
-    'Gói tháng',
-    'Gói năm ',
+    'Giá',
+    'Số lượng credit',
+    'Credit tặng thêm',
     'Trạng thái',
     'Hành động',
   ]);
@@ -96,12 +95,8 @@ export class PricingPlansComponent implements OnInit {
   isLoadingArchive = this.loadingService.is('archive-pricing-plan');
   isLoadingActive = this.loadingService.is('active-pricing-plan');
 
-  pricingPlans = this.pricingPlanService.pricingPlans;
-  totalPricingPlans = this.pricingPlanService.totalPricingPlans;
-
-  ngOnInit(): void {
-    this.loadData();
-  }
+  creditPacks = this.creditPackService.creditPacks;
+  totalCreditPacks = this.creditPackService.totalCreditPack;
 
   private loadData(): void {
     const params: EntityListParams = {
@@ -113,7 +108,7 @@ export class PricingPlansComponent implements OnInit {
       activeOnly: this.getActiveOnlyStatus(),
     };
 
-    this.pricingPlanService.getPricingPlans(params).subscribe();
+    this.creditPackService.getCreditPacks(params).subscribe();
   }
 
   private getActiveOnlyStatus(): boolean | undefined {
@@ -142,7 +137,7 @@ export class PricingPlansComponent implements OnInit {
 
   loadDataLazy(event: TableLazyLoadEvent): void {
     const first = event.first ?? 0;
-    const rows = event.rows ?? PRICING_PLANS_LIMIT;
+    const rows = event.rows ?? CREDIT_PACKS_LIMIT;
 
     // Handle sorting
     if (event.sortField) {
@@ -171,11 +166,11 @@ export class PricingPlansComponent implements OnInit {
     this.loadData();
   }
 
-  openConfirmArchiveDialog(event: Event, pricingPlanId: string): void {
+  openConfirmArchiveDialog(event: Event, creditPackId: string): void {
     this.confirmationService.confirm({
       target: event.target as EventTarget,
-      message: 'Bạn có chắc chắn muốn vô hiệu hóa gói đăng ký này không?',
-      header: 'Vô hiệu hóa gói đăng ký',
+      message: 'Bạn có chắc chắn muốn vô hiệu hóa gói credit này không?',
+      header: 'Vô hiệu hóa gói credit',
       icon: 'pi pi-info-circle',
       rejectLabel: 'Hủy',
       rejectButtonProps: {
@@ -188,17 +183,17 @@ export class PricingPlansComponent implements OnInit {
         severity: 'danger',
       },
       accept: () => {
-        this.pricingPlanService.archivePricingPlan(pricingPlanId).subscribe({
+        this.creditPackService.archiveCreditPack(creditPackId).subscribe({
           next: () => this.loadData(),
         });
       },
     });
   }
-  openConfirmActiveDialog(event: Event, pricingPlanId: string): void {
+  openConfirmActiveDialog(event: Event, creditPackId: string): void {
     this.confirmationService.confirm({
       target: event.target as EventTarget,
-      message: 'Bạn có chắc chắn muốn kích hoạt gói đăng ký này không?',
-      header: 'Kích hoạt gói đăng ký',
+      message: 'Bạn có chắc chắn muốn kích hoạt gói credit này không?',
+      header: 'Kích hoạt gói credit',
       icon: 'pi pi-exclamation-triangle',
       rejectLabel: 'Hủy',
       rejectButtonProps: {
@@ -210,7 +205,7 @@ export class PricingPlansComponent implements OnInit {
         label: 'Xác nhận',
       },
       accept: () => {
-        this.pricingPlanService.activatePricingPlan(pricingPlanId).subscribe({
+        this.creditPackService.activateCreditPack(creditPackId).subscribe({
           next: () => this.loadData(),
         });
       },

@@ -56,6 +56,13 @@ export const adminRoutes: Routes = [
             mod => mod.pricingPlansRoute
           ),
       },
+      {
+        path: 'credit-packs',
+        loadChildren: () =>
+          import('./credit-packs/credit-packs.routes').then(
+            mod => mod.creditPacksRoute
+          ),
+      },
     ],
   },
   {
