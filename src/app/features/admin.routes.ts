@@ -10,9 +10,9 @@ export const adminRoutes: Routes = [
     children: [
       {
         path: '',
-        loadChildren: () =>
-          import('./dashboard/dashboard.routes').then(
-            mod => mod.dashboardRoute
+        loadComponent: () =>
+          import('./dashboard/dashboard.component').then(
+            mod => mod.DashboardComponent
           ),
       },
       {
@@ -61,6 +61,20 @@ export const adminRoutes: Routes = [
         loadChildren: () =>
           import('./credit-packs/credit-packs.routes').then(
             mod => mod.creditPacksRoute
+          ),
+      },
+      {
+        path: 'settings',
+        data: {
+          breadcrumb: 'Cài đặt',
+        },
+        loadComponent: () =>
+          import(
+            '../shared/pages/settings-page/settings-page-layout/settings-page-layout.component'
+          ).then(mod => mod.SettingsPageLayoutComponent),
+        loadChildren: () =>
+          import('../shared/pages/settings-page/settings-page.routes').then(
+            mod => mod.settingRoutes
           ),
       },
     ],
