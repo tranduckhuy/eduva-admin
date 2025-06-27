@@ -1,3 +1,5 @@
+import { FormGroup } from '@angular/forms';
+
 /**
  * Triggers the download of a file from a base64-encoded string.
  *
@@ -46,3 +48,22 @@ export const triggerBlobDownload = (fileName: string, blob: Blob): void => {
   a.click();
   window.URL.revokeObjectURL(url);
 };
+
+/**
+ * Checks whether the value and confirm value fields in a FormGroup do not match.
+ *
+ * @param form - The FormGroup containing the fields that need to check matching.
+ * @param valueField - The name of the value field (default: 'newPassword').
+ * @param confirmValueField - The name of the confirm value field (default: 'confirmPassword').
+ * @returns `true` if the values do not match, otherwise `false`.
+ */
+export function isFormFieldMismatch(
+  form: FormGroup,
+  valueField: string = 'newPassword',
+  confirmValueField: string = 'confirmPassword'
+): boolean {
+  const value: string | null | undefined = form.get(valueField)?.value;
+  const confirmValue: string | null | undefined =
+    form.get(confirmValueField)?.value;
+  return value !== confirmValue;
+}

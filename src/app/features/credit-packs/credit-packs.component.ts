@@ -1,14 +1,12 @@
-import { CurrencyPipe, registerLocaleData } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  LOCALE_ID,
   signal,
 } from '@angular/core';
+import { CurrencyPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import localeVi from '@angular/common/locales/vi';
 
 import { Select } from 'primeng/select';
 import { TooltipModule } from 'primeng/tooltip';
@@ -30,8 +28,6 @@ interface StatusOption {
   code: number | undefined;
 }
 
-registerLocaleData(localeVi);
-
 @Component({
   selector: 'app-credit-packs',
   standalone: true,
@@ -50,8 +46,6 @@ registerLocaleData(localeVi);
   ],
   templateUrl: './credit-packs.component.html',
   styleUrl: './credit-packs.component.css',
-  providers: [{ provide: LOCALE_ID, useValue: 'vi-VN' }],
-
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreditPacksComponent {

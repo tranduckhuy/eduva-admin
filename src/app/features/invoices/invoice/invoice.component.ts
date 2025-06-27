@@ -1,12 +1,10 @@
-import { ChangeDetectionStrategy, Component, LOCALE_ID } from '@angular/core';
-import { CurrencyPipe, DatePipe, registerLocaleData } from '@angular/common';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import localeVi from '@angular/common/locales/vi';
 
 import { TableModule } from 'primeng/table';
 
 import { Invoice } from '../../../shared/models/entities/invoice.model';
-
-registerLocaleData(localeVi);
 
 @Component({
   selector: 'app-invoice',
@@ -14,7 +12,6 @@ registerLocaleData(localeVi);
   imports: [CurrencyPipe, DatePipe, TableModule],
   templateUrl: './invoice.component.html',
   styleUrl: './invoice.component.css',
-  providers: [DatePipe, { provide: LOCALE_ID, useValue: 'vi' }],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InvoiceComponent {

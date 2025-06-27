@@ -1,21 +1,28 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ChangeDetectorRef,
+  OnInit,
   input,
   output,
-  ChangeDetectorRef,
-  signal,
+  inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, NavigationEnd } from '@angular/router';
+import { RouterLink, Router, NavigationEnd } from '@angular/router';
+
 import { filter } from 'rxjs';
 
 import { AccordionItemComponent } from './accordion-item/accordion-item.component';
+import { UserService } from '../../../shared/services/api/user/user.service';
+import {
+  UserRole,
+  UserRoles,
+} from '../../../shared/constants/user-roles.constant';
 
 type NavItem = {
   label: string;
   icon: string;
-  type: 'link' | 'accordion';
+  type: 'link' | 'accordion' | 'button';
   link?: string;
   isActive: boolean;
   submenuItems: { label: string; link: string; active?: boolean }[];
@@ -29,214 +36,183 @@ type NavbarConfig = {
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, AccordionItemComponent],
+  imports: [CommonModule, RouterLink, AccordionItemComponent],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NavbarComponent {
-  closeSidebar = output();
+export class NavbarComponent implements OnInit {
+  private readonly router = inject(Router);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly userService = inject(UserService);
+
   isSidebarCollapsed = input();
 
-  navConfigs = signal<NavbarConfig[]>([
-    {
-      section: 'Thống kê',
-      navItems: [
-        {
-          label: 'Bảng thống kê',
-          icon: 'dashboard',
-          type: 'link',
-          isActive: true,
-          submenuItems: [],
-        },
-      ],
-    },
-    {
-      section: 'Quản lý',
-      navItems: [
-        {
-          label: 'Trường học',
-          icon: 'school',
-          link: '/schools',
-          type: 'link',
-          isActive: false,
-          submenuItems: [],
-        },
-        {
-          label: 'Người dùng',
-          icon: 'people',
-          type: 'accordion',
-          isActive: false,
-          submenuItems: [
-            {
-              label: 'School admins',
-              link: '/school-admins',
-              active: true,
-            },
-            { label: 'Giáo viên', link: '/teachers', active: true },
-            { label: 'Học sinh', link: '/students', active: true },
-            {
-              label: 'Kiểm duyệt nội dung',
-              link: '/content-moderators',
-              active: true,
-            },
-          ],
-        },
-        {
-          label: 'Gói thanh toán',
-          icon: 'paid',
-          type: 'accordion',
-          isActive: false,
-          submenuItems: [
-            {
-              label: 'Gói đăng ký',
-              link: '/subscription-plans',
-              active: true,
-            },
-            { label: 'Gói credit', link: '/credit-packs', active: true },
-          ],
-        },
-        {
-          label: 'Hóa đơn',
-          icon: 'receipt_long',
-          link: '/invoices',
-          type: 'link',
-          isActive: false,
-          submenuItems: [],
-        },
-        {
-          label: 'Học tập',
-          icon: 'auto_stories',
-          type: 'accordion',
-          isActive: false,
-          submenuItems: [
-            { label: 'Subject List', link: '#!', active: true },
-            { label: 'Subject Detail', link: '#!' },
-            { label: 'Lesson Preview', link: '#!' },
-            { label: 'Create Subject', link: '#!' },
-            { label: 'Edit Subject', link: '#!' },
-            { label: 'Instructors', link: '#!' },
-          ],
-        },
-        {
-          label: 'Tài liệu',
-          icon: 'folder_open',
-          type: 'accordion',
-          isActive: false,
-          submenuItems: [
-            { label: 'My Drive', link: '#!', active: true },
-            { label: 'Assets', link: '#!' },
-            { label: 'Personal', link: '#!' },
-            { label: 'Documents', link: '#!' },
-            { label: 'Media', link: '#!' },
-          ],
-        },
-      ],
-    },
-    {
-      section: 'Khác',
-      navItems: [
-        {
-          label: 'Trang cá nhân',
-          icon: 'account_circle',
-          type: 'link',
-          isActive: false,
-          submenuItems: [],
-        },
-        {
-          label: 'Cài đặt',
-          icon: 'settings',
-          type: 'accordion',
-          isActive: false,
-          submenuItems: [
-            { label: 'Account Settings', link: '#!', active: true },
-            { label: 'Change Password', link: '#!' },
-            { label: 'Privacy Policy', link: '#!' },
-            { label: 'Terms & Conditions', link: '#!' },
-            { label: 'Cấu hình hệ thống', link: '/system-config' },
-          ],
-        },
-        {
-          label: 'Đăng xuất',
-          icon: 'logout',
-          type: 'link',
-          isActive: false,
-          submenuItems: [],
-        },
-      ],
-    },
-  ]);
+  closeSidebar = output();
 
-  constructor(
-    private readonly router: Router,
-    private readonly cdr: ChangeDetectorRef
-  ) {
-    // Immediately update for current route on init
-    this.updateActiveNav(this.router.url);
+  user = this.userService.currentUser;
 
-    // Listen to route changes
+  navConfigs: NavbarConfig[] = [];
+
+  ngOnInit(): void {
+    const user = this.user();
+    const userRole = user?.roles?.[0] as UserRole;
+    this.navConfigs = this.getNavbarConfigByRole(userRole);
+
+    this.setActiveNavItems(this.router.url);
+
+    // ? Listen to router events to update active states
     this.router.events
-      .pipe(
-        filter(
-          (event): event is NavigationEnd => event instanceof NavigationEnd
-        )
-      )
-      .subscribe(event => {
-        this.updateActiveNav(event.url);
-        // Trigger change detection to update the view
-        this.cdr.detectChanges();
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => {
+        this.setActiveNavItems(event.urlAfterRedirects);
       });
   }
 
-  private updateActiveNav(currentUrl: string) {
-    const navConfigs = this.navConfigs();
-    // Create a new array to hold the updated configs
-    const updatedConfigs = navConfigs.map(section => ({
-      ...section,
-      navItems: section.navItems.map(item => ({
-        ...item,
-        isActive: false,
-        submenuItems: item.submenuItems.map(sub => ({
-          ...sub,
-          active: false,
-        })),
-      })),
-    }));
+  private setActiveNavItems(url: string) {
+    const path = url.split('?')[0]; // ? Just get path name
 
-    // Update active states based on current URL
-    for (const section of updatedConfigs) {
-      for (const item of section.navItems) {
-        // First check submenu items
-        if (item.submenuItems?.length > 0) {
-          const hasActiveSubmenu = item.submenuItems.some(sub => {
-            if (
-              sub.link &&
-              sub.link !== '#!' &&
-              currentUrl.startsWith(sub.link)
-            ) {
-              sub.active = true;
-              return true;
-            }
-            return false;
-          });
+    this.navConfigs.forEach(section => {
+      section.navItems.forEach(item => {
+        // ? Match exact main nav item by path only
+        item.isActive = item.link === path;
 
-          if (hasActiveSubmenu) {
-            item.isActive = true;
+        // ? Reset and re-check submenu
+        item.submenuItems.forEach(sub => {
+          sub.active = sub.link === path;
+          if (sub.active) {
+            item.isActive = true; // ? If submenu is active, parent is also active
           }
-        }
+        });
+      });
+    });
 
-        // Then check direct link match
-        if (
-          item.link &&
-          item.link !== '#!' &&
-          currentUrl.startsWith(item.link)
-        ) {
-          item.isActive = true;
-        }
-      }
-    }
+    this.cdr.markForCheck();
+  }
 
-    // Update the signal with new configs
-    this.navConfigs.set(updatedConfigs);
+  private getNavbarConfigByRole(role: UserRole): NavbarConfig[] {
+    if (role !== UserRoles.SYSTEM_ADMIN) return [];
+
+    return [
+      {
+        section: 'Thống kê',
+        navItems: [
+          {
+            label: 'Bảng thống kê',
+            icon: 'dashboard',
+            type: 'link',
+            link: '/admin',
+            isActive: true,
+            submenuItems: [],
+          },
+        ],
+      },
+      {
+        section: 'Quản lý',
+        navItems: [
+          {
+            label: 'Trường học',
+            icon: 'school',
+            link: '/admin/schools',
+            type: 'link',
+            isActive: false,
+            submenuItems: [],
+          },
+          {
+            label: 'Người dùng',
+            icon: 'people',
+            type: 'accordion',
+            isActive: false,
+            submenuItems: [
+              {
+                label: 'School admins',
+                link: '/admin/school-admins',
+                active: true,
+              },
+              { label: 'Giáo viên', link: '/admin/teachers', active: true },
+              { label: 'Học sinh', link: '/admin/students', active: true },
+              {
+                label: 'Kiểm duyệt nội dung',
+                link: '/admin/content-moderators',
+                active: true,
+              },
+            ],
+          },
+          {
+            label: 'Gói thanh toán',
+            icon: 'paid',
+            type: 'accordion',
+            isActive: false,
+            submenuItems: [
+              {
+                label: 'Gói đăng ký',
+                link: '/admin/subscription-plans',
+                active: true,
+              },
+              {
+                label: 'Gói credit',
+                link: '/admin/credit-packs',
+                active: true,
+              },
+            ],
+          },
+          {
+            label: 'Hóa đơn',
+            icon: 'receipt_long',
+            type: 'link',
+            link: '/admin/invoices',
+            isActive: false,
+            submenuItems: [],
+          },
+          {
+            label: 'Học tập',
+            icon: 'auto_stories',
+            type: 'accordion',
+            isActive: false,
+            submenuItems: [
+              { label: 'Subject List', link: '#!', active: true },
+              { label: 'Subject Detail', link: '#!' },
+              { label: 'Lesson Preview', link: '#!' },
+              { label: 'Create Subject', link: '#!' },
+              { label: 'Edit Subject', link: '#!' },
+              { label: 'Instructors', link: '#!' },
+            ],
+          },
+          {
+            label: 'Tài liệu',
+            icon: 'folder_open',
+            type: 'accordion',
+            isActive: false,
+            submenuItems: [
+              { label: 'My Drive', link: '#!', active: true },
+              { label: 'Assets', link: '#!' },
+              { label: 'Personal', link: '#!' },
+              { label: 'Documents', link: '#!' },
+              { label: 'Media', link: '#!' },
+            ],
+          },
+        ],
+      },
+      {
+        section: 'Khác',
+        navItems: [
+          {
+            label: 'Cài đặt',
+            icon: 'settings',
+            link: '/admin/settings',
+            type: 'link',
+            isActive: false,
+            submenuItems: [],
+          },
+          {
+            label: 'Đăng xuất',
+            icon: 'logout',
+            type: 'button',
+            isActive: false,
+            submenuItems: [],
+          },
+        ],
+      },
+    ];
   }
 }

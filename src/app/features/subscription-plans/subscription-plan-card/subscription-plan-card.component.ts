@@ -2,18 +2,14 @@ import {
   ChangeDetectionStrategy,
   Component,
   input,
-  LOCALE_ID,
   signal,
 } from '@angular/core';
-import localeVi from '@angular/common/locales/vi';
-import { CurrencyPipe, registerLocaleData } from '@angular/common';
+import { CurrencyPipe } from '@angular/common';
 
 import { ToggleSwitch } from 'primeng/toggleswitch';
 
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { FormsModule } from '@angular/forms';
-
-registerLocaleData(localeVi);
 
 @Component({
   selector: 'app-subscription-plan-card',
@@ -21,8 +17,6 @@ registerLocaleData(localeVi);
   imports: [ButtonComponent, CurrencyPipe, ToggleSwitch, FormsModule],
   templateUrl: './subscription-plan-card.component.html',
   styleUrl: './subscription-plan-card.component.css',
-  providers: [{ provide: LOCALE_ID, useValue: 'vi-VN' }],
-
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SubscriptionPlanCardComponent {

@@ -2,13 +2,12 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  LOCALE_ID,
   signal,
   OnInit,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import localeVi from '@angular/common/locales/vi';
-import { CurrencyPipe, registerLocaleData } from '@angular/common';
+import { CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { Select } from 'primeng/select';
@@ -26,8 +25,6 @@ import { EntityListParams } from '../../shared/models/common/entity-list-params'
 import { SUBSCRIPTION_PLANS_LIMIT } from '../../shared/constants/common.constant';
 import { SubscriptionPlanService } from './service/subscription-plan.service';
 import { StorageFormatPipe } from '../../shared/pipes/storage-format.pipe';
-
-registerLocaleData(localeVi);
 
 interface StatusOption {
   name: string;
@@ -53,7 +50,6 @@ interface StatusOption {
   ],
   templateUrl: './subscription-plans.component.html',
   styleUrl: './subscription-plans.component.css',
-  providers: [{ provide: LOCALE_ID, useValue: 'vi-VN' }],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SubscriptionPlansComponent implements OnInit {

@@ -1,21 +1,22 @@
-import { School } from '../../../features/schools/model/school-model';
-import { Status } from '../common/entity-status';
+import { School } from './school.model';
 
-type UserRole =
-  | 'SystemAdmin'
-  | 'SchoolAdmin'
-  | 'ContentModerator'
-  | 'Teacher'
-  | 'Student';
+import { UserRole } from '../../constants/user-roles.constant';
+import { EntityStatus } from '../enum/entity-status.enum';
 
 export interface User {
   id: string;
   fullName: string;
   phoneNumber: string;
   email: string;
-  status: Status;
   avatarUrl: string;
-  school: School;
+  school?: School;
   roles: UserRole[];
   creditBalance: number;
+  is2FAEnabled: boolean;
+  isEmailConfirmed: boolean;
+  status: EntityStatus;
+  userSubscriptionResponse: {
+    isSubscriptionActive: boolean;
+    subscriptionEndDate: string;
+  };
 }
