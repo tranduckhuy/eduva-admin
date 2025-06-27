@@ -6,7 +6,6 @@ import {
   OnInit,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import localeVi from '@angular/common/locales/vi';
 import { CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 

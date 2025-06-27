@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import localeVi from '@angular/common/locales/vi';
 
 import { TableModule } from 'primeng/table';
 

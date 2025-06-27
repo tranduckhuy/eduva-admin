@@ -14,10 +14,7 @@ import { ToastHandlingService } from '../../../shared/services/core/toast/toast-
 import { GlobalModalService } from '../../../shared/services/layout/global-modal/global-modal.service';
 
 import { StatusCode } from '../../../shared/constants/status-code.constant';
-import {
-  UserRole,
-  UserRoles,
-} from '../../../shared/constants/user-roles.constant';
+import { UserRoles } from '../../../shared/constants/user-roles.constant';
 
 import { type LoginRequest } from '../pages/login/models/login-request.model';
 import { type RefreshTokenRequest } from '../models/request/refresh-token-request.model';
