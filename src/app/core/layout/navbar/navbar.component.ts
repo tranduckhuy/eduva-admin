@@ -45,6 +45,7 @@ export class NavbarComponent {
         {
           label: 'Bảng thống kê',
           icon: 'dashboard',
+          link: '/',
           type: 'link',
           isActive: true,
           submenuItems: [],
