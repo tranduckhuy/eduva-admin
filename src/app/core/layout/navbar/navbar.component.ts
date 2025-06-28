@@ -98,14 +98,6 @@ export class NavbarComponent {
           ],
         },
         {
-          label: 'Hóa đơn',
-          icon: 'receipt_long',
-          link: '/invoices',
-          type: 'link',
-          isActive: false,
-          submenuItems: [],
-        },
-        {
           label: 'Lịch sử giao dịch',
           icon: 'receipt_long',
           link: '/payments',
