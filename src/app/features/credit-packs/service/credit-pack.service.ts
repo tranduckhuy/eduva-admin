@@ -11,7 +11,7 @@ import { EntityListParams } from '../../../shared/models/common/entity-list-para
 import { EntityListResponse } from '../../../shared/models/api/response/entity-list-response.model';
 import { CreditPack } from '../model/credit-pack.model';
 import { CreditPackRequest } from '../model/credit-pack-request.model';
-import { BaseResponse } from '../../../shared/models/api/response/base-response.model';
+import { BaseResponse } from '../../../shared/models/api/base-response.model';
 
 @Injectable({ providedIn: 'root' })
 export class CreditPackService {
@@ -82,7 +82,7 @@ export class CreditPackService {
     return this.handleCreationRequest(
       this.requestService.post<void>(this.BASE_URL, req),
       'Gói credit đã được tạo mới thành công!',
-      'credit-packs'
+      'admin/credit-packs'
     );
   }
 

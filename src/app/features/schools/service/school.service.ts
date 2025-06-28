@@ -9,7 +9,7 @@ import { EntityListParams } from '../../../shared/models/common/entity-list-para
 import { EntityListResponse } from '../../../shared/models/api/response/entity-list-response.model';
 import { School } from '../model/school-model';
 import { SchoolDetail } from '../model/school-detail-model';
-import { BaseResponse } from '../../../shared/models/api/response/base-response.model';
+import { BaseResponse } from '../../../shared/models/api/base-response.model';
 
 @Injectable({ providedIn: 'root' })
 export class SchoolService {
