@@ -22,7 +22,7 @@
         placeholder="Chọn trạng thái hoạt động"
         class="!dark:bg-dark-200 flex h-11 items-center sm:w-56" />
 
-      <!--  Export button -->
+      <!--  Create button -->
       <div class="flex gap-2">
         <a routerLink="create">
           <app-button [variant]="'outline'" class="flex items-center">
@@ -34,7 +34,7 @@
           </app-button>
         </a>
 
-        <!--  Create button -->
+        <!--  Export button -->
         <a routerLink="create">
           <app-button [variant]="'outline'" class="flex items-center">
             <span
@@ -115,7 +115,7 @@
           </td>
           <td class="!text-center">
             <div class="flex items-center justify-center gap-2">
-              <a [routerLink]="['/credit-packs', credit.id]">
+              <a [routerLink]="['/admin/credit-packs', credit.id]">
                 <app-button
                   pTooltip="Xem chi tiết"
                   tooltipPosition="top"
@@ -125,7 +125,7 @@
                   >visibility</app-button
                 >
               </a>
-              <a [routerLink]="['/credit-packs', credit.id, 'update']">
+              <a [routerLink]="['/admin/credit-packs', credit.id, 'update']">
                 <app-button
                   pTooltip="Chỉnh sửa"
                   tooltipPosition="top"

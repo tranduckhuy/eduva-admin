@@ -4,7 +4,7 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { CurrencyPipe } from '@angular/common';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 
 import { ToggleSwitch } from 'primeng/toggleswitch';
 
@@ -14,7 +14,13 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-subscription-plan-card',
   standalone: true,
-  imports: [ButtonComponent, CurrencyPipe, ToggleSwitch, FormsModule],
+  imports: [
+    ButtonComponent,
+    CurrencyPipe,
+    ToggleSwitch,
+    FormsModule,
+    CommonModule,
+  ],
   templateUrl: './subscription-plan-card.component.html',
   styleUrl: './subscription-plan-card.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

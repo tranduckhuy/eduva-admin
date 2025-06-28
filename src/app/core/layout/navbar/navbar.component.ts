@@ -6,6 +6,7 @@ import {
   input,
   output,
   inject,
+  signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router, NavigationEnd } from '@angular/router';
@@ -48,16 +49,15 @@ export class NavbarComponent implements OnInit {
 
   isSidebarCollapsed = input();
 
+  navConfigs = signal<NavbarConfig[]>([]);
   closeSidebar = output();
 
   user = this.userService.currentUser;
 
-  navConfigs: NavbarConfig[] = [];
-
   ngOnInit(): void {
     const user = this.user();
     const userRole = user?.roles?.[0] as UserRole;
-    this.navConfigs = this.getNavbarConfigByRole(userRole);
+    this.navConfigs.set(this.getNavbarConfigByRole(userRole));
 
     this.setActiveNavItems(this.router.url);
 
@@ -72,7 +72,7 @@ export class NavbarComponent implements OnInit {
   private setActiveNavItems(url: string) {
     const path = url.split('?')[0]; // ? Just get path name
 
-    this.navConfigs.forEach(section => {
+    this.navConfigs().forEach(section => {
       section.navItems.forEach(item => {
         // ? Match exact main nav item by path only
         item.isActive = item.link === path;
@@ -157,10 +157,10 @@ export class NavbarComponent implements OnInit {
             ],
           },
           {
-            label: 'Hóa đơn',
+            label: 'Lịch sử giao dịch',
             icon: 'receipt_long',
+            link: '/admin/payments',
             type: 'link',
-            link: '/admin/invoices',
             isActive: false,
             submenuItems: [],
           },
