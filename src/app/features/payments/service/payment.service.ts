@@ -7,12 +7,12 @@ import { RequestService } from '../../../shared/services/core/request/request.se
 import { ToastHandlingService } from '../../../shared/services/core/toast/toast-handling.service';
 import { environment } from '../../../../environments/environment';
 import { Payment } from '../model/payment.model';
-import { BaseResponse } from '../../../shared/models/api/response/base-response.model';
 import { StatusCode } from '../../../shared/constants/status-code.constant';
 import { PaymentListParams } from '../model/payment-list-params';
 import { EntityListResponse } from '../../../shared/models/api/response/entity-list-response.model';
 import { SchoolSubscriptionDetail } from '../model/school-subscription-detail.model';
 import { CreditTransactionDetail } from '../model/credit-transaction-detail';
+import { BaseResponse } from '../../../shared/models/api/base-response.model';
 
 @Injectable({
   providedIn: 'root',
@@ -120,8 +120,6 @@ export class PaymentService {
       map(res => {
         if (res.statusCode === StatusCode.SUCCESS && res.data !== undefined) {
           options.successHandler?.(res.data);
-          console.log(res.data);
-
           return res.data;
         }
         options.errorHandler?.();

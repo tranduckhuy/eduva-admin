@@ -52,7 +52,8 @@ export class PaymentComponent {
 
   private loadData(): void {
     const currentUrl = this.router.url;
-    const paymentType = currentUrl.split('/')[2];
+    const paymentType = currentUrl.split('/')[3];
+    console.log(paymentType);
 
     if (paymentType === 'credit-pack') {
       this.isCreditPack.set(true);

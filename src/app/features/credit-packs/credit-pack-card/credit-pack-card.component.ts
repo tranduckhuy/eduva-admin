@@ -2,16 +2,12 @@ import {
   ChangeDetectionStrategy,
   Component,
   input,
-  LOCALE_ID,
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import localeVi from '@angular/common/locales/vi';
-import { CurrencyPipe, registerLocaleData } from '@angular/common';
+import { CurrencyPipe } from '@angular/common';
 
 import { ButtonComponent } from '../../../shared/components/button/button.component';
-
-registerLocaleData(localeVi);
 
 @Component({
   selector: 'app-credit-pack-card',
@@ -19,8 +15,6 @@ registerLocaleData(localeVi);
   imports: [ButtonComponent, CurrencyPipe, FormsModule],
   templateUrl: './credit-pack-card.component.html',
   styleUrl: './credit-pack-card.component.css',
-  providers: [{ provide: LOCALE_ID, useValue: 'vi-VN' }],
-
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreditPackCardComponent {

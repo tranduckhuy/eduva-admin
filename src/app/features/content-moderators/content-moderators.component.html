@@ -108,7 +108,11 @@
           </td>
           <td class="!text-center">
             <div class="mr-4 flex items-center justify-center gap-2">
-              <a [routerLink]="['/content-moderators', contentModerator.id]">
+              <a
+                [routerLink]="[
+                  '/admin/content-moderators',
+                  contentModerator.id,
+                ]">
                 <app-button
                   pTooltip="Xem chi tiết"
                   tooltipPosition="top"

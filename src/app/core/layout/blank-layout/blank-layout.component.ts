@@ -23,23 +23,19 @@ import { ThemeService } from '../../../shared/services/core/theme/theme.service'
     <p-toast />
     <p-confirmDialog [baseZIndex]="1000" />
 
-    @if (showThemeButton()) {
-      <button
-        class="fixed right-5 top-5 z-10 transition-colors duration-100 ease-linear hover:text-primary md:right-[25px] md:top-[25px]"
-        (click)="toggleDarkMode()">
-        <i class="material-symbols-outlined !text-xl md:!text-[22px]">
-          {{ isDarkMode() ? 'light_mode' : 'dark_mode' }}
-        </i>
-      </button>
-    }
+    <button
+      class="fixed right-5 top-5 z-10 transition-colors duration-100 ease-linear hover:text-primary md:right-[25px] md:top-[25px]"
+      (click)="toggleDarkMode()">
+      <i class="material-symbols-outlined !text-xl md:!text-[22px]">
+        {{ isDarkMode() ? 'light_mode' : 'dark_mode' }}
+      </i>
+    </button>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BlankLayoutComponent {
   private readonly themeService = inject(ThemeService);
   private readonly router = inject(Router);
-
-  private readonly hiddenPaths = ['/generate-lesson'];
 
   private readonly currentUrl = signal(this.router.url);
 
@@ -51,10 +47,6 @@ export class BlankLayoutComponent {
       { allowSignalWrites: true }
     );
   }
-
-  readonly showThemeButton = computed(() => {
-    return !this.hiddenPaths.some(path => this.currentUrl().includes(path));
-  });
 
   readonly isDarkMode = computed(() => this.themeService.isDarkMode());
 

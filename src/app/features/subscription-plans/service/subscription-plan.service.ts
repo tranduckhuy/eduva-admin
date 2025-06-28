@@ -11,7 +11,7 @@ import { EntityListResponse } from '../../../shared/models/api/response/entity-l
 import { EntityListParams } from '../../../shared/models/common/entity-list-params';
 import { SubscriptionPlan } from '../model/subscription-plan.model';
 import { SubscriptionPlanRequest } from '../model/subscription-plan-request.model';
-import { BaseResponse } from '../../../shared/models/api/response/base-response.model';
+import { BaseResponse } from '../../../shared/models/api/base-response.model';
 
 @Injectable({ providedIn: 'root' })
 export class SubscriptionPlanService {
@@ -87,7 +87,7 @@ export class SubscriptionPlanService {
     return this.handleCreationRequest(
       this.requestService.post<void>(this.BASE_URL, req),
       'Gói đăng ký đã được tạo mới thành công!',
-      'subscription-plans'
+      'admin/subscription-plans'
     );
   }
 
