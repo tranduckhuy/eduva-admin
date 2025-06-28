@@ -71,6 +71,25 @@
             [name]="'description'">
           </app-form-control>
         </div>
+        <div class="e-col-12 form-group">
+          <div class="checkbox flex flex-col text-left">
+            <input
+              type="checkbox"
+              id="isRecommended"
+              name="isRecommended"
+              disabled
+              [value]="subscriptionPlanDetail()?.isRecommended"
+              [checked]="subscriptionPlanDetail()?.isRecommended"
+              hidden />
+            <label
+              class="relative ml-1 flex items-center gap-[6px] pt-2 font-semibold"
+              for="isRecommended">
+              <span for="isRecommended"
+                >Đánh dấu gói này trở thành gói đề xuất</span
+              >
+            </label>
+          </div>
+        </div>
       </div>
     </div>
   </div>

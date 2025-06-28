@@ -5,4 +5,5 @@ export interface SubscriptionPlanRequest {
   priceMonthly: number;
   pricePerYear: number;
   storageLimitGB: number;
+  isRecommended: boolean;
 }

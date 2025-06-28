@@ -6,7 +6,11 @@ import {
   signal,
 } from '@angular/core';
 import localeVi from '@angular/common/locales/vi';
-import { CurrencyPipe, registerLocaleData } from '@angular/common';
+import {
+  CommonModule,
+  CurrencyPipe,
+  registerLocaleData,
+} from '@angular/common';
 
 import { ToggleSwitch } from 'primeng/toggleswitch';
 
@@ -18,7 +22,13 @@ registerLocaleData(localeVi);
 @Component({
   selector: 'app-subscription-plan-card',
   standalone: true,
-  imports: [ButtonComponent, CurrencyPipe, ToggleSwitch, FormsModule],
+  imports: [
+    ButtonComponent,
+    CurrencyPipe,
+    ToggleSwitch,
+    FormsModule,
+    CommonModule,
+  ],
   templateUrl: './subscription-plan-card.component.html',
   styleUrl: './subscription-plan-card.component.css',
   providers: [{ provide: LOCALE_ID, useValue: 'vi-VN' }],

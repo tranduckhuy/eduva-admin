@@ -106,6 +106,14 @@ export class NavbarComponent {
           submenuItems: [],
         },
         {
+          label: 'Lịch sử giao dịch',
+          icon: 'receipt_long',
+          link: '/payments',
+          type: 'link',
+          isActive: false,
+          submenuItems: [],
+        },
+        {
           label: 'Học tập',
           icon: 'auto_stories',
           type: 'accordion',

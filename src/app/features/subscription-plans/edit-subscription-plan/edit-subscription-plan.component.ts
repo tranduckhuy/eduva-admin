@@ -52,6 +52,7 @@ export class EditSubscriptionPlanComponent implements OnInit {
       storageLimitGB: [0, [Validators.required, Validators.min(0)]],
       priceMonthly: [0, [Validators.required, Validators.min(0)]],
       pricePerYear: [0, [Validators.required, Validators.min(0)]],
+      isRecommended: [false],
     });
   }
 
@@ -73,6 +74,7 @@ export class EditSubscriptionPlanComponent implements OnInit {
             storageLimitGB: detail.storageLimitGB,
             priceMonthly: detail.priceMonthly,
             pricePerYear: detail.pricePerYear,
+            isRecommended: detail.isRecommended,
           };
 
           this.form.patchValue(this.originalData);
@@ -113,6 +115,7 @@ export class EditSubscriptionPlanComponent implements OnInit {
       storageLimitGB: this.form.value.storageLimitGB,
       priceMonthly: this.form.value.priceMonthly,
       pricePerYear: this.form.value.pricePerYear,
+      isRecommended: this.form.value.isRecommended,
     };
 
     this.subscriptionPlanService

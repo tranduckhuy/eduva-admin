@@ -45,6 +45,7 @@ export class SubscriptionPlanCreateComponent {
       storageLimitGB: [0],
       priceMonthly: [0],
       pricePerYear: [0],
+      isRecommended: [false],
     });
   }
 
@@ -62,6 +63,7 @@ export class SubscriptionPlanCreateComponent {
       storageLimitGB: this.form.value.storageLimitGB,
       priceMonthly: this.form.value.priceMonthly,
       pricePerYear: this.form.value.pricePerYear,
+      isRecommended: this.form.value.isRecommended,
     };
 
     this.SubscriptionPlanService.createSubscriptionPlan(req).subscribe();
