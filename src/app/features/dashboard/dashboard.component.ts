@@ -1,6 +1,4 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { registerLocaleData } from '@angular/common';
-import localeVi from '@angular/common/locales/vi';
 
 import { StatCardComponent } from './stat-card/stat-card.component';
 import { UserRegistrationTrendComponent } from './user-registration-trend/user-registration-trend.component';
@@ -24,8 +22,6 @@ interface SubItem {
   title: string;
   value: number;
 }
-
-registerLocaleData(localeVi);
 
 @Component({
   selector: 'app-dashboard',

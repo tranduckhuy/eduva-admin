@@ -1,24 +1,33 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { EMPTY, Observable, catchError, map } from 'rxjs';
+
+import { EMPTY, Observable, catchError, map, of, tap } from 'rxjs';
 
 import { environment } from '../../../../../environments/environment';
 import { RequestService } from '../../core/request/request.service';
 import { ToastHandlingService } from '../../core/toast/toast-handling.service';
 import { StatusCode } from '../../../constants/status-code.constant';
 import { type User } from '../../../models/entities/user.model';
-import { EntityListResponse } from '../../../models/api/response/entity-list-response.model';
-import { UserListParams } from '../../../models/common/user-list-params';
-import { BaseResponse } from '../../../models/api/response/base-response.model';
+import { type UpdateProfileRequest } from '../../../pages/settings-page/personal-information/models/update-profile-request.model';
+import { type EntityListResponse } from '../../../models/api/response/entity-list-response.model';
+import { type UserListParams } from '../../../models/common/user-list-params';
+import { BaseResponse } from '../../../models/api/base-response.model';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
   private readonly requestService = inject(RequestService);
-  private readonly toastService = inject(ToastHandlingService);
+  private readonly toastHandlingService = inject(ToastHandlingService);
 
   // Signals
   private readonly usersSignal = signal<User[]>([]);
   private readonly totalUsersSignal = signal<number>(0);
   private readonly userDetailSignal = signal<User | null>(null);
+
+  private readonly BASE_API_URL = environment.baseApiUrl;
+  private readonly USER_API_URL = `${this.BASE_API_URL}/users`;
+  private readonly USER_PROFILE_API_URL = `${this.USER_API_URL}/profile`;
+
+  private readonly SESSION_STORAGE_KEY = 'eduva_user';
+
   private readonly currentUserSignal = signal<User | null>(null);
 
   // Readonly signals
@@ -31,24 +40,6 @@ export class UserService {
   private readonly BASE_URL = `${environment.baseApiUrl}/users`;
   private readonly PROFILE_URL = `${this.BASE_URL}/profile`;
 
-  /**
-   * Fetches the current user's profile
-   * @returns Observable with User data or null
-   */
-  getCurrentProfile(): Observable<User | null> {
-    return this.handleRequest<User>(
-      this.requestService.get<User>(this.PROFILE_URL),
-      {
-        successHandler: data => this.currentUserSignal.set(data),
-      }
-    );
-  }
-
-  /**
-   * Fetches a list of users with pagination/sorting/filtering
-   * @param params User list parameters
-   * @returns Observable with EntityListResponse or null
-   */
   getUsers(
     params: UserListParams
   ): Observable<EntityListResponse<User> | null> {
@@ -128,11 +119,11 @@ export class UserService {
           return res.data;
         }
         options.errorHandler?.();
-        this.toastService.errorGeneral();
+        this.toastHandlingService.errorGeneral();
         return null;
       }),
       catchError(() => {
-        this.toastService.errorGeneral();
+        this.toastHandlingService.errorGeneral();
         return EMPTY;
       })
     );
@@ -148,17 +139,64 @@ export class UserService {
     return request$.pipe(
       map(res => {
         if (res.statusCode === StatusCode.SUCCESS) {
-          this.toastService.success('Thành công', successMessage);
+          this.toastHandlingService.success('Thành công', successMessage);
         } else {
-          this.toastService.errorGeneral();
+          this.toastHandlingService.errorGeneral();
         }
       }),
       catchError(() => {
-        this.toastService.errorGeneral();
+        this.toastHandlingService.errorGeneral();
         return EMPTY;
       })
     );
   }
+
+  constructor() {
+    // Hydrate signal from sessionStorage if sessionStorage have data
+    const cachedUser = this.loadUserFromStorage();
+    if (cachedUser) {
+      this.currentUserSignal.set(cachedUser);
+    }
+  }
+
+  getCurrentProfile(): Observable<User | null> {
+    return this.requestService.get<User>(this.USER_PROFILE_API_URL).pipe(
+      tap(res => this.handleGetProfileSideEffect(res)),
+      map(res => this.extractUserFromResponse(res)),
+      catchError(() => this.handleErrorResponse())
+    );
+  }
+
+  updateUserProfile(request: UpdateProfileRequest): Observable<User | null> {
+    return this.requestService
+      .put<User>(this.USER_PROFILE_API_URL, request)
+      .pipe(
+        tap(res => this.handleUpdateProfileSideEffect(res)),
+        map(res => this.extractUserFromResponse(res)),
+        catchError(() => this.handleErrorResponse())
+      );
+  }
+
+  updateCurrentUserPartial(update: Partial<User>): void {
+    const current = this.currentUserSignal();
+    if (!current) return;
+    const merged = { ...current, ...update };
+    this.setCurrentUser(merged);
+  }
+
+  clearCurrentUser(): void {
+    this.setCurrentUser(null);
+  }
+
+  // getUsers(
+  //   params: UserListParams
+  // ): Observable<EntityListResponse<User> | null> {
+  //   return this.requestService
+  //     .get<EntityListResponse<User> | null>(this.USER_API_URL, params, {
+  //       loadingKey: 'get-users',
+  //     })
+  //   );
+  // }
 
   private resetUsers(): void {
     this.usersSignal.set([]);
@@ -167,5 +205,76 @@ export class UserService {
 
   private resetUser(): void {
     this.userDetailSignal.set(null);
+  }
+
+  private handleGetProfileSideEffect(res: any): void {
+    if (res.statusCode === StatusCode.SUCCESS && res.data) {
+      this.setCurrentUser(res.data);
+    } else {
+      this.toastHandlingService.errorGeneral();
+    }
+  }
+
+  private handleUpdateProfileSideEffect(res: any): void {
+    if (res.statusCode === StatusCode.SUCCESS && res.data) {
+      this.toastHandlingService.success(
+        'Thành công',
+        'Hồ sơ của bạn đã được thay đổi thành công'
+      );
+
+      const currentUser = this.currentUser();
+      const updated = res.data;
+
+      if (!currentUser || !updated) {
+        this.toastHandlingService.errorGeneral();
+        return;
+      }
+
+      const mergedUser = this.mergeUser(currentUser, updated);
+      this.setCurrentUser(mergedUser);
+    } else {
+      this.toastHandlingService.errorGeneral();
+    }
+  }
+
+  private extractUserFromResponse(res: any): User | null {
+    if (res.statusCode === StatusCode.SUCCESS && res.data) {
+      return res.data;
+    }
+    return null;
+  }
+
+  private handleErrorResponse(): Observable<null> {
+    this.toastHandlingService.errorGeneral();
+    return of(null);
+  }
+
+  private mergeUser(current: User, updated: Partial<User>): User {
+    return {
+      ...current,
+      ...updated,
+      roles: updated.roles?.length ? updated.roles : current.roles,
+      isEmailConfirmed: updated.isEmailConfirmed ?? current.isEmailConfirmed,
+      userSubscriptionResponse:
+        updated.userSubscriptionResponse ?? current.userSubscriptionResponse,
+    };
+  }
+
+  private loadUserFromStorage(): User | null {
+    const raw = sessionStorage.getItem(this.SESSION_STORAGE_KEY);
+    try {
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  private setCurrentUser(user: User | null): void {
+    this.currentUserSignal.set(user);
+    if (user) {
+      sessionStorage.setItem(this.SESSION_STORAGE_KEY, JSON.stringify(user));
+    } else {
+      sessionStorage.removeItem(this.SESSION_STORAGE_KEY);
+    }
   }
 }

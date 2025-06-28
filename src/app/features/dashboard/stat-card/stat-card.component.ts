@@ -1,11 +1,5 @@
-import { CurrencyPipe, registerLocaleData } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  input,
-  LOCALE_ID,
-} from '@angular/core';
-import localeVi from '@angular/common/locales/vi';
+import { CurrencyPipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 import { ProgressBar } from 'primeng/progressbar';
 import { TooltipModule } from 'primeng/tooltip';
@@ -27,15 +21,12 @@ interface SubItem {
   value: number;
 }
 
-registerLocaleData(localeVi);
-
 @Component({
   selector: 'app-stat-card',
   standalone: true,
   imports: [ProgressBar, TooltipModule, CurrencyPipe],
   templateUrl: './stat-card.component.html',
   styleUrl: './stat-card.component.css',
-  providers: [{ provide: LOCALE_ID, useValue: 'vi-VN' }],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StatCardComponent {

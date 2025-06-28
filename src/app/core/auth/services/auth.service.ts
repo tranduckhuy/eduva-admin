@@ -8,15 +8,18 @@ import { environment } from '../../../../environments/environment';
 
 import { JwtService } from './jwt.service';
 import { UserService } from '../../../shared/services/api/user/user.service';
+import { EmailVerificationService } from './email-verification.service';
 import { RequestService } from '../../../shared/services/core/request/request.service';
 import { ToastHandlingService } from '../../../shared/services/core/toast/toast-handling.service';
+import { GlobalModalService } from '../../../shared/services/layout/global-modal/global-modal.service';
 
 import { StatusCode } from '../../../shared/constants/status-code.constant';
+import { UserRoles } from '../../../shared/constants/user-roles.constant';
 
 import { type LoginRequest } from '../pages/login/models/login-request.model';
-import { type RefreshTokenRequest } from '../models/refresh-token-request.model';
-
-import { type AuthTokenResponse } from '../models/auth-response.model';
+import { type RefreshTokenRequest } from '../models/request/refresh-token-request.model';
+import { type AuthTokenResponse } from '../models/response/auth-response.model';
+import { type EmailLinkRequest } from '../models/request/email-link-request.model';
 
 @Injectable({
   providedIn: 'root',
@@ -25,13 +28,16 @@ export class AuthService {
   private readonly router = inject(Router);
   private readonly jwtService = inject(JwtService);
   private readonly userService = inject(UserService);
+  private readonly emailVerificationService = inject(EmailVerificationService);
   private readonly requestService = inject(RequestService);
   private readonly toastHandlingService = inject(ToastHandlingService);
+  private readonly globalModalService = inject(GlobalModalService);
 
   private readonly BASE_API_URL = environment.baseApiUrl;
   private readonly LOGIN_API_URL = `${this.BASE_API_URL}/auth/login`;
   private readonly REFRESH_TOKEN_API_URL = `${this.BASE_API_URL}/auth/refresh-token`;
   private readonly LOGOUT_API_URL = `${this.BASE_API_URL}/auth/logout`;
+  private readonly CLIENT_URL = `${environment.clientUrl}/login`;
 
   private readonly isLoggedInSignal = signal<boolean>(
     !!this.jwtService.getAccessToken()
@@ -42,59 +48,19 @@ export class AuthService {
     return this.requestService
       .post<AuthTokenResponse>(this.LOGIN_API_URL, request, {
         bypassAuth: true,
-        showLoading: false,
       })
       .pipe(
         map(res => {
           if (res.statusCode === StatusCode.SUCCESS && res.data) {
-            const { accessToken, refreshToken, expiresIn } = res.data;
-
-            this.jwtService.setAccessToken(accessToken);
-            this.jwtService.setRefreshToken(refreshToken);
-            this.jwtService.setExpiresDate(
-              new Date(Date.now() + expiresIn * 1000).toISOString()
-            );
-            this.isLoggedInSignal.set(true);
-
-            // ? Call UserProfile API for redirect by role
-            this.userService.getCurrentProfile().subscribe(user => {
-              if (!user) {
-                this.toastHandlingService.errorGeneral();
-              } else if (user.roles.includes('SystemAdmin')) {
-                this.router.navigateByUrl('/');
-              }
-            });
-
+            this.handleLoginSuccess(res.data);
             return res.data;
-          } else {
-            this.toastHandlingService.errorGeneral();
-            return null;
           }
+
+          this.toastHandlingService.errorGeneral();
+          return null;
         }),
-        catchError((err: HttpErrorResponse) => {
-          switch (err.error.statusCode) {
-            case StatusCode.USER_NOT_EXISTS:
-            case StatusCode.INVALID_CREDENTIALS:
-              this.toastHandlingService.error(
-                'Đăng nhập thất bại',
-                'Tên đăng nhập hoặc mật khẩu chưa chính xác.'
-              );
-              break;
-            case StatusCode.USER_NOT_CONFIRMED:
-              this.toastHandlingService.error(
-                'Đăng nhập thất bại',
-                'Tài khoản của bạn chưa được xác minh. Vui lòng kiểm tra email để hoàn tất xác minh.'
-              );
-              break;
-            case StatusCode.USER_ACCOUNT_LOCKED:
-              this.toastHandlingService.error(
-                'Đăng nhập thất bại',
-                'Tài khoản của bạn đã bị vô hiệu hóa.'
-              );
-              break;
-            default:
-              this.toastHandlingService.errorGeneral();
-          }
+        catchError(err => {
+          this.handleLoginError(err, request.email);
           return of(null);
         })
       );
@@ -111,22 +77,15 @@ export class AuthService {
       .pipe(
         map(res => {
           if (res.statusCode === StatusCode.SUCCESS && res.data) {
-            const { accessToken, refreshToken, expiresIn } = res.data;
-
-            this.jwtService.setAccessToken(accessToken);
-            this.jwtService.setRefreshToken(refreshToken);
-            this.jwtService.setExpiresDate(
-              new Date(Date.now() + expiresIn * 1000).toISOString()
-            );
-
+            this.handleTokenStorage(res.data);
             return res.data;
           }
 
-          this.jwtService.clearAll();
+          this.clearSession();
           return null;
         }),
         catchError(() => {
-          this.jwtService.clearAll();
+          this.clearSession();
           this.router.navigateByUrl('/auth/login');
           return of(null);
         })
@@ -136,14 +95,118 @@ export class AuthService {
   logout(): Observable<void> {
     return this.requestService.post(this.LOGOUT_API_URL).pipe(
       tap(() => {
-        this.jwtService.clearAll();
-        this.isLoggedInSignal.set(false);
-        this.router.navigateByUrl('/auth/login', {
-          replaceUrl: true,
+        // ? Clear user profile cache
+        this.clearSession();
+
+        // ? Clear state cache
+        Object.keys(localStorage).forEach(key => {
+          if (key.startsWith('accordion-open:')) {
+            localStorage.removeItem(key);
+          }
         });
+
+        // ? Close modal
+        this.globalModalService.close();
+
+        // ? Close Submenus
+        window.dispatchEvent(new Event('close-all-submenus'));
+
+        this.router.navigateByUrl('/auth/login', { replaceUrl: true });
       }),
       map(() => void 0),
       catchError(() => of(void 0))
     );
+  }
+
+  handleLoginSuccess(data: AuthTokenResponse): void {
+    this.handleTokenStorage(data);
+    this.redirectUserAfterLogin();
+    this.isLoggedInSignal.set(true);
+  }
+
+  // ---------------------------
+  //  Private Helper Functions
+  // ---------------------------
+
+  private handleTokenStorage(data: AuthTokenResponse): void {
+    const { accessToken, refreshToken, expiresIn } = data;
+    this.jwtService.setAccessToken(accessToken);
+    this.jwtService.setRefreshToken(refreshToken);
+    this.jwtService.setExpiresDate(
+      new Date(Date.now() + expiresIn * 1000).toISOString()
+    );
+  }
+
+  private handleLoginError(err: HttpErrorResponse, email: string): void {
+    const statusCode = err.error?.statusCode;
+
+    switch (statusCode) {
+      case StatusCode.USER_NOT_EXISTS:
+      case StatusCode.INVALID_CREDENTIALS:
+        this.toastHandlingService.error(
+          'Đăng nhập thất bại',
+          'Tên đăng nhập hoặc mật khẩu chưa chính xác.'
+        );
+        break;
+
+      case StatusCode.USER_NOT_CONFIRMED:
+        this.toastHandlingService.error(
+          'Đăng nhập thất bại',
+          'Tài khoản của bạn chưa được xác minh. Vui lòng kiểm tra email để hoàn tất xác minh.'
+        );
+        this.resendConfirmEmail(email);
+        break;
+
+      case StatusCode.USER_ACCOUNT_LOCKED:
+        this.toastHandlingService.error(
+          'Đăng nhập thất bại',
+          'Tài khoản của bạn đã bị vô hiệu hóa.'
+        );
+        break;
+
+      case StatusCode.REQUIRES_OTP_VERIFICATION:
+        this.router.navigate(['/auth/otp-confirmation'], {
+          queryParams: { email },
+        });
+        break;
+
+      default:
+        this.toastHandlingService.errorGeneral();
+    }
+  }
+
+  private resendConfirmEmail(email: string): void {
+    const request: EmailLinkRequest = {
+      email,
+      clientUrl: this.CLIENT_URL,
+    };
+
+    this.emailVerificationService
+      .resendConfirmEmail(request, {
+        title: 'Email xác minh đã được gửi lại',
+        description: 'Vui lòng kiểm tra email của bạn để hoàn tất xác minh.',
+      })
+      .subscribe();
+  }
+
+  private clearSession(): void {
+    this.jwtService.clearAll();
+    this.userService.clearCurrentUser();
+    this.isLoggedInSignal.set(false);
+  }
+
+  private redirectUserAfterLogin(): void {
+    this.userService.getCurrentProfile().subscribe(user => {
+      if (!user) {
+        this.toastHandlingService.errorGeneral();
+        return;
+      }
+
+      const firstRole = user.roles[0];
+      const redirectUrl =
+        firstRole === UserRoles.SYSTEM_ADMIN ? '/' : '/unauthorized';
+
+      this.router.navigateByUrl(redirectUrl, { replaceUrl: true });
+    });
   }
 }

@@ -1,13 +1,11 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  LOCALE_ID,
   signal,
   ViewChild,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import localeVi from '@angular/common/locales/vi';
-import { CurrencyPipe, DatePipe, registerLocaleData } from '@angular/common';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 
 import { TooltipModule } from 'primeng/tooltip';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
@@ -20,8 +18,6 @@ import { ButtonComponent } from '../../shared/components/button/button.component
 import { DialogComponent } from '../../shared/components/dialog/dialog.component';
 
 import { Invoice } from '../../shared/models/entities/invoice.model';
-
-registerLocaleData(localeVi);
 
 @Component({
   selector: 'app-invoices',
@@ -39,7 +35,6 @@ registerLocaleData(localeVi);
   ],
   templateUrl: './invoices.component.html',
   styleUrl: './invoices.component.css',
-  providers: [{ provide: LOCALE_ID, useValue: 'vi-VN' }],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InvoicesComponent {
