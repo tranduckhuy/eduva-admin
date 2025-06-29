@@ -7,7 +7,7 @@ import { environment } from '../../../../environments/environment';
 import { RequestService } from '../../../shared/services/core/request/request.service';
 import { ToastHandlingService } from '../../../shared/services/core/toast/toast-handling.service';
 import { StatusCode } from '../../../shared/constants/status-code.constant';
-import { EntityListResponse } from '../../../shared/models/api/response/entity-list-response.model';
+import { EntityListResponse } from '../../../shared/models/api/response/query/entity-list-response.model';
 import { EntityListParams } from '../../../shared/models/common/entity-list-params';
 import { SubscriptionPlan } from '../model/subscription-plan.model';
 import { SubscriptionPlanRequest } from '../model/subscription-plan-request.model';

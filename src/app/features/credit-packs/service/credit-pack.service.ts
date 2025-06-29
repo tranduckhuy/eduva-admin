@@ -8,7 +8,7 @@ import { RequestService } from '../../../shared/services/core/request/request.se
 import { ToastHandlingService } from '../../../shared/services/core/toast/toast-handling.service';
 import { StatusCode } from '../../../shared/constants/status-code.constant';
 import { EntityListParams } from '../../../shared/models/common/entity-list-params';
-import { EntityListResponse } from '../../../shared/models/api/response/entity-list-response.model';
+import { EntityListResponse } from '../../../shared/models/api/response/query/entity-list-response.model';
 import { CreditPack } from '../model/credit-pack.model';
 import { CreditPackRequest } from '../model/credit-pack-request.model';
 import { BaseResponse } from '../../../shared/models/api/base-response.model';

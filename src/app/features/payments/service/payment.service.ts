@@ -9,7 +9,7 @@ import { environment } from '../../../../environments/environment';
 import { Payment } from '../model/payment.model';
 import { StatusCode } from '../../../shared/constants/status-code.constant';
 import { PaymentListParams } from '../model/payment-list-params';
-import { EntityListResponse } from '../../../shared/models/api/response/entity-list-response.model';
+import { EntityListResponse } from '../../../shared/models/api/response/query/entity-list-response.model';
 import { SchoolSubscriptionDetail } from '../model/school-subscription-detail.model';
 import { CreditTransactionDetail } from '../model/credit-transaction-detail';
 import { BaseResponse } from '../../../shared/models/api/base-response.model';
