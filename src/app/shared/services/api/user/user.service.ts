@@ -8,7 +8,7 @@ import { ToastHandlingService } from '../../core/toast/toast-handling.service';
 import { StatusCode } from '../../../constants/status-code.constant';
 import { type User } from '../../../models/entities/user.model';
 import { type UpdateProfileRequest } from '../../../pages/settings-page/personal-information/models/update-profile-request.model';
-import { type EntityListResponse } from '../../../models/api/response/entity-list-response.model';
+import { type EntityListResponse } from '../../../models/api/response/query/entity-list-response.model';
 import { type UserListParams } from '../../../models/common/user-list-params';
 import { BaseResponse } from '../../../models/api/base-response.model';
 
