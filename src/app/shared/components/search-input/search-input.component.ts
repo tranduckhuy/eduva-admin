@@ -4,7 +4,6 @@ import {
   DestroyRef,
   inject,
   input,
-  OnInit,
   output,
   signal,
 } from '@angular/core';
@@ -20,7 +19,7 @@ import { debounceSignal } from '../../utils/util-functions';
   styleUrl: './search-input.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SearchInputComponent implements OnInit {
+export class SearchInputComponent {
   private readonly destroyRef = inject(DestroyRef);
 
   private readonly destroyDebounce: () => void;
@@ -31,14 +30,6 @@ export class SearchInputComponent implements OnInit {
   search = output<string>();
 
   searchTerm = signal<string>('');
-
-  ngOnInit() {
-    // this.searchTerm.set(this.initialSearchTerm());
-  }
-
-  // onSearch(): void {
-  //   this.search.emit(this.searchTerm());
-  // }
 
   constructor() {
     this.destroyDebounce = debounceSignal(
