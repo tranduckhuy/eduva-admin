@@ -20,6 +20,11 @@
             ></span
           >
         </a>
+
+        <app-export-invoice-pdf
+          [isCreditPack]="isCreditPack()"
+          [creditTransactionDetail]="creditTransactionDetail()"
+          [schoolSubscriptionDetail]="schoolSubscriptionDetail()" />
       </div>
 
       <div class="p-5">
@@ -107,7 +112,7 @@
             <p class="mb-2 text-[15px]">
               {{
                 isCreditPack()
-                  ? (creditTransactionDetail()?.createdAt | date: 'medium')
+                  ? (creditTransactionDetail()?.createdAt | date: 'mediumDate')
                   : (schoolSubscriptionDetail()?.startDate | date: 'medium')
               }}
             </p>

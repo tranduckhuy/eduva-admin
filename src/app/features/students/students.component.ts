@@ -81,9 +81,9 @@ export class StudentsComponent {
   ]);
 
   // Signals from service
-  isLoadingGet = this.loadingService.is('get-Schools');
-  isLoadingArchive = this.loadingService.is('archive-school');
-  isLoadingActive = this.loadingService.is('active-school');
+  isLoadingGet = this.loadingService.is('get-users');
+  isLoadingArchive = this.loadingService.is('archive-user');
+  isLoadingActive = this.loadingService.is('active-user');
 
   users = this.userService.users;
   totalUsers = this.userService.totalUsers;
