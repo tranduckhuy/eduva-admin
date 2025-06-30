@@ -18,13 +18,20 @@ import localeVi from '@angular/common/locales/vi';
 import { PaymentService } from '../service/payment.service';
 import { LoadingService } from '../../../shared/services/core/loading/loading.service';
 import { StorageFormatPipe } from '../../../shared/pipes/storage-format.pipe';
+import { ExportInvoicePdfComponent } from '../export-invoice-pdf/export-invoice-pdf.component';
 
 registerLocaleData(localeVi);
 
 @Component({
   selector: 'app-payment',
   standalone: true,
-  imports: [DatePipe, CurrencyPipe, StorageFormatPipe, CommonModule],
+  imports: [
+    DatePipe,
+    CurrencyPipe,
+    StorageFormatPipe,
+    CommonModule,
+    ExportInvoicePdfComponent,
+  ],
   templateUrl: './payment.component.html',
   styleUrl: './payment.component.css',
   providers: [DatePipe, { provide: LOCALE_ID, useValue: 'vi' }],
@@ -52,7 +59,6 @@ export class PaymentComponent {
   private loadData(): void {
     const currentUrl = this.router.url;
     const paymentType = currentUrl.split('/')[3];
-    console.log(paymentType);
 
     if (paymentType === 'credit-pack') {
       this.isCreditPack.set(true);
