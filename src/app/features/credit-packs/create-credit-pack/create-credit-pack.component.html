@@ -1,0 +1,74 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="e-row e-g-4 e-g-md-6">
+    <div class="e-col-8 e-col-lg-12">
+      <div
+        class="rounded border border-gray-100 bg-white p-4 pb-6 shadow-main dark:border-dark-500 dark:bg-dark-200">
+        <div class="mb-4 flex items-center justify-between">
+          <h2 class="text-base font-medium">Thông tin gói credit</h2>
+          <app-button [variant]="'light'" [type]="'submit'"
+            >Lưu thông tin</app-button
+          >
+        </div>
+
+        <div class="e-row e-row-cols-1 e-g-4">
+          <div class="e-col-12">
+            <app-form-control
+              label="Tên gói"
+              type="text"
+              [name]="'name'"
+              [maxLength]="25"
+              [required]="true"
+              [placeholder]="'Nhập tên gói...'"
+              [submitted]="submitted()"
+              formControlName="name">
+            </app-form-control>
+          </div>
+          <div class="e-col">
+            <app-form-control
+              label="Giá gói (vnd)"
+              [type]="'number'"
+              [name]="'price'"
+              [required]="true"
+              [min]="1"
+              [placeholder]="'Nhập giá gói...'"
+              [submitted]="submitted()"
+              formControlName="price">
+            </app-form-control>
+          </div>
+          <div class="e-col">
+            <app-form-control
+              label="Số lượng credit"
+              [type]="'number'"
+              [name]="'credits'"
+              [required]="true"
+              [min]="1"
+              [placeholder]="'Nhập số lượng credit...'"
+              [submitted]="submitted()"
+              formControlName="credits">
+            </app-form-control>
+          </div>
+          <div class="e-col">
+            <app-form-control
+              label="Credit tặng thêm"
+              [type]="'number'"
+              [name]="'bonusCredits'"
+              [required]="true"
+              [min]="0"
+              [placeholder]="'Nhập số lượng credit tặng thêm...'"
+              [submitted]="submitted()"
+              formControlName="bonusCredits">
+            </app-form-control>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="e-col-4 e-col-lg-12">
+      <app-credit-pack-card
+        [name]="form.get('name')?.value"
+        [price]="form.get('price')?.value"
+        [credits]="form.get('credits')?.value"
+        [bonusCredits]="form.get('priceMonthly')?.value" />
+    </div>
+  </div>
+</form>
