@@ -45,9 +45,9 @@ export const adminRoutes: Routes = [
           ),
       },
       {
-        path: 'invoices',
+        path: 'payments',
         loadChildren: () =>
-          import('./invoices/invoices.routes').then(mod => mod.invoicesRoute),
+          import('./payments/payment.routes').then(mod => mod.paymentRoute),
       },
       {
         path: 'subscription-plans',

@@ -13,4 +13,5 @@ export interface SubscriptionPlan {
   pricePerYear: number;
   status: Status;
   storageLimitGB: number;
+  isRecommended: boolean;
 }

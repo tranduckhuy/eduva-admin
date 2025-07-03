@@ -28,6 +28,8 @@
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@supabase/supabase-js": "^2.50.1",
     "@primeng/themes": "^18.0.2",
+    "jspdf": "^3.0.1",
+    "jspdf-autotable": "^5.0.2",
     "apexcharts": "^3.54.1",
     "dompurify": "^3.2.6",
     "ng-apexcharts": "^1.7.2",

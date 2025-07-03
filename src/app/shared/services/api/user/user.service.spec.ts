@@ -7,7 +7,7 @@ import { RequestService } from '../../core/request/request.service';
 import { ToastHandlingService } from '../../core/toast/toast-handling.service';
 import { StatusCode } from '../../../constants/status-code.constant';
 import { User } from '../../../models/entities/user.model';
-import { EntityListResponse } from '../../../models/api/response/entity-list-response.model';
+import { EntityListResponse } from '../../../models/api/response/query/entity-list-response.model';
 import { UserListParams } from '../../../models/common/user-list-params';
 import { School } from '../../../../features/schools/model/school-model';
 
