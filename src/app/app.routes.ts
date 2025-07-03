@@ -25,5 +25,12 @@ export const routes: Routes = [
     loadChildren: () =>
       import('./features/admin.routes').then(mod => mod.adminRoutes),
   },
-  { path: '**', redirectTo: '' },
+  {
+    path: 'errors',
+    loadChildren: () =>
+      import('./shared/pages/errors/errors.routes').then(
+        mod => mod.errorRoutes
+      ),
+  },
+  { path: '**', redirectTo: 'errors/404' },
 ];

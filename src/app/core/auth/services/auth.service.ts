@@ -121,7 +121,6 @@ export class AuthService {
   handleLoginSuccess(data: AuthTokenResponse): void {
     this.handleTokenStorage(data);
     this.redirectUserAfterLogin();
-    this.isLoggedInSignal.set(true);
   }
 
   // ---------------------------
@@ -135,6 +134,27 @@ export class AuthService {
     this.jwtService.setExpiresDate(
       new Date(Date.now() + expiresIn * 1000).toISOString()
     );
+  }
+
+  private redirectUserAfterLogin(): void {
+    this.userService.getCurrentProfile().subscribe(user => {
+      if (!user) {
+        this.toastHandlingService.errorGeneral();
+        return;
+      }
+
+      if (!user.roles.includes(UserRoles.SYSTEM_ADMIN)) {
+        this.router.navigateByUrl('/errors/403');
+        setTimeout(() => {
+          this.clearSession();
+          this.isLoggedInSignal.set(false);
+        }, 300);
+        return;
+      }
+
+      this.isLoggedInSignal.set(true);
+      this.router.navigateByUrl('/', { replaceUrl: true });
+    });
   }
 
   private handleLoginError(err: HttpErrorResponse, email: string): void {
@@ -193,20 +213,5 @@ export class AuthService {
     this.jwtService.clearAll();
     this.userService.clearCurrentUser();
     this.isLoggedInSignal.set(false);
-  }
-
-  private redirectUserAfterLogin(): void {
-    this.userService.getCurrentProfile().subscribe(user => {
-      if (!user) {
-        this.toastHandlingService.errorGeneral();
-        return;
-      }
-
-      const firstRole = user.roles[0];
-      const redirectUrl =
-        firstRole === UserRoles.SYSTEM_ADMIN ? '/' : '/unauthorized';
-
-      this.router.navigateByUrl(redirectUrl, { replaceUrl: true });
-    });
   }
 }
