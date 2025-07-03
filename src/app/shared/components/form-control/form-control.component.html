@@ -6,10 +6,11 @@
       </label>
       @if (redirectLink()) {
         <a
+          tabindex="-1"
           routerLink="{{ redirectLink().href }}"
-          class="mb-2 block font-semibold text-[#f33a58]"
-          >{{ redirectLink().value }}</a
-        >
+          class="mb-2 block font-semibold text-[#f33a58]">
+          {{ redirectLink().value }}
+        </a>
       }
     </div>
     <div
@@ -86,13 +87,17 @@
         type() !== 'password' &&
         (!options() || options().length === 0)
       ) {
-        <i
-          class="fa-solid fa-triangle-exclamation absolute right-[14px] top-[20%] block animate-shake text-base text-[#f33a58]"></i>
+        <div class="absolute right-[14px] top-1/2 -translate-y-1/2">
+          <i
+            class="fa-solid fa-triangle-exclamation animate-shake text-base text-[#f33a58]">
+          </i>
+        </div>
       } @else if (
         type() === 'password' && (!options() || options().length === 0)
       ) {
         @if (isShowPassword()) {
           <span
+            tabindex="-1"
             class="material-symbols-outlined absolute right-[14px] top-[17%] block cursor-pointer text-lg text-[#64748b]"
             (mousedown)="$event.preventDefault()"
             (click)="
@@ -104,6 +109,7 @@
           </span>
         } @else {
           <span
+            tabindex="-1"
             class="material-symbols-outlined absolute right-[14px] top-[17%] block cursor-pointer text-lg text-[#64748b]"
             (mousedown)="$event.preventDefault()"
             (click)="

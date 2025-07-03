@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "frontend-admin": {
+    "eduva-admin": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -21,7 +21,7 @@
             "customWebpackConfig": {
               "path": "./custom-webpack.config.ts"
             },
-            "outputPath": "dist/frontend-admin",
+            "outputPath": "dist/eduva-admin",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [],
@@ -91,47 +91,19 @@
           "builder": "@angular-builders/custom-webpack:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "frontend-admin:build:production"
+              "buildTarget": "eduva-admin:build:production"
             },
             "development": {
-              "buildTarget": "frontend-admin:build:development"
+              "buildTarget": "eduva-admin:build:development"
             },
             "staging": {
-              "buildTarget": "frontend-admin:build:staging"
+              "buildTarget": "eduva-admin:build:staging"
             }
           },
           "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n"
-        },
-        "test": {
-          "builder": "@angular-builders/custom-webpack:karma",
-          "options": {
-            "customWebpackConfig": {
-              "path": "./custom-webpack.config.ts"
-            },
-            "polyfills": [],
-            "tsConfig": "tsconfig.spec.json",
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "public",
-                "output": "."
-              },
-              {
-                "glob": "**/*",
-                "input": "src/assets",
-                "output": "assets"
-              }
-            ],
-            "styles": [
-              "node_modules/@fortawesome/fontawesome-svg-core/styles.css",
-              "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
-              "src/styles.css"
-            ],
-            "scripts": []
-          }
         }
       }
     }
