@@ -16,7 +16,6 @@
               label="Tên gói"
               type="text"
               [name]="'name'"
-              [maxLength]="25"
               [required]="true"
               [placeholder]="'Nhập tên gói...'"
               [submitted]="submitted()"
@@ -75,6 +74,7 @@
             <app-form-control
               [isTextarea]="true"
               [label]="'Mô tả'"
+              [maxLength]="200"
               [placeholder]="'Nhập mô tả...'"
               [name]="'description'"
               [submitted]="submitted()"
