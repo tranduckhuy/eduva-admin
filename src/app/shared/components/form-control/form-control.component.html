@@ -25,9 +25,10 @@
           control.invalid &&
           (control.touched || submitted())
         ),
-        'focus-within:border-primary':
+        'focus-within:border-primary dark:focus-within:border-primary':
           !control.invalid || (!control.touched && !submitted()),
-        'bg-[#e1e6f2]': readOnly() === true,
+        'pointer-events-none !border-[#f1f4fa] !bg-[#f1f4fa] dark:!border-dark-400 dark:!bg-dark-400':
+          readOnly() === true,
       }"
       [style.backgroundColor]="
         control.invalid && (control.touched || submitted()) ? '#ff00001a' : ''
@@ -44,7 +45,7 @@
           }
           <select
             [formControl]="control"
-            class="custom-select flex w-full items-center border-none bg-transparent py-3 pl-4 pr-[42px] leading-none outline-none placeholder:text-black/60 dark:!bg-dark-400 dark:!text-white dark:text-white dark:placeholder:text-[#64748b]"
+            class="custom-select flex w-full items-center border-none bg-transparent py-3 pl-4 pr-[42px] leading-none outline-none placeholder:text-black/60 dark:!bg-dark-400 dark:text-white dark:placeholder:text-[#64748b]"
             (blur)="handleTouched()">
             <option value="" disabled selected hidden>
               {{ placeholder() }}

@@ -5,12 +5,14 @@ import { EMPTY, Observable, catchError, map, of, tap } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { RequestService } from '../../core/request/request.service';
 import { ToastHandlingService } from '../../core/toast/toast-handling.service';
+
 import { StatusCode } from '../../../constants/status-code.constant';
+
 import { type User } from '../../../models/entities/user.model';
+import { type BaseResponse } from '../../../models/api/base-response.model';
 import { type UpdateProfileRequest } from '../../../pages/settings-page/personal-information/models/update-profile-request.model';
 import { type EntityListResponse } from '../../../models/api/response/query/entity-list-response.model';
 import { type UserListParams } from '../../../models/common/user-list-params';
-import { BaseResponse } from '../../../models/api/base-response.model';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -26,7 +28,7 @@ export class UserService {
   private readonly USER_API_URL = `${this.BASE_API_URL}/users`;
   private readonly USER_PROFILE_API_URL = `${this.USER_API_URL}/profile`;
 
-  private readonly SESSION_STORAGE_KEY = 'eduva_user';
+  private readonly LOCAL_STORAGE_KEY = 'eduva_user';
 
   private readonly currentUserSignal = signal<User | null>(null);
 
@@ -36,17 +38,17 @@ export class UserService {
   readonly userDetail = this.userDetailSignal.asReadonly();
   readonly currentUser = this.currentUserSignal.asReadonly();
 
-  // API URLs
-  private readonly BASE_URL = `${environment.baseApiUrl}/users`;
-  private readonly PROFILE_URL = `${this.BASE_URL}/profile`;
-
   getUsers(
     params: UserListParams
   ): Observable<EntityListResponse<User> | null> {
     return this.handleRequest<EntityListResponse<User>>(
-      this.requestService.get<EntityListResponse<User>>(this.BASE_URL, params, {
-        loadingKey: 'get-users',
-      }),
+      this.requestService.get<EntityListResponse<User>>(
+        this.USER_API_URL,
+        params,
+        {
+          loadingKey: 'get-users',
+        }
+      ),
       {
         successHandler: data => {
           this.usersSignal.set(data.data);
@@ -64,7 +66,7 @@ export class UserService {
    */
   getUserDetailById(id: string): Observable<User | null> {
     return this.handleRequest<User>(
-      this.requestService.get<User>(`${this.BASE_URL}/${id}`),
+      this.requestService.get<User>(`${this.USER_API_URL}/${id}`),
       {
         successHandler: data => this.userDetailSignal.set(data),
         errorHandler: () => this.resetUser(),
@@ -79,7 +81,7 @@ export class UserService {
    */
   activateUser(id: string): Observable<void> {
     return this.handleModificationRequest(
-      this.requestService.put<void>(`${this.BASE_URL}/${id}/unlock`, '', {
+      this.requestService.put<void>(`${this.USER_API_URL}/${id}/unlock`, '', {
         loadingKey: 'activate-user',
       }),
       'Kích hoạt người dùng thành công!'
@@ -93,7 +95,7 @@ export class UserService {
    */
   archiveUser(id: string): Observable<void> {
     return this.handleModificationRequest(
-      this.requestService.put<void>(`${this.BASE_URL}/${id}/lock`, '', {
+      this.requestService.put<void>(`${this.USER_API_URL}/${id}/lock`, '', {
         loadingKey: 'archive-user',
       }),
       'Vô hiệu người dùng thành công!'
@@ -261,7 +263,7 @@ export class UserService {
   }
 
   private loadUserFromStorage(): User | null {
-    const raw = sessionStorage.getItem(this.SESSION_STORAGE_KEY);
+    const raw = localStorage.getItem(this.LOCAL_STORAGE_KEY);
     try {
       return raw ? JSON.parse(raw) : null;
     } catch {
@@ -272,9 +274,9 @@ export class UserService {
   private setCurrentUser(user: User | null): void {
     this.currentUserSignal.set(user);
     if (user) {
-      sessionStorage.setItem(this.SESSION_STORAGE_KEY, JSON.stringify(user));
+      localStorage.setItem(this.LOCAL_STORAGE_KEY, JSON.stringify(user));
     } else {
-      sessionStorage.removeItem(this.SESSION_STORAGE_KEY);
+      localStorage.removeItem(this.LOCAL_STORAGE_KEY);
     }
   }
 }
