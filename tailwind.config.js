@@ -100,6 +100,7 @@ module.exports = {
           800: '#163990',
         },
         dark: {
+          DEFAULT: '#172036',
           50: '#f3f3f3',
           100: '#8695aa',
           200: '#001027',
@@ -178,6 +179,7 @@ module.exports = {
           700: '#ffa000',
         },
         info: {
+          DEFAULT: '#00c1eb',
           50: '#e1f7fe',
           100: '#b3ecfc',
           200: '#80e0fa',
