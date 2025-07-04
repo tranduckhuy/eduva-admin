@@ -45,7 +45,7 @@ export class InformationComponent {
     if (!role) return '/settings';
 
     return role === UserRoles.SCHOOL_ADMIN || role === UserRoles.SYSTEM_ADMIN
-      ? '/school-admin/settings'
+      ? '/admin/settings'
       : '/teacher/settings';
   });
 

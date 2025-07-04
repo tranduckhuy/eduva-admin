@@ -164,33 +164,6 @@ export class NavbarComponent implements OnInit {
             isActive: false,
             submenuItems: [],
           },
-          {
-            label: 'Học tập',
-            icon: 'auto_stories',
-            type: 'accordion',
-            isActive: false,
-            submenuItems: [
-              { label: 'Subject List', link: '#!', active: true },
-              { label: 'Subject Detail', link: '#!' },
-              { label: 'Lesson Preview', link: '#!' },
-              { label: 'Create Subject', link: '#!' },
-              { label: 'Edit Subject', link: '#!' },
-              { label: 'Instructors', link: '#!' },
-            ],
-          },
-          {
-            label: 'Tài liệu',
-            icon: 'folder_open',
-            type: 'accordion',
-            isActive: false,
-            submenuItems: [
-              { label: 'My Drive', link: '#!', active: true },
-              { label: 'Assets', link: '#!' },
-              { label: 'Personal', link: '#!' },
-              { label: 'Documents', link: '#!' },
-              { label: 'Media', link: '#!' },
-            ],
-          },
         ],
       },
       {
