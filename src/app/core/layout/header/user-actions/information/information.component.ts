@@ -40,6 +40,15 @@ export class InformationComponent {
     return this.themeService.isDarkMode();
   });
 
+  readonly settingsLink = computed(() => {
+    const role = this.user()?.roles[0];
+    if (!role) return '/settings';
+
+    return role === UserRoles.SCHOOL_ADMIN || role === UserRoles.SYSTEM_ADMIN
+      ? '/admin/settings'
+      : '/teacher/settings';
+  });
+
   toggleDarkMode() {
     this.themeService.toggleDarkMode();
   }
