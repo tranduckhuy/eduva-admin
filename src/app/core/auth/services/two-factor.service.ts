@@ -103,8 +103,8 @@ export class TwoFactorService {
   //  Private Helper Functions
   // ---------------------------
 
-  private handleRequest2FAResponse(res: any, isEnable: boolean): void {
-    const action = isEnable ? 'kích hoạt' : 'hủy';
+  private handleRequest2FAResponse(res: any, isEnabled: boolean): void {
+    const action = !isEnabled ? 'kích hoạt' : 'hủy';
     if (res.statusCode === StatusCode.SUCCESS) {
       this.toastHandlingService.success(
         'Yêu cầu thành công',
@@ -130,14 +130,14 @@ export class TwoFactorService {
     return throwError(() => err);
   }
 
-  private handleConfirm2FAResponse(res: any, isEnable: boolean): void {
-    const action = isEnable ? 'kích hoạt' : 'hủy';
+  private handleConfirm2FAResponse(res: any, isEnabled: boolean): void {
+    const action = !isEnabled ? 'kích hoạt' : 'hủy';
     if (res.statusCode === StatusCode.SUCCESS) {
       this.toastHandlingService.success(
         'Xác nhận thành công',
         `Xác thực hai bước đã được ${action} thành công cho tài khoản của bạn.`
       );
-      this.userService.updateCurrentUserPartial({ is2FAEnabled: !isEnable });
+      this.userService.updateCurrentUserPartial({ is2FAEnabled: !isEnabled });
     } else {
       this.toastHandlingService.error(
         'Thất bại',
