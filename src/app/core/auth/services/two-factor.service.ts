@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 
-import { Observable, catchError, map, of, tap } from 'rxjs';
+import { Observable, catchError, map, of, tap, throwError } from 'rxjs';
 
 import { environment } from '../../../../environments/environment';
 
@@ -46,7 +46,10 @@ export class TwoFactorService {
       : this.REQUEST_DISABLE_TWO_FACTOR_API_URL;
 
     return this.requestService
-      .post(url, request, { loadingKey: 'password-modal' })
+      .post(url, request, {
+        bypassAuthError: true,
+        loadingKey: 'password-modal',
+      })
       .pipe(
         tap(res => this.handleRequest2FAResponse(res, isEnable)),
         map(() => void 0),
@@ -63,7 +66,7 @@ export class TwoFactorService {
       : this.CONFIRM_DISABLE_TWO_FACTOR_API_URL;
 
     return this.requestService
-      .post(url, request, { loadingKey: 'otp-modal' })
+      .post(url, request, { bypassAuthError: true, loadingKey: 'otp-modal' })
       .pipe(
         tap(res => this.handleConfirm2FAResponse(res, isEnable)),
         map(() => void 0),
@@ -75,7 +78,10 @@ export class TwoFactorService {
     request: VerifyOtpRequest
   ): Observable<AuthTokenResponse | null> {
     return this.requestService
-      .post<AuthTokenResponse>(this.VERIFY_OTP_LOGIN_API_URL, request)
+      .post<AuthTokenResponse>(this.VERIFY_OTP_LOGIN_API_URL, request, {
+        bypassAuth: true,
+        bypassAuthError: true,
+      })
       .pipe(
         tap(res => this.handleVerify2FAResponse(res, res.data)),
         map(res => this.extractAuthDataFromResponse(res)),
@@ -113,15 +119,15 @@ export class TwoFactorService {
   }
 
   private handleRequest2FAError(err: HttpErrorResponse): Observable<void> {
-    if (err.error?.statusCode === StatusCode.PROVIDED_INFORMATION_IS_INVALID) {
-      this.toastHandlingService.error(
-        'Lỗi xác thực',
+    if (err.error?.statusCode === StatusCode.INVALID_CREDENTIALS) {
+      this.toastHandlingService.warn(
+        'Cảnh báo xác thực',
         'Mật khẩu hiện tại không chính xác. Vui lòng kiểm tra và thử lại.'
       );
     } else {
       this.toastHandlingService.errorGeneral();
     }
-    return of(void 0);
+    return throwError(() => err);
   }
 
   private handleConfirm2FAResponse(res: any, isEnable: boolean): void {
@@ -142,7 +148,7 @@ export class TwoFactorService {
 
   private handleConfirm2FAError(err: HttpErrorResponse): Observable<void> {
     this.handleOtpInvalidError(err);
-    return of(void 0);
+    return throwError(() => err);
   }
 
   private handleVerify2FAResponse(res: any, data?: AuthTokenResponse): void {

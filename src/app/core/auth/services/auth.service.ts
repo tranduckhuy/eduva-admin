@@ -37,7 +37,8 @@ export class AuthService {
   private readonly LOGIN_API_URL = `${this.BASE_API_URL}/auth/login`;
   private readonly REFRESH_TOKEN_API_URL = `${this.BASE_API_URL}/auth/refresh-token`;
   private readonly LOGOUT_API_URL = `${this.BASE_API_URL}/auth/logout`;
-  private readonly CLIENT_URL = `${environment.clientUrl}/login`;
+
+  private readonly CLIENT_URL = `${environment.clientUrl}/auth/login`;
 
   private readonly isLoggedInSignal = signal<boolean>(
     !!this.jwtService.getAccessToken()
@@ -48,6 +49,7 @@ export class AuthService {
     return this.requestService
       .post<AuthTokenResponse>(this.LOGIN_API_URL, request, {
         bypassAuth: true,
+        bypassAuthError: true,
       })
       .pipe(
         map(res => {
@@ -72,6 +74,7 @@ export class AuthService {
     return this.requestService
       .post<AuthTokenResponse>(this.REFRESH_TOKEN_API_URL, request, {
         bypassAuth: true,
+        bypassAuthError: true,
         showLoading: false,
       })
       .pipe(
@@ -93,29 +96,31 @@ export class AuthService {
   }
 
   logout(): Observable<void> {
-    return this.requestService.post(this.LOGOUT_API_URL).pipe(
-      tap(() => {
-        // ? Clear user profile cache
-        this.clearSession();
+    return this.requestService
+      .post(this.LOGOUT_API_URL, undefined, { bypassAuthError: true })
+      .pipe(
+        tap(() => {
+          // ? Clear user profile cache
+          this.clearSession();
 
-        // ? Clear state cache
-        Object.keys(localStorage).forEach(key => {
-          if (key.startsWith('accordion-open:')) {
-            localStorage.removeItem(key);
-          }
-        });
+          // ? Clear state cache
+          Object.keys(localStorage).forEach(key => {
+            if (key.startsWith('accordion-open:')) {
+              localStorage.removeItem(key);
+            }
+          });
 
-        // ? Close modal
-        this.globalModalService.close();
+          // ? Close modal
+          this.globalModalService.close();
 
-        // ? Close Submenus
-        window.dispatchEvent(new Event('close-all-submenus'));
+          // ? Close Submenus
+          window.dispatchEvent(new Event('close-all-submenus'));
 
-        this.router.navigateByUrl('/auth/login', { replaceUrl: true });
-      }),
-      map(() => void 0),
-      catchError(() => of(void 0))
-    );
+          this.router.navigateByUrl('/auth/login', { replaceUrl: true });
+        }),
+        map(() => void 0),
+        catchError(() => of(void 0))
+      );
   }
 
   handleLoginSuccess(data: AuthTokenResponse): void {
