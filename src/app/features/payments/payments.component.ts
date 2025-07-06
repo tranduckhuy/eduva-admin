@@ -54,7 +54,7 @@ export class PaymentsComponent {
   first = signal<number>(0);
   rows = signal<number>(PAYMENTS_LIMIT);
   sortField = signal<string | null>(null);
-  sortOrder = signal<number>(0); // 1 = asc, -1 = desc
+  sortOrder = signal<number>(-1); // 1 = asc, -1 = desc
   paymentPurpose = signal<0 | 1 | undefined>(undefined); // 1 = SchoolSubscription, 0 = CreditPackage
   selectedTimeFilter = signal<
     { name: string; value: string | undefined } | undefined
@@ -107,7 +107,7 @@ export class PaymentsComponent {
       this.sortOrder.set(selected.value === 'desc' ? -1 : 1);
     } else {
       this.sortField.set(null);
-      this.sortOrder.set(1);
+      this.sortOrder.set(-1);
     }
 
     this.first.set(0);
@@ -123,7 +123,7 @@ export class PaymentsComponent {
       this.sortField.set(
         Array.isArray(event.sortField) ? event.sortField[0] : event.sortField
       );
-      this.sortOrder.set(event.sortOrder ?? 1);
+      this.sortOrder.set(event.sortOrder ?? -1);
     }
 
     this.first.set(first);
@@ -149,7 +149,7 @@ export class PaymentsComponent {
   onSearchTriggered(term: string): void {
     this.searchTerm.set(term);
     this.sortField.set(null);
-    this.sortOrder.set(1);
+    this.sortOrder.set(-1);
     this.first.set(0); // Reset to first page when search changes
     this.loadData();
   }

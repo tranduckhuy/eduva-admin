@@ -24,6 +24,7 @@ import { EntityListParams } from '../../shared/models/common/entity-list-params'
 import { SUBSCRIPTION_PLANS_LIMIT } from '../../shared/constants/common.constant';
 import { SubscriptionPlanService } from './service/subscription-plan.service';
 import { StorageFormatPipe } from '../../shared/pipes/storage-format.pipe';
+import { EntityStatus } from '../../shared/models/enum/entity-status.enum';
 
 interface StatusOption {
   name: string;
@@ -51,7 +52,7 @@ interface StatusOption {
   styleUrl: './subscription-plans.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SubscriptionPlansComponent implements OnInit {
+export class SubscriptionPlansComponent {
   private readonly confirmationService = inject(ConfirmationService);
   private readonly subscriptionPlanService = inject(SubscriptionPlanService);
   private readonly loadingService = inject(LoadingService);
@@ -60,7 +61,7 @@ export class SubscriptionPlansComponent implements OnInit {
   first = signal<number>(0);
   rows = signal<number>(SUBSCRIPTION_PLANS_LIMIT);
   sortField = signal<string | null>(null);
-  sortOrder = signal<number>(0); // 1 = asc, -1 = desc
+  sortOrder = signal<number>(-1); // 1 = asc, -1 = desc
   statusSelect = signal<StatusOption | undefined>(undefined);
   selectedTimeFilter = signal<
     { name: string; value: string | undefined } | undefined
@@ -78,8 +79,8 @@ export class SubscriptionPlansComponent implements OnInit {
   ]);
 
   readonly statusSelectOptions = signal<StatusOption[]>([
-    { name: 'Đang hoạt động', code: 0 },
-    { name: 'Vô hiệu hóa', code: 3 },
+    { name: 'Đang hoạt động', code: EntityStatus.Active },
+    { name: 'Vô hiệu hóa', code: EntityStatus.Archived },
     { name: 'Tất cả', code: undefined },
   ]);
 
@@ -96,16 +97,12 @@ export class SubscriptionPlansComponent implements OnInit {
   subscriptionPlans = this.subscriptionPlanService.subscriptionPlans;
   totalSubscriptionPlans = this.subscriptionPlanService.totalSubscriptionPlans;
 
-  ngOnInit(): void {
-    this.loadData();
-  }
-
   private loadData(): void {
     const params: EntityListParams = {
       pageIndex: Math.floor(this.first() / this.rows()) + 1,
       pageSize: this.rows(),
       searchTerm: this.searchTerm(),
-      sortBy: this.sortField() ?? 'createdAt',
+      sortBy: this.sortField() ?? 'lastmodified',
       sortDirection: this.sortOrder() === 1 ? 'asc' : 'desc',
       activeOnly: this.getActiveOnlyStatus(),
     };
@@ -126,11 +123,11 @@ export class SubscriptionPlansComponent implements OnInit {
     this.selectedTimeFilter.set(selected);
 
     if (selected?.value) {
-      this.sortField.set('createdAt');
+      this.sortField.set('lastmodified');
       this.sortOrder.set(selected.value === 'desc' ? -1 : 1);
     } else {
       this.sortField.set(null);
-      this.sortOrder.set(1);
+      this.sortOrder.set(-1);
     }
 
     this.first.set(0);
@@ -146,7 +143,7 @@ export class SubscriptionPlansComponent implements OnInit {
       this.sortField.set(
         Array.isArray(event.sortField) ? event.sortField[0] : event.sortField
       );
-      this.sortOrder.set(event.sortOrder ?? 1);
+      this.sortOrder.set(event.sortOrder ?? -1);
     }
 
     this.first.set(first);
@@ -163,7 +160,7 @@ export class SubscriptionPlansComponent implements OnInit {
   onSearchTriggered(term: string): void {
     this.searchTerm.set(term);
     this.sortField.set(null);
-    this.sortOrder.set(1);
+    this.sortOrder.set(-1);
     this.first.set(0); // Reset to first page when search changes
     this.loadData();
   }
