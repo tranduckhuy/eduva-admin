@@ -12,6 +12,8 @@ import { GlobalModalService } from '../../shared/services/layout/global-modal/gl
 
 import { BYPASS_AUTH_ERROR } from '../../shared/tokens/context/http-context.token';
 
+let hasShownUnauthorizedDialog = false;
+
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const jwtService = inject(JwtService);
@@ -24,6 +26,10 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const handleServerError = () => router.navigateByUrl('/errors/500');
 
   const handleUnauthorized = () => {
+    if (hasShownUnauthorizedDialog) return;
+
+    hasShownUnauthorizedDialog = true;
+
     globalModalService.close();
     confirmationService.confirm({
       message: 'Vui lòng đăng nhập lại.',
