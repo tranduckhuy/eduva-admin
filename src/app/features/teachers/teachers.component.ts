@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
+  OnInit,
   signal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
@@ -22,6 +23,7 @@ import { LoadingService } from '../../shared/services/core/loading/loading.servi
 import { UserListParams } from '../../shared/models/common/user-list-params';
 import { USERS_LIMIT } from '../../shared/constants/common.constant';
 import { TableSkeletonComponent } from '../../shared/components/skeleton/table-skeleton/table-skeleton.component';
+import { EntityStatus } from '../../shared/models/enum/entity-status.enum';
 
 interface StatusOption {
   name: string;
@@ -56,7 +58,7 @@ export class TeachersComponent {
   first = signal<number>(0);
   rows = signal<number>(USERS_LIMIT);
   sortField = signal<string | null>(null);
-  sortOrder = signal<number>(0); // 1 = asc, -1 = desc
+  sortOrder = signal<number>(-1); // 1 = asc, -1 = desc
   statusSelect = signal<StatusOption | undefined>(undefined);
   selectedTimeFilter = signal<
     { name: string; value: string | undefined } | undefined
@@ -64,7 +66,7 @@ export class TeachersComponent {
   searchTerm = signal<string>('');
   tableHeadSkeleton = signal([
     'STT',
-    'School Admin',
+    'Giáo viên',
     'Số điện thoại',
     'Email',
     'Trạng thái',
@@ -72,8 +74,8 @@ export class TeachersComponent {
   ]);
 
   readonly statusSelectOptions = signal<StatusOption[]>([
-    { name: 'Đang hoạt động', code: 0 },
-    { name: 'Vô hiệu hóa', code: 3 },
+    { name: 'Đang hoạt động', code: EntityStatus.Active },
+    { name: 'Vô hiệu hóa', code: EntityStatus.Archived },
     { name: 'Tất cả', code: undefined },
   ]);
 
@@ -98,17 +100,10 @@ export class TeachersComponent {
       searchTerm: this.searchTerm(),
       sortBy: this.sortField() ?? 'createdAt',
       sortDirection: this.sortOrder() === 1 ? 'asc' : 'desc',
-      activeOnly: this.getActiveOnlyStatus(),
+      status: this.statusSelect()?.code,
     };
 
     this.userService.getUsers(params).subscribe();
-  }
-
-  private getActiveOnlyStatus(): boolean | undefined {
-    const statusCode = this.statusSelect()?.code;
-    if (statusCode === 0) return true;
-    if (statusCode === 1) return false;
-    return undefined;
   }
 
   onTimeFilterChange(
@@ -121,7 +116,7 @@ export class TeachersComponent {
       this.sortOrder.set(selected.value === 'desc' ? -1 : 1);
     } else {
       this.sortField.set(null);
-      this.sortOrder.set(1);
+      this.sortOrder.set(-1);
     }
 
     this.first.set(0);
@@ -137,7 +132,7 @@ export class TeachersComponent {
       this.sortField.set(
         Array.isArray(event.sortField) ? event.sortField[0] : event.sortField
       );
-      this.sortOrder.set(event.sortOrder ?? 1);
+      this.sortOrder.set(event.sortOrder ?? -1);
     }
 
     this.first.set(first);
@@ -154,7 +149,7 @@ export class TeachersComponent {
   onSearchTriggered(term: string): void {
     this.searchTerm.set(term);
     this.sortField.set(null);
-    this.sortOrder.set(1);
+    this.sortOrder.set(-1);
     this.first.set(0); // Reset to first page when search changes
     this.loadData();
   }

@@ -35,15 +35,13 @@
         </a>
 
         <!--  Create button -->
-        <a routerLink="create">
-          <app-button [variant]="'outline'" class="flex items-center">
-            <span
-              class="material-symbols-outlined relative top-[3px] mr-1 text-lg leading-none"
-              >download</span
-            >
-            <span>Export</span>
-          </app-button>
-        </a>
+        <app-button [variant]="'outline'" class="flex items-center">
+          <span
+            class="material-symbols-outlined relative top-[3px] mr-1 text-lg leading-none"
+            >download</span
+          >
+          <span>Export</span>
+        </app-button>
       </div>
     </div>
   </div>
@@ -59,6 +57,7 @@
       [rows]="rows()"
       [first]="first()"
       [showCurrentPageReport]="true"
+      [lazyLoadOnInit]="false"
       (onLazyLoad)="loadDataLazy($event)"
       [totalRecords]="totalSubscriptionPlans()"
       currentPageReportTemplate="Hiển thị {first} đến {last} trên {totalRecords} gói đăng ký">

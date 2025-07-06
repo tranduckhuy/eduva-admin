@@ -21,6 +21,7 @@ import { SCHOOLS_LIMIT } from '../../shared/constants/common.constant';
 import { LoadingService } from '../../shared/services/core/loading/loading.service';
 import { EntityListParams } from '../../shared/models/common/entity-list-params';
 import { TableSkeletonComponent } from '../../shared/components/skeleton/table-skeleton/table-skeleton.component';
+import { EntityStatus } from '../../shared/models/enum/entity-status.enum';
 
 interface StatusOption {
   name: string;
@@ -55,7 +56,7 @@ export class SchoolsComponent {
   first = signal<number>(0);
   rows = signal<number>(SCHOOLS_LIMIT);
   sortField = signal<string | null>(null);
-  sortOrder = signal<number>(0); // 1 = asc, -1 = desc
+  sortOrder = signal<number>(-1); // 1 = asc, -1 = desc
   statusSelect = signal<StatusOption | undefined>(undefined);
   selectedTimeFilter = signal<
     { name: string; value: string | undefined } | undefined
@@ -73,8 +74,8 @@ export class SchoolsComponent {
   ]);
 
   readonly statusSelectOptions = signal<StatusOption[]>([
-    { name: 'Đang hoạt động', code: 0 },
-    { name: 'Vô hiệu hóa', code: 3 },
+    { name: 'Đang hoạt động', code: EntityStatus.Active },
+    { name: 'Vô hiệu hóa', code: EntityStatus.Archived },
     { name: 'Tất cả', code: undefined },
   ]);
 
@@ -121,7 +122,7 @@ export class SchoolsComponent {
       this.sortOrder.set(selected.value === 'desc' ? -1 : 1);
     } else {
       this.sortField.set(null);
-      this.sortOrder.set(1);
+      this.sortOrder.set(-1);
     }
 
     this.first.set(0);
@@ -137,7 +138,7 @@ export class SchoolsComponent {
       this.sortField.set(
         Array.isArray(event.sortField) ? event.sortField[0] : event.sortField
       );
-      this.sortOrder.set(event.sortOrder ?? 1);
+      this.sortOrder.set(event.sortOrder ?? -1);
     }
 
     this.first.set(first);
@@ -154,7 +155,7 @@ export class SchoolsComponent {
   onSearchTriggered(term: string): void {
     this.searchTerm.set(term);
     this.sortField.set(null);
-    this.sortOrder.set(1);
+    this.sortOrder.set(-1);
     this.first.set(0); // Reset to first page when search changes
     this.loadData();
   }

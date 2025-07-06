@@ -24,15 +24,13 @@
 
       <!--  Export button -->
       <div class="flex gap-2">
-        <a routerLink="create">
-          <app-button [variant]="'outline'" class="flex items-center">
-            <span
-              class="material-symbols-outlined relative top-[3px] mr-1 text-lg leading-none"
-              >download</span
-            >
-            <span>Export</span>
-          </app-button>
-        </a>
+        <app-button [variant]="'outline'" class="flex items-center">
+          <span
+            class="material-symbols-outlined relative top-[3px] mr-1 text-lg leading-none"
+            >download</span
+          >
+          <span>Export</span>
+        </app-button>
       </div>
     </div>
   </div>
@@ -47,6 +45,7 @@
       [rows]="rows()"
       [lazy]="true"
       [first]="first()"
+      [lazyLoadOnInit]="false"
       [showCurrentPageReport]="true"
       (onLazyLoad)="loadDataLazy($event)"
       [totalRecords]="totalUsers()"
