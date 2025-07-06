@@ -21,6 +21,7 @@ import { ButtonComponent } from '../../shared/components/button/button.component
 import { LoadingService } from '../../shared/services/core/loading/loading.service';
 import { SearchInputComponent } from '../../shared/components/search-input/search-input.component';
 import { TableSkeletonComponent } from '../../shared/components/skeleton/table-skeleton/table-skeleton.component';
+import { EntityStatus } from '../../shared/models/enum/entity-status.enum';
 
 interface StatusOption {
   name: string;
@@ -54,7 +55,7 @@ export class ContentModeratorsComponent {
   first = signal<number>(0);
   rows = signal<number>(USERS_LIMIT);
   sortField = signal<string | null>(null);
-  sortOrder = signal<number>(0); // 1 = asc, -1 = desc
+  sortOrder = signal<number>(-1); // 1 = asc, -1 = desc
   statusSelect = signal<StatusOption | undefined>(undefined);
   selectedTimeFilter = signal<
     { name: string; value: string | undefined } | undefined
@@ -62,7 +63,7 @@ export class ContentModeratorsComponent {
   searchTerm = signal<string>('');
   tableHeadSkeleton = signal([
     'STT',
-    'School Admin',
+    'Kiểm duyệt nội dung',
     'Số điện thoại',
     'Email',
     'Trạng thái',
@@ -70,15 +71,14 @@ export class ContentModeratorsComponent {
   ]);
 
   readonly statusSelectOptions = signal<StatusOption[]>([
-    { name: 'Đang hoạt động', code: 0 },
-    { name: 'Vô hiệu hóa', code: 3 },
+    { name: 'Đang hoạt động', code: EntityStatus.Active },
+    { name: 'Vô hiệu hóa', code: EntityStatus.Archived },
     { name: 'Tất cả', code: undefined },
   ]);
 
   readonly timeFilterOptions = signal([
     { name: 'Mới nhất', value: 'desc' },
     { name: 'Cũ nhất', value: 'asc' },
-    { name: 'Tất cả', value: undefined },
   ]);
 
   // Signals from service
@@ -97,17 +97,10 @@ export class ContentModeratorsComponent {
       searchTerm: this.searchTerm(),
       sortBy: this.sortField() ?? 'createdAt',
       sortDirection: this.sortOrder() === 1 ? 'asc' : 'desc',
-      activeOnly: this.getActiveOnlyStatus(),
+      status: this.statusSelect()?.code,
     };
 
     this.userService.getUsers(params).subscribe();
-  }
-
-  private getActiveOnlyStatus(): boolean | undefined {
-    const statusCode = this.statusSelect()?.code;
-    if (statusCode === 0) return true;
-    if (statusCode === 1) return false;
-    return undefined;
   }
 
   onTimeFilterChange(
@@ -120,7 +113,7 @@ export class ContentModeratorsComponent {
       this.sortOrder.set(selected.value === 'desc' ? -1 : 1);
     } else {
       this.sortField.set(null);
-      this.sortOrder.set(1);
+      this.sortOrder.set(-1);
     }
 
     this.first.set(0);
@@ -136,7 +129,7 @@ export class ContentModeratorsComponent {
       this.sortField.set(
         Array.isArray(event.sortField) ? event.sortField[0] : event.sortField
       );
-      this.sortOrder.set(event.sortOrder ?? 1);
+      this.sortOrder.set(event.sortOrder ?? -1);
     }
 
     this.first.set(first);
@@ -153,7 +146,7 @@ export class ContentModeratorsComponent {
   onSearchTriggered(term: string): void {
     this.searchTerm.set(term);
     this.sortField.set(null);
-    this.sortOrder.set(1);
+    this.sortOrder.set(-1);
     this.first.set(0); // Reset to first page when search changes
     this.loadData();
   }

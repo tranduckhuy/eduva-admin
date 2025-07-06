@@ -57,10 +57,17 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
       if (isServerError) {
         handleServerError();
-      } else if (isAuthError && !isByPass) {
+        return throwError(() => error);
+      }
+
+      if (isAuthError && !isByPass) {
         handleUnauthorized();
-      } else if (isForbidden && !isByPass) {
+        return throwError(() => error);
+      }
+
+      if (isForbidden && !isByPass) {
         handleForbidden();
+        return throwError(() => error);
       }
 
       return throwError(() => error);
