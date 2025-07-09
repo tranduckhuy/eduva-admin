@@ -132,7 +132,7 @@ export class NavbarComponent implements OnInit {
               { label: 'Giáo viên', link: '/admin/teachers', active: true },
               { label: 'Học sinh', link: '/admin/students', active: true },
               {
-                label: 'Kiểm duyệt nội dung',
+                label: 'Kiểm duyệt viên',
                 link: '/admin/content-moderators',
                 active: true,
               },
