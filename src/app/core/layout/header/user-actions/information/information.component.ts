@@ -14,8 +14,6 @@ import { AuthService } from '../../../../auth/services/auth.service';
 import { UserService } from '../../../../../shared/services/api/user/user.service';
 import { ThemeService } from '../../../../../shared/services/core/theme/theme.service';
 
-import { UserRoles } from '../../../../../shared/constants/user-roles.constant';
-
 @Component({
   selector: 'header-information',
   standalone: true,

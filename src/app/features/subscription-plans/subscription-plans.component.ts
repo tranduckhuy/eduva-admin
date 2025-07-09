@@ -3,7 +3,6 @@ import {
   Component,
   inject,
   signal,
-  OnInit,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CurrencyPipe } from '@angular/common';
