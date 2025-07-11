@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  OnInit,
   signal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';

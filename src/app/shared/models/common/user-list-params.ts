@@ -8,5 +8,5 @@ type UserRole =
 
 export interface UserListParams extends EntityListParams {
   role: UserRole;
-  status?: number | undefined;
+  status?: number;
 }
