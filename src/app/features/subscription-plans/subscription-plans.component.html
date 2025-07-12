@@ -37,9 +37,9 @@
         <!--  Create button -->
         <app-button [variant]="'outline'" class="flex items-center">
           <span
-            class="material-symbols-outlined relative top-[3px] mr-1 text-lg leading-none"
-            >download</span
-          >
+            class="material-symbols-outlined relative top-[3px] mr-1 text-lg leading-none">
+            download
+          </span>
           <span>Export</span>
         </app-button>
       </div>
@@ -126,9 +126,9 @@
                   tooltipPosition="top"
                   [variant]="'light'"
                   [size]="'xs'"
-                  class="material-symbols-outlined rounded-full px-[7px] pb-[6px] pt-[8px] text-lg leading-none"
-                  >visibility</app-button
-                >
+                  class="material-symbols-outlined rounded-full px-[7px] pb-[6px] pt-[8px] text-lg leading-none">
+                  visibility
+                </app-button>
               </a>
               <a
                 [routerLink]="[
@@ -141,9 +141,9 @@
                   tooltipPosition="top"
                   [variant]="'light'"
                   [size]="'xs'"
-                  class="material-symbols-outlined rounded-full px-[7px] pb-[6px] pt-[8px] text-lg leading-none"
-                  >edit</app-button
-                >
+                  class="material-symbols-outlined rounded-full px-[7px] pb-[6px] pt-[8px] text-lg leading-none">
+                  edit
+                </app-button>
               </a>
               @if (subscription.status === 0) {
                 <app-button
@@ -152,9 +152,9 @@
                   [loading]="isLoadingArchive()"
                   (clicked)="openConfirmArchiveDialog($event, subscription.id)"
                   [variant]="'light-danger'"
-                  class="material-symbols-outlined rounded-full px-[7px] py-[7px] text-lg leading-none"
-                  >archive</app-button
-                >
+                  class="material-symbols-outlined rounded-full px-[7px] py-[7px] text-lg leading-none">
+                  archive
+                </app-button>
               } @else if (subscription.status === 3) {
                 <app-button
                   pTooltip="Kích hoạt"
@@ -162,8 +162,8 @@
                   [loading]="isLoadingActive()"
                   (clicked)="openConfirmActiveDialog($event, subscription.id)"
                   [variant]="'light'"
-                  class="material-symbols-outlined rounded-full px-[7px] py-[7px] text-lg leading-none"
-                  >unarchive</app-button
+                  class="material-symbols-outlined rounded-full px-[7px] py-[7px] text-lg leading-none">
+                  unarchive</app-button
                 >
               }
             </div>

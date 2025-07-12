@@ -26,9 +26,9 @@
       <div class="flex gap-2">
         <app-button [variant]="'outline'" class="flex items-center">
           <span
-            class="material-symbols-outlined relative top-[3px] mr-1 text-lg leading-none"
-            >download</span
-          >
+            class="material-symbols-outlined relative top-[3px] mr-1 text-lg leading-none">
+            download
+          </span>
           <span>Export</span>
         </app-button>
       </div>
@@ -107,9 +107,9 @@
                   pTooltip="Xem chi tiết"
                   tooltipPosition="top"
                   [variant]="'light'"
-                  class="material-symbols-outlined rounded-full px-[7px] pb-[6px] pt-[8px] text-lg leading-none"
-                  >visibility</app-button
-                >
+                  class="material-symbols-outlined rounded-full px-[7px] pb-[6px] pt-[8px] text-lg leading-none">
+                  visibility
+                </app-button>
               </a>
               @if (student.status === 0) {
                 <app-button
@@ -118,9 +118,9 @@
                   [loading]="isLoadingArchive()"
                   (clicked)="openConfirmArchiveDialog($event, student.id)"
                   [variant]="'light-danger'"
-                  class="material-symbols-outlined rounded-full px-[7px] py-[7px] text-lg leading-none"
-                  >archive</app-button
-                >
+                  class="material-symbols-outlined rounded-full px-[7px] py-[7px] text-lg leading-none">
+                  archive
+                </app-button>
               } @else if (student.status === 1) {
                 <app-button
                   pTooltip="Kích hoạt"
@@ -128,9 +128,9 @@
                   [loading]="isLoadingActive()"
                   (clicked)="openConfirmActiveDialog($event, student.id)"
                   [variant]="'light'"
-                  class="material-symbols-outlined rounded-full px-[7px] py-[7px] text-lg leading-none"
-                  >unarchive</app-button
-                >
+                  class="material-symbols-outlined rounded-full px-[7px] py-[7px] text-lg leading-none">
+                  unarchive
+                </app-button>
               }
             </div>
           </td>

@@ -10,18 +10,22 @@ import { CurrencyPipe, DatePipe, registerLocaleData } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
-import { Select } from 'primeng/select';
+import { SelectModule } from 'primeng/select';
 import { TooltipModule } from 'primeng/tooltip';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 
 import { LeadingZeroPipe } from '../../shared/pipes/leading-zero.pipe';
+
+import { PaymentService } from './service/payment.service';
+import { LoadingService } from '../../shared/services/core/loading/loading.service';
+
+import { PaymentListParams } from './model/payment-list-params';
+import { PAYMENTS_LIMIT } from '../../shared/constants/common.constant';
+
 import { SearchInputComponent } from '../../shared/components/search-input/search-input.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
-import { LoadingService } from '../../shared/services/core/loading/loading.service';
 import { TableSkeletonComponent } from '../../shared/components/skeleton/table-skeleton/table-skeleton.component';
-import { PaymentService } from './service/payment.service';
-import { PAYMENTS_LIMIT } from '../../shared/constants/common.constant';
-import { PaymentListParams } from './model/payment-list-params';
+import { BadgeComponent } from '../../shared/components/badge/badge.component';
 
 registerLocaleData(localeVi);
 
@@ -29,17 +33,18 @@ registerLocaleData(localeVi);
   selector: 'app-payments',
   standalone: true,
   imports: [
+    DatePipe,
     CurrencyPipe,
+    FormsModule,
+    RouterLink,
+    TableModule,
+    TooltipModule,
+    SelectModule,
+    LeadingZeroPipe,
     SearchInputComponent,
     ButtonComponent,
-    TableModule,
-    LeadingZeroPipe,
-    TooltipModule,
-    RouterLink,
-    FormsModule,
-    Select,
     TableSkeletonComponent,
-    DatePipe,
+    BadgeComponent,
   ],
   templateUrl: './payments.component.html',
   styleUrl: './payments.component.css',

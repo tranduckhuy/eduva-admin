@@ -125,17 +125,17 @@ export class NavbarComponent implements OnInit {
             isActive: false,
             submenuItems: [
               {
-                label: 'School admins',
+                label: 'Quản trị viên trường',
                 link: '/admin/school-admins',
                 active: true,
               },
-              { label: 'Giáo viên', link: '/admin/teachers', active: true },
-              { label: 'Học sinh', link: '/admin/students', active: true },
               {
                 label: 'Kiểm duyệt viên',
                 link: '/admin/content-moderators',
                 active: true,
               },
+              { label: 'Giáo viên', link: '/admin/teachers', active: true },
+              { label: 'Học sinh', link: '/admin/students', active: true },
             ],
           },
           {

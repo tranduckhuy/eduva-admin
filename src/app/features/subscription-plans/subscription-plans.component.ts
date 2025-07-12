@@ -189,6 +189,7 @@ export class SubscriptionPlansComponent {
       },
     });
   }
+
   openConfirmActiveDialog(event: Event, subscriptionPlanId: string): void {
     this.confirmationService.confirm({
       target: event.target as EventTarget,

@@ -9,18 +9,18 @@
             src="./images/logo.png"
             alt="EDUVA"
             class="size-8 rounded-md object-contain" />
-          <span class="text-base font-bold leading-none dark:text-white"
-            >EDUVA INVOICE:
-            <span class="text-primary"
-              >#{{
+          <span class="text-base font-bold leading-none dark:text-white">
+            EDUVA INVOICE:
+            <span class="text-primary">
+              #{{
                 isCreditPack()
-                  ? creditTransactionDetail()?.id
-                  : schoolSubscriptionDetail()?.id
-              }}</span
-            ></span
-          >
+                  ? creditTransactionDetail()?.transactionCode
+                  : schoolSubscriptionDetail()?.paymentTransaction
+                      ?.transactionCode
+              }}
+            </span>
+          </span>
         </div>
-
         <app-export-invoice-pdf
           [isCreditPack]="isCreditPack()"
           [creditTransactionDetail]="creditTransactionDetail()"
