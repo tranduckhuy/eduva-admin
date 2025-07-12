@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { of, throwError, EMPTY } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 
 import { SubscriptionPlanService } from './subscription-plan.service';
@@ -11,7 +11,6 @@ import { StatusCode } from '../../../shared/constants/status-code.constant';
 import { SubscriptionPlan } from '../model/subscription-plan.model';
 import { SubscriptionPlanRequest } from '../model/subscription-plan-request.model';
 import { EntityListParams } from '../../../shared/models/common/entity-list-params';
-import { EntityListResponse } from '../../../shared/models/api/response/query/entity-list-response.model';
 
 describe('SubscriptionPlanService', () => {
   let service: SubscriptionPlanService;
@@ -93,6 +92,7 @@ describe('SubscriptionPlanService', () => {
           provide: ToastHandlingService,
           useValue: {
             success: vi.fn(),
+            warn: vi.fn(),
             error: vi.fn(),
             errorGeneral: vi.fn(),
           },
@@ -332,9 +332,29 @@ describe('SubscriptionPlanService', () => {
       service
         .updateSubscriptionPlan(mockSubscriptionPlanRequest, id)
         .subscribe(() => {
-          expect(toastService.error).toHaveBeenCalledWith(
-            'Thông tin cung cấp không hợp lệ',
+          expect(toastService.warn).toHaveBeenCalledWith(
+            'Không thể cập nhật gói',
             'Tên gói đăng ký đã tồn tại. Vui lòng chọn tên khác!'
+          );
+        });
+    });
+
+    it('should handle plan in use error', () => {
+      const id = '1';
+      const error = new HttpErrorResponse({
+        error: {
+          statusCode: StatusCode.PLAN_IN_USE,
+        },
+      });
+
+      vi.mocked(requestService.put).mockReturnValue(throwError(() => error));
+
+      service
+        .updateSubscriptionPlan(mockSubscriptionPlanRequest, id)
+        .subscribe(() => {
+          expect(toastService.warn).toHaveBeenCalledWith(
+            'Không thể cập nhật gói',
+            'Gói đăng ký này đang được sử dụng bởi một hoặc nhiều trường và không thể vô hiệu hóa.'
           );
         });
     });

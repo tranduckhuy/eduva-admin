@@ -176,7 +176,7 @@ export class SubscriptionPlanService {
         }
       }),
       catchError((err: HttpErrorResponse) => {
-        switch (err.error.statusCode) {
+        switch (err.error?.statusCode) {
           case StatusCode.PROVIDED_INFORMATION_IS_INVALID:
             if (handleNameConflict) {
               this.toastService.warn(
