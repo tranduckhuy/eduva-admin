@@ -1,7 +1,13 @@
+enum PaymentStatus {
+  Pending = 0,
+  Paid = 1,
+}
+
 export interface CreditTransactionDetail {
   id: string;
-  credits: number;
+  totalCredits: number;
   createdAt: string;
+  paymentStatus: PaymentStatus;
   user: {
     id: string;
     fullName: string;
@@ -15,5 +21,7 @@ export interface CreditTransactionDetail {
     credits: number;
     bonusCredits: number;
   };
+  transactionCode: string;
+  amount: number;
   paymentTransactionId: string;
 }

@@ -176,17 +176,25 @@ export class SubscriptionPlanService {
         }
       }),
       catchError((err: HttpErrorResponse) => {
-        if (
-          handleNameConflict &&
-          err.error.statusCode === StatusCode.PROVIDED_INFORMATION_IS_INVALID
-        ) {
-          this.toastService.error(
-            'Thông tin cung cấp không hợp lệ',
-            'Tên gói đăng ký đã tồn tại. Vui lòng chọn tên khác!'
-          );
-        } else {
-          this.toastService.errorGeneral();
+        switch (err.error?.statusCode) {
+          case StatusCode.PROVIDED_INFORMATION_IS_INVALID:
+            if (handleNameConflict) {
+              this.toastService.warn(
+                'Không thể cập nhật gói',
+                'Tên gói đăng ký đã tồn tại. Vui lòng chọn tên khác!'
+              );
+            }
+            break;
+          case StatusCode.PLAN_IN_USE:
+            this.toastService.warn(
+              'Không thể cập nhật gói',
+              'Gói đăng ký này đang được sử dụng bởi một hoặc nhiều trường và không thể vô hiệu hóa.'
+            );
+            break;
+          default:
+            this.toastService.errorGeneral();
         }
+
         return of(void 0);
       })
     );

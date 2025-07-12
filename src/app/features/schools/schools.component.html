@@ -71,10 +71,10 @@
             pSortableColumn="contactemail">
             <span class="mr-2">Email</span><p-sortIcon field="contactemail" />
           </th>
-          <th scope="col" class="!w-[10%] !min-w-[100px] !text-center">
+          <th scope="col" class="!w-[15%] !min-w-[150px] !text-center">
             Trạng thái
           </th>
-          <th scope="col" class="!w-[15%] !min-w-[150px] !text-center">
+          <th scope="col" class="!w-[10%] !min-w-[120px] !text-center">
             Hành động
           </th>
         </tr>
@@ -82,8 +82,22 @@
       <ng-template #body let-school let-i="rowIndex">
         <tr>
           <td class="!text-center">{{ i + 1 | leadingZero }}</td>
-          <td>{{ school.name }}</td>
-          <td>{{ school.address }}</td>
+          <td>
+            <span
+              class="line-clamp-2"
+              tooltipPosition="bottom"
+              [pTooltip]="school.name">
+              {{ school.name }}
+            </span>
+          </td>
+          <td>
+            <span
+              class="line-clamp-2"
+              tooltipPosition="bottom"
+              [pTooltip]="school.address">
+              {{ school.address }}
+            </span>
+          </td>
           <td>{{ school.contactPhone }}</td>
           <td>{{ school.contactEmail }}</td>
           <td class="!text-center">

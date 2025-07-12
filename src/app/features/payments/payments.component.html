@@ -9,20 +9,20 @@
         [class]="
           paymentPurpose() === undefined ? '!bg-primary !text-white' : ''
         ">
-        Tất cả</app-button
-      >
+        Tất cả
+      </app-button>
       <app-button
         (clicked)="getCreditPayments()"
         [variant]="'outline'"
         [class]="paymentPurpose() === 0 ? '!bg-primary !text-white' : ''">
-        Gói credit</app-button
-      >
+        Gói credit
+      </app-button>
       <app-button
         (clicked)="getSubscriptionPlansPayments()"
         [variant]="'outline'"
         [class]="paymentPurpose() === 1 ? '!bg-primary !text-white' : ''">
-        Gói trường</app-button
-      >
+        Gói trường
+      </app-button>
     </div>
     <div class="flex flex-wrap gap-3 sm:flex-row sm:items-center sm:gap-4">
       <app-search-input (search)="onSearchTriggered($event)" />
@@ -59,18 +59,20 @@
           <th scope="col" class="!w-[5%] !text-center">STT</th>
           <th
             scope="col"
-            class="!w-[25%] !min-w-[200px]"
+            class="!w-[27%] !min-w-[200px]"
             pSortableColumn="fullname">
-            <span class="mr-2">Khách hàng</span><p-sortIcon field="fullname" />
+            <span class="mr-2">Khách hàng</span>
+            <p-sortIcon field="fullname" />
           </th>
+          <th scope="col" class="!min-w-[150px]">Ngày tạo</th>
           <th scope="col" class="!min-w-[150px]">Mã đơn</th>
           <th scope="col" class="!min-w-[150px]" pSortableColumn="price">
-            <span class="mr-2">Giá</span><p-sortIcon field="price" />
+            <span class="mr-2">Giá</span>
+            <p-sortIcon field="price" />
           </th>
-          <th scope="col" class="!min-w-[150px]">Loại đơn</th>
-          <th scope="col" class="!min-w-[150px]">Phương thức</th>
-          <th scope="col" class="!min-w-[150px]">Ngày tạo</th>
-          <th scope="col" class="!w-[10%] !min-w-[150px] !pr-4 !text-center">
+          <th scope="col" class="!min-w-[150px] !text-center">Loại đơn</th>
+          <th scope="col" class="!min-w-[150px] !text-center">Phương thức</th>
+          <th scope="col" class="!w-[8%] !min-w-[150px] !pr-4 !text-center">
             Hành động
           </th>
         </tr>
@@ -78,22 +80,21 @@
       <ng-template #body let-payment let-i="rowIndex">
         <tr>
           <td class="!text-center">{{ i + 1 | leadingZero }}</td>
-          <td>
-            <div class="flex items-center gap-2">
+          <td class="!w-[27%] !min-w-[200px]">
+            <div class="flex max-w-full items-center gap-2">
               <img
                 [src]="payment.user.avatarUrl"
                 class="size-10 rounded-full object-cover"
                 alt="Avatar" />
-              <div class="flex flex-col">
-                <h3 class="text-base font-semibold">
-                  {{ payment.user.fullName }}
-                </h3>
-                <p class="w-[200px] text-sm text-gray-500">
-                  {{ payment.user.email }}
-                </p>
-              </div>
+              <h3
+                class="line-clamp-2 text-base font-semibold"
+                tooltipPosition="bottom"
+                [pTooltip]="payment.user.fullName">
+                {{ payment.user.fullName }}
+              </h3>
             </div>
           </td>
+          <td>{{ payment.createdAt | date: 'mediumDate' }}</td>
           <td class="uppercase text-primary">#{{ payment.transactionCode }}</td>
           <td>
             {{
@@ -101,10 +102,21 @@
             }}
           </td>
           <td>
-            {{ payment.paymentPurpose === 0 ? 'Gói credit' : 'Gói trường' }}
+            <div class="flex w-full items-center justify-center">
+              <app-badge
+                [variant]="payment.paymentPurpose === 0 ? 'orange' : 'warning'">
+                {{ payment.paymentPurpose === 0 ? 'Gói Credit' : 'Gói Trường' }}
+              </app-badge>
+            </div>
           </td>
-          <td>{{ payment.paymentMethod === 0 ? 'VNPAY' : 'PayOS' }}</td>
-          <td>{{ payment.createdAt | date: 'mediumDate' }}</td>
+          <td>
+            <div class="flex w-full items-center justify-center">
+              <app-badge
+                [variant]="payment.paymentMethod === 0 ? 'info' : 'purple'">
+                {{ payment.paymentMethod === 0 ? 'VNPAY' : 'PayOS' }}
+              </app-badge>
+            </div>
+          </td>
           <td class="!text-center">
             <div class="flex items-center justify-center gap-2">
               <a
@@ -120,9 +132,9 @@
                   tooltipPosition="top"
                   [variant]="'light'"
                   [size]="'xs'"
-                  class="material-symbols-outlined rounded-full px-[7px] pb-[6px] pt-[8px] text-lg leading-none"
-                  >visibility</app-button
-                >
+                  class="material-symbols-outlined rounded-full px-[7px] pb-[6px] pt-[8px] text-lg leading-none">
+                  visibility
+                </app-button>
               </a>
             </div>
           </td>

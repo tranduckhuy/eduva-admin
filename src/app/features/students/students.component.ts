@@ -27,6 +27,7 @@ interface StatusOption {
   name: string;
   code: number | undefined;
 }
+
 @Component({
   selector: 'app-students',
   standalone: true,
@@ -72,7 +73,7 @@ export class StudentsComponent {
 
   readonly statusSelectOptions = signal<StatusOption[]>([
     { name: 'Đang hoạt động', code: EntityStatus.Active },
-    { name: 'Vô hiệu hóa', code: EntityStatus.Archived },
+    { name: 'Vô hiệu hóa', code: EntityStatus.InActive },
     { name: 'Tất cả', code: undefined },
   ]);
 
@@ -139,7 +140,7 @@ export class StudentsComponent {
 
   onStatusSelectChange(selected: StatusOption | undefined): void {
     this.statusSelect.set(selected);
-    this.first.set(0); // Reset to first page when filter changes
+    this.first.set(0);
     this.loadData();
   }
 
