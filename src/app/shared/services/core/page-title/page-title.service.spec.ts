@@ -70,7 +70,7 @@ describe('PageTitleService', () => {
     tick();
 
     // Assert that setTitle was called with the correct formatted title
-    expect(titleMock.setTitle).toHaveBeenCalledWith(`${mockTitle} | by EDUVA`);
+    expect(titleMock.setTitle).toHaveBeenCalledWith(`${mockTitle} | EDUVA`);
   }));
 
   // Test case for init method with no custom title (default title)
@@ -113,9 +113,7 @@ describe('PageTitleService', () => {
     );
     tick();
 
-    expect(titleMock.setTitle).toHaveBeenCalledWith(
-      `${nestedTitle} | by EDUVA`
-    );
+    expect(titleMock.setTitle).toHaveBeenCalledWith(`${nestedTitle} | EDUVA`);
   }));
 
   // Test case to ensure no title is set if NavigationEnd does not occur
