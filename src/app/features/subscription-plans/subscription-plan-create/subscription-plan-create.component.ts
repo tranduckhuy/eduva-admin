@@ -4,7 +4,12 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 
 import { FormControlComponent } from '../../../shared/components/form-control/form-control.component';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
@@ -31,7 +36,7 @@ export class SubscriptionPlanCreateComponent {
   private readonly SubscriptionPlanService = inject(SubscriptionPlanService);
   private readonly loadingService = inject(LoadingService);
 
-  isLoading = this.loadingService;
+  isLoading = this.loadingService.isLoading;
 
   form!: FormGroup;
 
@@ -39,12 +44,12 @@ export class SubscriptionPlanCreateComponent {
 
   constructor() {
     this.form = this.fb.group({
-      name: [''],
+      name: ['', Validators.required],
       description: [''],
-      maxUsers: [0],
-      storageLimitGB: [0],
-      priceMonthly: [0],
-      pricePerYear: [0],
+      maxUsers: [0, [Validators.required, Validators.min(1)]],
+      storageLimitGB: [0, [Validators.required, Validators.min(1)]],
+      priceMonthly: [0, [Validators.required, Validators.min(1)]],
+      pricePerYear: [0, [Validators.required, Validators.min(1)]],
       isRecommended: [false],
     });
   }
