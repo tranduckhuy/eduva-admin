@@ -47,11 +47,11 @@ export class EditSubscriptionPlanComponent implements OnInit {
   constructor() {
     this.form = this.fb.group({
       name: ['', Validators.required],
-      description: ['', Validators.required],
+      description: [''],
       maxUsers: [0, [Validators.required, Validators.min(1)]],
-      storageLimitGB: [0, [Validators.required, Validators.min(0)]],
-      priceMonthly: [0, [Validators.required, Validators.min(0)]],
-      pricePerYear: [0, [Validators.required, Validators.min(0)]],
+      storageLimitGB: [0, [Validators.required, Validators.min(1)]],
+      priceMonthly: [0, [Validators.required, Validators.min(1)]],
+      pricePerYear: [0, [Validators.required, Validators.min(1)]],
       isRecommended: [false],
     });
   }
