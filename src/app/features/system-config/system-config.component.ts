@@ -9,6 +9,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { LeadingZeroPipe } from '../../shared/pipes/leading-zero.pipe';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { SearchInputComponent } from '../../shared/components/search-input/search-input.component';
+import { TableEmptyStateComponent } from '../../shared/components/table-empty-state/table-empty-state.component';
 
 @Component({
   selector: 'app-system-config',
@@ -22,6 +23,7 @@ import { SearchInputComponent } from '../../shared/components/search-input/searc
     TooltipModule,
     FormsModule,
     ButtonComponent,
+    TableEmptyStateComponent,
   ],
   templateUrl: './system-config.component.html',
   styleUrl: './system-config.component.css',

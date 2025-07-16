@@ -49,127 +49,155 @@
   @if (isLoadingGet()) {
     <app-table-skeleton [tableHead]="tableHeadSkeleton()" />
   } @else {
-    <p-table
-      [value]="subscriptionPlans()"
-      [tableStyle]="{ 'min-width': '50rem' }"
-      [paginator]="true"
-      [lazy]="true"
-      [rows]="rows()"
-      [first]="first()"
-      [showCurrentPageReport]="true"
-      [lazyLoadOnInit]="false"
-      (onLazyLoad)="loadDataLazy($event)"
-      [totalRecords]="totalSubscriptionPlans()"
-      currentPageReportTemplate="Hiển thị {first} đến {last} trên {totalRecords} gói đăng ký">
-      <ng-template pTemplate="header">
-        <tr>
-          <th scope="col" class="!w-[5%] !text-center">STT</th>
-          <th
-            scope="col"
-            class="!w-[15%] !min-w-[150px]"
-            pSortableColumn="name">
-            <span class="mr-2">Tên</span><p-sortIcon field="name" />
-          </th>
-          <th scope="col" pSortableColumn="storage" class="!min-w-[150px]">
-            Dung lượng<p-sortIcon field="storage" />
-          </th>
-          <th scope="col" pSortableColumn="users" class="!min-w-[150px]">
-            <div class="flex items-center">
-              <span class="mr-2">Số lượng<br />tài khoản</span>
-              <p-sortIcon field="users" />
-            </div>
-          </th>
-          <th scope="col" pSortableColumn="monthly" class="!min-w-[150px]">
-            Gói tháng <p-sortIcon field="monthly" />
-          </th>
-          <th scope="col" pSortableColumn="yearly" class="!min-w-[150px]">
-            Gói năm <p-sortIcon field="yearly" />
-          </th>
-          <th scope="col" class="!w-[10%] !min-w-[150px] !text-center">
-            Trạng thái
-          </th>
-          <th scope="col" class="!w-[15%] !min-w-[150px] !text-center">
-            Hành động
-          </th>
-        </tr>
-      </ng-template>
+    <div class="relative">
+      <p-table
+        [value]="subscriptionPlans()"
+        [tableStyle]="{ 'min-width': '50rem' }"
+        [paginator]="true"
+        [lazy]="true"
+        [rows]="rows()"
+        [first]="first()"
+        [showCurrentPageReport]="true"
+        [lazyLoadOnInit]="false"
+        (onLazyLoad)="loadDataLazy($event)"
+        [totalRecords]="totalSubscriptionPlans()"
+        currentPageReportTemplate="Hiển thị {first} đến {last} trên {totalRecords} gói đăng ký">
+        <ng-template pTemplate="header">
+          <tr>
+            <th scope="col" class="!w-[5%] !text-center">STT</th>
+            <th
+              scope="col"
+              class="!w-[15%] !min-w-[150px]"
+              pSortableColumn="name">
+              <span class="mr-2">Tên</span><p-sortIcon field="name" />
+            </th>
+            <th scope="col" pSortableColumn="storage" class="!min-w-[150px]">
+              Dung lượng<p-sortIcon field="storage" />
+            </th>
+            <th scope="col" pSortableColumn="users" class="!min-w-[150px]">
+              <div class="flex items-center">
+                <span class="mr-2">Số lượng<br />tài khoản</span>
+                <p-sortIcon field="users" />
+              </div>
+            </th>
+            <th scope="col" pSortableColumn="monthly" class="!min-w-[150px]">
+              Gói tháng <p-sortIcon field="monthly" />
+            </th>
+            <th scope="col" pSortableColumn="yearly" class="!min-w-[150px]">
+              Gói năm <p-sortIcon field="yearly" />
+            </th>
+            <th scope="col" class="!w-[10%] !min-w-[150px] !text-center">
+              Trạng thái
+            </th>
+            <th scope="col" class="!w-[15%] !min-w-[150px] !text-center">
+              Hành động
+            </th>
+          </tr>
+        </ng-template>
 
-      <ng-template pTemplate="body" let-subscription let-i="rowIndex">
-        <tr>
-          <td class="!text-center">{{ i + 1 | leadingZero }}</td>
-          <td>{{ subscription.name }}</td>
-          <td>{{ subscription.storageLimitGB | storageFormat }}</td>
-          <td>{{ subscription.maxUsers }}</td>
-          <td>
-            {{
-              subscription.priceMonthly
-                | currency: 'VND' : 'symbol' : '1.0-0' : 'vi-VN'
-            }}
-          </td>
-          <td>
-            {{
-              subscription.pricePerYear
-                | currency: 'VND' : 'symbol' : '1.0-0' : 'vi-VN'
-            }}
-          </td>
-          <td class="!text-center">
-            <app-badge
-              [variant]="subscription.status === 0 ? 'success' : 'destructive'">
-              {{ subscription.status === 0 ? 'Đang hoạt động' : 'Vô hiệu hóa' }}
-            </app-badge>
-          </td>
-          <td class="!text-center">
-            <div class="flex items-center justify-center gap-2">
-              <a [routerLink]="['/subscription-plans', subscription.id]">
-                <app-button
-                  pTooltip="Xem chi tiết"
-                  tooltipPosition="top"
-                  [variant]="'light'"
-                  [size]="'xs'"
-                  class="material-symbols-outlined rounded-full px-[7px] pb-[6px] pt-[8px] text-lg leading-none">
-                  visibility
-                </app-button>
-              </a>
-              <a
-                [routerLink]="[
-                  '/admin/subscription-plans',
-                  subscription.id,
-                  'update',
-                ]">
-                <app-button
-                  pTooltip="Chỉnh sửa"
-                  tooltipPosition="top"
-                  [variant]="'light'"
-                  [size]="'xs'"
-                  class="material-symbols-outlined rounded-full px-[7px] pb-[6px] pt-[8px] text-lg leading-none">
-                  edit
-                </app-button>
-              </a>
-              @if (subscription.status === 0) {
-                <app-button
-                  pTooltip="Vô hiệu hóa"
-                  tooltipPosition="top"
-                  [loading]="isLoadingArchive()"
-                  (clicked)="openConfirmArchiveDialog($event, subscription.id)"
-                  [variant]="'light-danger'"
-                  class="material-symbols-outlined rounded-full px-[7px] py-[7px] text-lg leading-none">
-                  archive
-                </app-button>
-              } @else if (subscription.status === 3) {
-                <app-button
-                  pTooltip="Kích hoạt"
-                  tooltipPosition="top"
-                  [loading]="isLoadingActive()"
-                  (clicked)="openConfirmActiveDialog($event, subscription.id)"
-                  [variant]="'light'"
-                  class="material-symbols-outlined rounded-full px-[7px] py-[7px] text-lg leading-none">
-                  unarchive</app-button
-                >
-              }
-            </div>
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
+        <ng-template pTemplate="body" let-subscription let-i="rowIndex">
+          <tr>
+            <td class="!text-center">{{ i + 1 | leadingZero }}</td>
+            <td>{{ subscription.name }}</td>
+            <td>{{ subscription.storageLimitGB | storageFormat }}</td>
+            <td>{{ subscription.maxUsers }}</td>
+            <td>
+              {{
+                subscription.priceMonthly
+                  | currency: 'VND' : 'symbol' : '1.0-0' : 'vi-VN'
+              }}
+            </td>
+            <td>
+              {{
+                subscription.pricePerYear
+                  | currency: 'VND' : 'symbol' : '1.0-0' : 'vi-VN'
+              }}
+            </td>
+            <td class="!text-center">
+              <app-badge
+                [variant]="
+                  subscription.status === 0 ? 'success' : 'destructive'
+                ">
+                {{
+                  subscription.status === 0 ? 'Đang hoạt động' : 'Vô hiệu hóa'
+                }}
+              </app-badge>
+            </td>
+            <td class="!text-center">
+              <div class="flex items-center justify-center gap-2">
+                <a [routerLink]="['/subscription-plans', subscription.id]">
+                  <app-button
+                    pTooltip="Xem chi tiết"
+                    tooltipPosition="top"
+                    variant="rounded"
+                    [size]="'xs'"
+                    class="material-symbols-outlined flex items-center justify-center border-none bg-transparent text-lg !text-primary shadow-none hover:bg-transparent">
+                    visibility
+                  </app-button>
+                </a>
+                <a
+                  [routerLink]="[
+                    '/admin/subscription-plans',
+                    subscription.id,
+                    'update',
+                  ]">
+                  <app-button
+                    pTooltip="Chỉnh sửa"
+                    tooltipPosition="top"
+                    variant="rounded"
+                    size="xs"
+                    class="material-symbols-outlined flex items-center justify-center border-none bg-transparent text-lg !text-primary shadow-none hover:bg-transparent">
+                    edit
+                  </app-button>
+                </a>
+                @if (subscription.status === 0) {
+                  <app-button
+                    pTooltip="Vô hiệu hóa"
+                    tooltipPosition="top"
+                    variant="rounded"
+                    size="xs"
+                    class="material-symbols-outlined flex items-center justify-center border-none bg-transparent text-lg !text-danger shadow-none hover:bg-transparent"
+                    [loading]="isLoadingArchive()"
+                    (clicked)="
+                      openConfirmArchiveDialog($event, subscription.id)
+                    ">
+                    archive
+                  </app-button>
+                } @else if (subscription.status === 3) {
+                  <app-button
+                    pTooltip="Kích hoạt"
+                    tooltipPosition="top"
+                    variant="rounded"
+                    size="xs"
+                    class="material-symbols-outlined flex items-center justify-center border-none bg-transparent text-lg !text-success shadow-none hover:bg-transparent"
+                    [loading]="isLoadingActive()"
+                    (clicked)="
+                      openConfirmActiveDialog($event, subscription.id)
+                    ">
+                    unarchive
+                  </app-button>
+                }
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template #emptymessage>
+          <tr>
+            <td colspan="100%">
+              <div class="h-[200px]"></div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+      @if (subscriptionPlans().length === 0) {
+        <div
+          class="pointer-events-none absolute left-0 right-0 top-[50%] -translate-y-[50%]">
+          <app-table-empty-state
+            icon="paid"
+            title="Chưa có gói thanh toán nào"
+            subtitle="Hệ thống hiện chưa có gói thanh toán nào để quản trị viên trường đăng ký. Vui lòng tạo ít nhất một gói để bắt đầu." />
+        </div>
+      }
+    </div>
   }
 </div>
