@@ -23,6 +23,7 @@ import { EntityListParams } from '../../shared/models/common/entity-list-params'
 import { SearchInputComponent } from '../../shared/components/search-input/search-input.component';
 import { TableSkeletonComponent } from '../../shared/components/skeleton/table-skeleton/table-skeleton.component';
 import { EntityStatus } from '../../shared/models/enum/entity-status.enum';
+import { TableEmptyStateComponent } from '../../shared/components/table-empty-state/table-empty-state.component';
 
 interface StatusOption {
   name: string;
@@ -44,6 +45,7 @@ interface StatusOption {
     FormsModule,
     Select,
     TableSkeletonComponent,
+    TableEmptyStateComponent,
   ],
   templateUrl: './credit-packs.component.html',
   styleUrl: './credit-packs.component.css',

@@ -24,6 +24,7 @@ import { SUBSCRIPTION_PLANS_LIMIT } from '../../shared/constants/common.constant
 import { SubscriptionPlanService } from './service/subscription-plan.service';
 import { StorageFormatPipe } from '../../shared/pipes/storage-format.pipe';
 import { EntityStatus } from '../../shared/models/enum/entity-status.enum';
+import { TableEmptyStateComponent } from '../../shared/components/table-empty-state/table-empty-state.component';
 
 interface StatusOption {
   name: string;
@@ -46,6 +47,7 @@ interface StatusOption {
     FormsModule,
     Select,
     TableSkeletonComponent,
+    TableEmptyStateComponent,
   ],
   templateUrl: './subscription-plans.component.html',
   styleUrl: './subscription-plans.component.css',
