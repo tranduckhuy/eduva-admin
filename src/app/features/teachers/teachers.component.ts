@@ -23,6 +23,7 @@ import { UserListParams } from '../../shared/models/common/user-list-params';
 import { USERS_LIMIT } from '../../shared/constants/common.constant';
 import { TableSkeletonComponent } from '../../shared/components/skeleton/table-skeleton/table-skeleton.component';
 import { EntityStatus } from '../../shared/models/enum/entity-status.enum';
+import { TableEmptyStateComponent } from '../../shared/components/table-empty-state/table-empty-state.component';
 
 interface StatusOption {
   name: string;
@@ -43,6 +44,7 @@ interface StatusOption {
     FormsModule,
     SelectModule,
     TableSkeletonComponent,
+    TableEmptyStateComponent,
   ],
   templateUrl: './teachers.component.html',
   styleUrl: './teachers.component.css',

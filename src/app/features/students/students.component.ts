@@ -22,6 +22,7 @@ import { LoadingService } from '../../shared/services/core/loading/loading.servi
 import { SearchInputComponent } from '../../shared/components/search-input/search-input.component';
 import { TableSkeletonComponent } from '../../shared/components/skeleton/table-skeleton/table-skeleton.component';
 import { EntityStatus } from '../../shared/models/enum/entity-status.enum';
+import { TableEmptyStateComponent } from '../../shared/components/table-empty-state/table-empty-state.component';
 
 interface StatusOption {
   name: string;
@@ -42,6 +43,7 @@ interface StatusOption {
     FormsModule,
     SelectModule,
     TableSkeletonComponent,
+    TableEmptyStateComponent,
   ],
   templateUrl: './students.component.html',
   styleUrl: './students.component.css',

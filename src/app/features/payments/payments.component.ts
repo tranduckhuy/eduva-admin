@@ -26,6 +26,7 @@ import { SearchInputComponent } from '../../shared/components/search-input/searc
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { TableSkeletonComponent } from '../../shared/components/skeleton/table-skeleton/table-skeleton.component';
 import { BadgeComponent } from '../../shared/components/badge/badge.component';
+import { TableEmptyStateComponent } from '../../shared/components/table-empty-state/table-empty-state.component';
 
 registerLocaleData(localeVi);
 
@@ -45,6 +46,7 @@ registerLocaleData(localeVi);
     ButtonComponent,
     TableSkeletonComponent,
     BadgeComponent,
+    TableEmptyStateComponent,
   ],
   templateUrl: './payments.component.html',
   styleUrl: './payments.component.css',
