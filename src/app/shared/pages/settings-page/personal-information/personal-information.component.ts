@@ -27,6 +27,7 @@ import { FormControlComponent } from '../../../components/form-control/form-cont
 import { UpdateAvatarModalComponent } from './update-avatar-modal/update-avatar-modal.component';
 
 import { type User } from '../../../models/entities/user.model';
+import { VIETNAM_PHONE_REGEX } from '../../../constants/common.constant';
 
 @Component({
   selector: 'app-personal-information',
@@ -47,7 +48,9 @@ export class PersonalInformationComponent implements OnInit {
   form: FormGroup;
 
   isLoading = this.loadingService.isLoading;
-  isEdit = signal(false);
+
+  submitted = signal<boolean>(false);
+  isEdit = signal<boolean>(false);
 
   user = this.userService.currentUser;
   originalUserData!: Partial<User> & { firstName: string; lastName: string };
@@ -58,7 +61,7 @@ export class PersonalInformationComponent implements OnInit {
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
       fullName: [''],
-      phoneNumber: ['', Validators.required],
+      phoneNumber: ['', [Validators.pattern(VIETNAM_PHONE_REGEX)]],
     });
   }
 
@@ -102,6 +105,8 @@ export class PersonalInformationComponent implements OnInit {
   }
 
   onSubmit() {
+    this.submitted.set(true);
+
     if (this.form.invalid) return;
 
     const { fullName, phoneNumber, avatar } = this.form.value;

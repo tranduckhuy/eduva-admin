@@ -66,7 +66,7 @@ export class SchoolAdminsComponent {
   searchTerm = signal<string>('');
   tableHeadSkeleton = signal([
     'STT',
-    'School Admin',
+    'Quản trị viên trường',
     'Số điện thoại',
     'Email',
     'Trạng thái',
