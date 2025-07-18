@@ -30,22 +30,19 @@ export class ExportInvoicePdfComponent {
   readonly schoolSubscriptionDetail = input<SchoolSubscriptionDetail | null>();
 
   async exportToPdf() {
-    await this.createFormattedPdf('Hóa_đơn_EDUVA.pdf');
+    const isCredit = this.isCreditPack();
+    if (isCredit) {
+      await this.createCreditInvoicePdf('Hóa_đơn_EDUVA.pdf');
+    } else {
+      await this.createSubscriptionInvoicePdf('Hóa_đơn_EDUVA.pdf');
+    }
   }
 
-  private async createFormattedPdf(fileName: string = 'document.pdf') {
+  private async createCreditInvoicePdf(fileName: string = 'document.pdf') {
     const pdf = new jsPDF();
-    const isCredit = this.isCreditPack();
     const creditDetail = this.creditTransactionDetail?.();
-    const subscriptionDetail = this.schoolSubscriptionDetail?.();
-    const user = isCredit ? creditDetail?.user : subscriptionDetail?.user;
-    const transaction = isCredit
-      ? creditDetail
-      : subscriptionDetail?.paymentTransaction;
-    const plan = subscriptionDetail?.plan;
-    const amount = transaction?.amount;
-    const planPrice = plan?.price;
-    const deductedAmount = amount && planPrice ? amount - planPrice : 0;
+    const user = creditDetail?.user;
+    const transaction = creditDetail;
 
     await this.loadFonts(pdf);
 
@@ -56,7 +53,7 @@ export class ExportInvoicePdfComponent {
     pdf.setFontSize(12);
     const rightColX = 110;
     const leftCol = this.getLeftCol();
-    const rightCol = this.getRightCol(user, subscriptionDetail, isCredit);
+    const rightCol = this.getRightCol(user, null, true);
     let y = 30;
     const lineSpacing = pdf.getLineHeight() * 0.6;
     y = this.renderTwoColumns(
@@ -71,19 +68,91 @@ export class ExportInvoicePdfComponent {
     const nextSectionY = y + 5;
     this.renderInvoiceDetails(
       pdf,
-      isCredit,
-      creditDetail,
-      subscriptionDetail,
-      transaction,
-      plan,
+      {
+        isCredit: true,
+        creditDetail,
+        subscriptionDetail: null,
+        transaction,
+        plan: null,
+      },
       rightColX,
       nextSectionY
     );
 
     const afterTextY = nextSectionY + 22;
-    const tableData = this.getTableData(
-      isCredit,
-      creditDetail,
+    const tableData = this.getCreditTableData(creditDetail);
+    autoTable(pdf, {
+      startY: afterTextY + 10,
+      margin: { left: 10 },
+      ...tableData,
+      styles: {
+        font: 'Nunito',
+        fontSize: 10,
+        cellPadding: 3,
+        overflow: 'linebreak',
+      },
+      headStyles: {
+        fontStyle: 'bold',
+      },
+      footStyles: {
+        fillColor: [255, 255, 255],
+        textColor: [32, 147, 231],
+        fontStyle: 'bold',
+      },
+    });
+
+    pdf.save(fileName);
+  }
+
+  private async createSubscriptionInvoicePdf(
+    fileName: string = 'document.pdf'
+  ) {
+    const pdf = new jsPDF();
+    const subscriptionDetail = this.schoolSubscriptionDetail?.();
+    const user = subscriptionDetail?.user;
+    const transaction = subscriptionDetail?.paymentTransaction;
+    const plan = subscriptionDetail?.plan;
+    const amount = transaction?.amount;
+    const planPrice = plan?.price;
+    const deductedAmount = amount && planPrice ? amount - planPrice : 0;
+
+    await this.loadFonts(pdf);
+
+    pdf.addImage(base64Img, 'PNG', 10, 10, 10, 10);
+    pdf.setFontSize(16).setFont('Nunito', 'bold');
+    pdf.text(`EDUVA Hóa Đơn: #${transaction?.transactionCode ?? ''}`, 24, 17);
+
+    pdf.setFontSize(12);
+    const rightColX = 110;
+    const leftCol = this.getLeftCol();
+    const rightCol = this.getRightCol(user, subscriptionDetail, false);
+    let y = 30;
+    const lineSpacing = pdf.getLineHeight() * 0.6;
+    y = this.renderTwoColumns(
+      pdf,
+      leftCol,
+      rightCol,
+      rightColX,
+      y,
+      lineSpacing
+    );
+
+    const nextSectionY = y + 5;
+    this.renderInvoiceDetails(
+      pdf,
+      {
+        isCredit: false,
+        creditDetail: null,
+        subscriptionDetail,
+        transaction,
+        plan,
+      },
+      rightColX,
+      nextSectionY
+    );
+
+    const afterTextY = nextSectionY + 22;
+    const tableData = this.getSubscriptionTableData(
       plan,
       subscriptionDetail,
       deductedAmount,
@@ -204,14 +273,18 @@ export class ExportInvoicePdfComponent {
 
   private renderInvoiceDetails(
     pdf: jsPDF,
-    isCredit: boolean,
-    creditDetail: any,
-    subscriptionDetail: any,
-    transaction: any,
-    plan: any,
+    invoiceData: {
+      isCredit: boolean;
+      creditDetail: any;
+      subscriptionDetail: any;
+      transaction: any;
+      plan: any;
+    },
     rightColX: number,
     nextSectionY: number
   ) {
+    const { isCredit, creditDetail, subscriptionDetail, transaction, plan } =
+      invoiceData;
     pdf.setFont('Nunito', 'normal');
     pdf.text('Mã hóa đơn:', 10, nextSectionY);
     pdf.text(transaction?.transactionCode ?? '', 10, nextSectionY + 7);
@@ -241,59 +314,57 @@ export class ExportInvoicePdfComponent {
     );
   }
 
-  private getTableData(
-    isCredit: boolean,
-    creditDetail: any,
+  private getCreditTableData(creditDetail: any) {
+    return {
+      head: [
+        ['STT', 'TÊN GÓI', 'SỐ LƯỢNG CREDITS', 'CREDITS TẶNG THÊM', 'GIÁ'],
+      ],
+      body: [
+        [
+          '01',
+          creditDetail?.aiCreditPack.name ?? '',
+          creditDetail?.aiCreditPack.credits ?? 0,
+          creditDetail?.aiCreditPack.bonusCredits ?? 0,
+          `${creditDetail?.aiCreditPack.price ?? 0} đ`,
+        ],
+      ],
+      foot: [
+        ['', '', '', 'Tổng:', `${creditDetail?.aiCreditPack.price ?? 0} ₫`],
+      ],
+    };
+  }
+
+  private getSubscriptionTableData(
     plan: any,
     subscriptionDetail: any,
     deductedAmount: number,
     transaction: any
   ) {
-    if (isCredit) {
-      return {
-        head: [
-          ['STT', 'TÊN GÓI', 'SỐ LƯỢNG CREDITS', 'CREDITS TẶNG THÊM', 'GIÁ'],
+    return {
+      head: [
+        [
+          'STT',
+          'TÊN GÓI',
+          'DUNG LƯỢNG LƯU TRỮ',
+          'SỐ LƯỢNG TÀI KHOẢN',
+          'LOẠI GÓI',
+          'GIÁ',
         ],
-        body: [
-          [
-            '01',
-            creditDetail?.aiCreditPack.name ?? '',
-            creditDetail?.aiCreditPack.credits ?? 0,
-            creditDetail?.aiCreditPack.bonusCredits ?? 0,
-            `${creditDetail?.aiCreditPack.price ?? 0} đ`,
-          ],
+      ],
+      body: [
+        [
+          '01',
+          plan?.name ?? '',
+          plan?.maxUsers ?? 0,
+          plan?.storageLimitGB ?? 0,
+          subscriptionDetail?.billingCycle === 0 ? 'Tháng' : 'Năm',
+          `${plan?.price ?? 0} đ`,
         ],
-        foot: [
-          ['', '', '', 'Tổng:', `${creditDetail?.aiCreditPack.price ?? 0} ₫`],
-        ],
-      };
-    } else {
-      return {
-        head: [
-          [
-            'STT',
-            'TÊN GÓI',
-            'DUNG LƯỢNG LƯU TRỮ',
-            'SỐ LƯỢNG TÀI KHOẢN',
-            'LOẠI GÓI',
-            'GIÁ',
-          ],
-        ],
-        body: [
-          [
-            '01',
-            plan?.name ?? '',
-            plan?.maxUsers ?? 0,
-            plan?.storageLimitGB ?? 0,
-            subscriptionDetail?.billingCycle === 0 ? 'Tháng' : 'Năm',
-            `${plan?.price ?? 0} đ`,
-          ],
-        ],
-        foot: [
-          ['', '', '', '', 'Giảm giá:', `${deductedAmount} ₫`],
-          ['', '', '', '', 'Tổng:', `${transaction?.amount ?? 0} ₫`],
-        ],
-      };
-    }
+      ],
+      foot: [
+        ['', '', '', '', 'Giảm giá:', `${deductedAmount} ₫`],
+        ['', '', '', '', 'Tổng:', `${transaction?.amount ?? 0} ₫`],
+      ],
+    };
   }
 }
