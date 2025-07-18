@@ -3,6 +3,7 @@ import {
   Component,
   inject,
   LOCALE_ID,
+  OnInit,
   signal,
 } from '@angular/core';
 import localeVi from '@angular/common/locales/vi';
@@ -22,7 +23,6 @@ import { LoadingService } from '../../shared/services/core/loading/loading.servi
 import { PaymentListParams } from './model/payment-list-params';
 import { PAYMENTS_LIMIT } from '../../shared/constants/common.constant';
 
-import { SearchInputComponent } from '../../shared/components/search-input/search-input.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { TableSkeletonComponent } from '../../shared/components/skeleton/table-skeleton/table-skeleton.component';
 import { BadgeComponent } from '../../shared/components/badge/badge.component';
@@ -42,7 +42,6 @@ registerLocaleData(localeVi);
     TooltipModule,
     SelectModule,
     LeadingZeroPipe,
-    SearchInputComponent,
     ButtonComponent,
     TableSkeletonComponent,
     BadgeComponent,
@@ -53,9 +52,13 @@ registerLocaleData(localeVi);
   providers: [{ provide: LOCALE_ID, useValue: 'vi-VN' }],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PaymentsComponent {
+export class PaymentsComponent implements OnInit {
   private readonly paymentService = inject(PaymentService);
   private readonly loadingService = inject(LoadingService);
+
+  ngOnInit(): void {
+    this.loadData();
+  }
 
   // Pagination & Sorting signals
   first = signal<number>(0);
