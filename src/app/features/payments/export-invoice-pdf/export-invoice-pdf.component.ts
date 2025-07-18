@@ -9,10 +9,10 @@ import { DatePipe } from '@angular/common';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-import { base64Img } from '../../../shared/constants/logoBase64.constant';
-import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { CreditTransactionDetail } from '../model/credit-transaction-detail';
 import { SchoolSubscriptionDetail } from '../model/school-subscription-detail.model';
+import { ButtonComponent } from '../../../shared/components/button/button.component';
+import { base64Img } from '../../../shared/constants/logoBase64.constant';
 
 @Component({
   selector: 'app-export-invoice-pdf',
@@ -30,210 +30,169 @@ export class ExportInvoicePdfComponent {
   readonly schoolSubscriptionDetail = input<SchoolSubscriptionDetail | null>();
 
   async exportToPdf() {
-    await this.createFormattedPdf({}, 'Hóa_đơn_EDUVA.pdf');
+    await this.createFormattedPdf('Hóa_đơn_EDUVA.pdf');
   }
 
-  private async createFormattedPdf(
-    data: any,
-    fileName: string = 'document.pdf'
-  ) {
+  private async createFormattedPdf(fileName: string = 'document.pdf') {
     const pdf = new jsPDF();
+    const isCredit = this.isCreditPack();
 
-    // Helper function to convert ArrayBuffer to base64 safely
-    function arrayBufferToBase64(buffer: ArrayBuffer): string {
+    const creditDetail = this.creditTransactionDetail?.();
+    const subscriptionDetail = this.schoolSubscriptionDetail?.();
+    const user = isCredit ? creditDetail?.user : subscriptionDetail?.user;
+    const transaction = isCredit
+      ? creditDetail
+      : subscriptionDetail?.paymentTransaction;
+    const plan = subscriptionDetail?.plan;
+    const amount = transaction?.amount;
+    const planPrice = plan?.price;
+    const deductedAmount = amount && planPrice ? amount - planPrice : 0;
+
+    const arrayBufferToBase64 = (buffer: ArrayBuffer): string => {
       let binary = '';
       const bytes = new Uint8Array(buffer);
-      const len = bytes.byteLength;
-      for (let i = 0; i < len; i++) {
-        binary += String.fromCharCode(bytes[i]);
+      for (const byte of bytes) {
+        binary += String.fromCharCode(byte);
       }
       return window.btoa(binary);
-    }
+    };
 
-    // Load and register Vietnamese font
     try {
       const fontName = 'Nunito';
-      // Load Regular font
-      const regularFontPath = 'assets/fonts/Nunito/Nunito-Regular.ttf';
-      const regularFontData = await fetch(regularFontPath).then(res =>
-        res.arrayBuffer()
+      const regular = await fetch(
+        'assets/fonts/Nunito/Nunito-Regular.ttf'
+      ).then(res => res.arrayBuffer());
+      const bold = await fetch('assets/fonts/Nunito/Nunito-Bold.ttf').then(
+        res => res.arrayBuffer()
       );
-      const regularBase64 = arrayBufferToBase64(regularFontData);
-      pdf.addFileToVFS('Nunito-Regular.ttf', regularBase64);
+      pdf.addFileToVFS('Nunito-Regular.ttf', arrayBufferToBase64(regular));
+      pdf.addFileToVFS('Nunito-Bold.ttf', arrayBufferToBase64(bold));
       pdf.addFont('Nunito-Regular.ttf', fontName, 'normal');
-
-      // Load Bold font
-      const boldFontPath = 'assets/fonts/Nunito/Nunito-Bold.ttf';
-      const boldFontData = await fetch(boldFontPath).then(res =>
-        res.arrayBuffer()
-      );
-      const boldBase64 = arrayBufferToBase64(boldFontData);
-      pdf.addFileToVFS('Nunito-Bold.ttf', boldBase64);
       pdf.addFont('Nunito-Bold.ttf', fontName, 'bold');
-
-      // Set default font
       pdf.setFont(fontName, 'normal');
-    } catch (error) {
-      console.warn(
-        'Failed to load Vietnamese font, falling back to default',
-        error
-      );
-      pdf.setFont('helvetica'); // Fallback font
+    } catch {
+      pdf.setFont('helvetica');
     }
-
-    // Logo
 
     pdf.addImage(base64Img, 'PNG', 10, 10, 10, 10);
+    pdf.setFontSize(16).setFont('Nunito', 'bold');
+    pdf.text(`EDUVA Hóa Đơn: #${transaction?.transactionCode ?? ''}`, 24, 17);
 
-    // Title
-    pdf.setFontSize(16);
-    pdf.setFont('Nunito', 'bold');
-    pdf.text(
-      `EDUVA Hóa Đơn: #${
-        this.isCreditPack()
-          ? this.creditTransactionDetail()?.id
-          : this.schoolSubscriptionDetail()?.id
-      }`,
-      24,
-      17
-    );
-
-    // Invoice From
     pdf.setFontSize(12);
-    pdf.setFont('Nunito', 'normal');
-    pdf.text('Hóa đơn từ:', 10, 30);
-
-    pdf.setFont('Nunito', 'bold');
-    pdf.text('EDUVA', 10, 36);
-    pdf.setFont('Nunito', 'normal');
-    pdf.text('Địa chỉ: thành phố Quy Nhơn, tỉnh Bình Định', 10, 42);
-    pdf.text('Số điện thoại: 01234543234', 10, 48);
-    pdf.text('Email: eduva@gmail.com', 10, 54);
-
-    // Invoice To
     const rightColX = 110;
-    pdf.setFontSize(12);
-    pdf.setFont('Nunito', 'normal');
-    pdf.text('Hóa đơn đến:', rightColX, 30);
-    pdf.setFont('Nunito', 'bold');
-    pdf.text(
-      `${
-        this.isCreditPack()
-          ? this.creditTransactionDetail()?.user?.fullName
-          : this.schoolSubscriptionDetail()?.user?.fullName
-      }`,
-      rightColX,
-      36
-    );
-    pdf.setFont('Nunito', 'normal');
-    pdf.text(
-      `Số điện thoại: ${
-        this.isCreditPack()
-          ? this.creditTransactionDetail()?.user?.phoneNumber
-          : this.schoolSubscriptionDetail()?.user?.phoneNumber
-      }`,
-      rightColX,
-      42
-    );
-    pdf.text(
-      `Email: ${
-        this.isCreditPack()
-          ? this.creditTransactionDetail()?.user?.email
-          : this.schoolSubscriptionDetail()?.user?.email
-      }`,
-      rightColX,
-      48
-    );
-    if (!this.isCreditPack()) {
-      pdf.text(
-        `Trường: ${this.schoolSubscriptionDetail()?.school?.name}`,
-        rightColX,
-        54
-      );
+    // Chuẩn bị dữ liệu hai cột
+    const leftCol = [
+      { text: 'Hóa đơn từ:', font: 'normal' },
+      { text: 'EDUVA', font: 'bold' },
+      { text: 'Địa chỉ: Đại học FPT Quy Nhơn, Tỉnh Gia Lai', font: 'normal' },
+      { text: 'Số điện thoại: 01234543234', font: 'normal' },
+      { text: 'Email: eduva@contact.com', font: 'normal' },
+    ];
+    const rightCol = [
+      { text: 'Hóa đơn đến:', font: 'normal' },
+      { text: user?.fullName ?? '', font: 'bold' },
+      {
+        text: `Số điện thoại: ${user?.phoneNumber ?? 'Chưa cập nhật'}`,
+        font: 'normal',
+      },
+      { text: `Email: ${user?.email ?? ''}`, font: 'normal' },
+      {
+        text: !isCredit
+          ? `Trường: ${subscriptionDetail?.school?.name ?? ''}`
+          : '',
+        font: 'normal',
+      },
+    ];
+    const maxRows = Math.max(leftCol.length, rightCol.length);
+    let y = 30;
+    const lineSpacing = pdf.getLineHeight() * 0.7;
+    for (let i = 0; i < maxRows; i++) {
+      // Left column
+      if (leftCol[i]) {
+        pdf.setFont('Nunito', leftCol[i].font);
+        pdf.text(leftCol[i].text, 10, y);
+      }
+      // Right column
+      if (rightCol[i] && rightCol[i].text) {
+        pdf.setFont('Nunito', rightCol[i].font);
+        if (i === 1) {
+          // Tên user, có thể dài nhiều dòng
+          const userNameLines = pdf.splitTextToSize(rightCol[i].text, 80);
+          pdf.text(userNameLines, rightColX, y);
+          y += userNameLines.length * lineSpacing;
+          if (userNameLines.length > 1) {
+            y += lineSpacing * -0.5;
+          }
+          continue;
+        } else {
+          pdf.text(rightCol[i].text, rightColX, y, { maxWidth: 80 });
+        }
+      }
+      y += lineSpacing;
     }
-    // Invoice details row
+
+    const nextSectionY = y + 5;
     pdf.setFont('Nunito', 'normal');
-    pdf.text('Mã hóa đơn:', 10, 70);
-    pdf.text('Tổng tiền:', 10, 85);
-    pdf.text('Ngày bắt đầu:', 110, 70);
-    pdf.text('Ngày kết thúc:', 110, 85);
-
+    pdf.text('Mã hóa đơn:', 10, nextSectionY);
+    pdf.text(transaction?.transactionCode ?? '', 10, nextSectionY + 7);
+    pdf.text('Tổng tiền:', 10, nextSectionY + 15);
     pdf.text(
-      `${
-        this.isCreditPack()
-          ? this.creditTransactionDetail()?.aiCreditPack?.id
-          : this.schoolSubscriptionDetail()?.id
-      }`,
+      `${isCredit ? creditDetail?.aiCreditPack.price : transaction?.amount} ₫`,
       10,
-      77
+      nextSectionY + 22
     );
+    pdf.text('Ngày bắt đầu:', rightColX, nextSectionY);
     pdf.text(
-      `${
-        this.isCreditPack()
-          ? this.creditTransactionDetail()?.aiCreditPack.price
-          : this.schoolSubscriptionDetail()?.paymentTransaction.amount
-      } ₫`,
-      10,
-      92
+      this.datePipe.transform(
+        isCredit ? creditDetail?.createdAt : subscriptionDetail?.startDate,
+        'medium'
+      ) ?? '',
+      rightColX,
+      nextSectionY + 7
     );
+    pdf.text('Ngày kết thúc:', rightColX, nextSectionY + 15);
     pdf.text(
-      `${
-        this.isCreditPack()
-          ? this.datePipe.transform(
-              this.creditTransactionDetail()?.createdAt,
-              'medium'
-            )
-          : this.datePipe.transform(
-              this.schoolSubscriptionDetail()?.startDate,
-              'medium'
-            )
-      }`,
-      110,
-      77
-    );
-    pdf.text(
-      `${
-        this.isCreditPack()
-          ? this.datePipe.transform(
-              this.creditTransactionDetail()?.createdAt,
-              'mediumDate'
-            )
-          : this.datePipe.transform(
-              this.schoolSubscriptionDetail()?.endDate,
-              'mediumDate'
-            )
-      }`,
-      110,
-      92
+      this.datePipe.transform(
+        isCredit ? creditDetail?.createdAt : subscriptionDetail?.endDate,
+        'mediumDate'
+      ) ?? '',
+      rightColX,
+      nextSectionY + 22
     );
 
-    // Table
+    const afterTextY = nextSectionY + 22;
+
     autoTable(pdf, {
-      startY: 105,
+      startY: afterTextY + 10,
       margin: { left: 10 },
       head: [
-        this.isCreditPack()
+        isCredit
           ? ['STT', 'TÊN GÓI', 'SỐ LƯỢNG CREDITS', 'CREDITS TẶNG THÊM', 'GIÁ']
-          : ['STT', 'TÊN GÓI', 'LƯU TRỮ', 'TÀI KHOẢN', 'LOẠI', 'GIÁ'],
+          : [
+              'STT',
+              'TÊN GÓI',
+              'DUNG LƯỢNG LƯU TRỮ',
+              'SỐ LƯỢNG TÀI KHOẢN',
+              'LOẠI GÓI',
+              'GIÁ',
+            ],
       ],
       body: [
-        this.isCreditPack()
+        isCredit
           ? [
               '01',
-              this.creditTransactionDetail()?.aiCreditPack.name ?? '',
-              this.creditTransactionDetail()?.aiCreditPack.credits ?? 0,
-              this.creditTransactionDetail()?.aiCreditPack.bonusCredits ?? 0,
-              this.creditTransactionDetail()?.aiCreditPack.price ?? 0 + ' đ',
+              creditDetail?.aiCreditPack.name ?? '',
+              creditDetail?.aiCreditPack.credits ?? 0,
+              creditDetail?.aiCreditPack.bonusCredits ?? 0,
+              `${creditDetail?.aiCreditPack.price ?? 0} đ`,
             ]
           : [
               '01',
-              this.schoolSubscriptionDetail()?.plan.name ?? '',
-              this.schoolSubscriptionDetail()?.plan.maxUsers ?? 0,
-              this.schoolSubscriptionDetail()?.plan.storageLimitGB ?? 0,
-              this.schoolSubscriptionDetail()?.billingCycle === 0
-                ? 'Tháng'
-                : 'Năm',
-              this.schoolSubscriptionDetail()?.plan.price ?? 0 + ' đ',
+              plan?.name ?? '',
+              plan?.maxUsers ?? 0,
+              plan?.storageLimitGB ?? 0,
+              subscriptionDetail?.billingCycle === 0 ? 'Tháng' : 'Năm',
+              `${plan?.price ?? 0} đ`,
             ],
       ],
       styles: {
@@ -245,27 +204,15 @@ export class ExportInvoicePdfComponent {
       headStyles: {
         fontStyle: 'bold',
       },
-      foot: [
-        this.isCreditPack()
-          ? [
-              '',
-              '',
-              '',
-              'Tổng:',
-              `${this.creditTransactionDetail()?.aiCreditPack.price} ₫`,
-            ]
-          : [
-              '',
-              '',
-              '',
-              '',
-              'Tổng:',
-              `${this.schoolSubscriptionDetail()?.paymentTransaction?.amount} ₫`,
-            ],
-      ],
+      foot: isCredit
+        ? [['', '', '', 'Tổng:', `${creditDetail?.aiCreditPack.price ?? 0} ₫`]]
+        : [
+            ['', '', '', '', 'Giảm giá:', `${deductedAmount} ₫`],
+            ['', '', '', '', 'Tổng:', `${transaction?.amount ?? 0} ₫`],
+          ],
       footStyles: {
         fillColor: [255, 255, 255],
-        textColor: [34, 197, 94],
+        textColor: [32, 147, 231],
         fontStyle: 'bold',
       },
     });
