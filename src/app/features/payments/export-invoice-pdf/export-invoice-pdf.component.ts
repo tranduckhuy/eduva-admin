@@ -283,7 +283,7 @@ export class ExportInvoicePdfComponent {
     rightColX: number,
     nextSectionY: number
   ) {
-    const { isCredit, creditDetail, subscriptionDetail, transaction, plan } =
+    const { isCredit, creditDetail, subscriptionDetail, transaction } =
       invoiceData;
     pdf.setFont('Nunito', 'normal');
     pdf.text('Mã hóa đơn:', 10, nextSectionY);
