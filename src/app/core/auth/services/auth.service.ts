@@ -74,7 +74,6 @@ export class AuthService {
     return this.requestService
       .post<AuthTokenResponse>(this.REFRESH_TOKEN_API_URL, request, {
         bypassAuth: true,
-        bypassAuthError: true,
         showLoading: false,
       })
       .pipe(
