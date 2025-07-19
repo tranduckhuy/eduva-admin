@@ -96,11 +96,11 @@ export class LessonCreationComponent {
       () => {
         const data = this.dashboardData();
 
-        if (data && data.lessonActivity && data.lessonActivity.length > 0) {
+        if (data?.lessonActivity && data.lessonActivity.length > 0) {
           // Check if the data format matches the current selection
           const firstPeriod = data.lessonActivity[0].period;
           const isWeeklyData = firstPeriod.includes('-W');
-          const isMonthlyData = firstPeriod.match(/^\d{4}-\d{2}$/);
+          const isMonthlyData = /^\d{4}-\d{2}$/.exec(firstPeriod);
 
           // Update timeSelect to match the actual data format
           if (isWeeklyData && this.timeSelect().code !== 'weekly') {
@@ -126,7 +126,7 @@ export class LessonCreationComponent {
     if (timeSelectValue.code === 'weekly') {
       return this.generateWeeklyData(7, data);
     } else {
-      return this.generateMonthlyData(12, data);
+      return this.generateMonthlyData(data, 12);
     }
   });
 
@@ -297,8 +297,8 @@ export class LessonCreationComponent {
   }
 
   private generateMonthlyData(
-    months: number = 12,
-    data: DashboardResponse
+    data: DashboardResponse,
+    months: number = 12
   ): {
     ai: DataPoint[];
     uploaded: DataPoint[];

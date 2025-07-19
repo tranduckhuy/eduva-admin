@@ -85,18 +85,21 @@ export class RevenueTrendComponent {
     effect(
       () => {
         const data = this.dashboardData();
+        const revenueStats = data?.revenueStats;
 
-        if (data && data.revenueStats && data.revenueStats.length > 0) {
+        if (revenueStats && revenueStats.length > 0) {
           // Check if the data format matches the current selection
-          const firstPeriod = data.revenueStats[0].period;
-          const isMonthlyData = firstPeriod.match(/^\d{4}-\d{2}$/);
-          const isYearlyData = firstPeriod.match(/^\d{4}$/);
+          const firstPeriod = revenueStats[0]?.period;
+          if (firstPeriod) {
+            const isMonthlyData = /^\d{4}-\d{2}$/.exec(firstPeriod);
+            const isYearlyData = /^\d{4}$/.exec(firstPeriod);
 
-          // Update timeSelect to match the actual data format
-          if (isMonthlyData && this.timeSelect().code !== 'monthly') {
-            this.timeSelect.set({ name: 'Theo tháng', code: 'monthly' });
-          } else if (isYearlyData && this.timeSelect().code !== 'yearly') {
-            this.timeSelect.set({ name: 'Theo năm', code: 'yearly' });
+            // Update timeSelect to match the actual data format
+            if (isMonthlyData && this.timeSelect().code !== 'monthly') {
+              this.timeSelect.set({ name: 'Theo tháng', code: 'monthly' });
+            } else if (isYearlyData && this.timeSelect().code !== 'yearly') {
+              this.timeSelect.set({ name: 'Theo năm', code: 'yearly' });
+            }
           }
         }
       },
@@ -109,7 +112,7 @@ export class RevenueTrendComponent {
     const data = this.dashboardData();
     const timeSelectValue = this.timeSelect();
 
-    if (!data || !data.revenueStats) {
+    if (!data?.revenueStats) {
       return [];
     }
 
@@ -127,14 +130,14 @@ export class RevenueTrendComponent {
           name: 'Credit Points',
           data: chartData.map(item => ({
             ...item,
-            y: item.meta?.creditPackRevenue || 0,
+            y: item.meta?.creditPackRevenue ?? 0,
           })),
         },
         {
           name: 'Subscription Plan',
           data: chartData.map(item => ({
             ...item,
-            y: item.meta?.subscriptionRevenue || 0,
+            y: item.meta?.subscriptionRevenue ?? 0,
           })),
         },
       ],
@@ -272,9 +275,9 @@ export class RevenueTrendComponent {
           type: 'solid',
         },
         meta: {
-          creditPackRevenue: stat.creditPackRevenue || 0,
-          subscriptionRevenue: stat.subscriptionRevenue || 0,
-          totalRevenue: stat.totalRevenue || 0,
+          creditPackRevenue: stat.creditPackRevenue ?? 0,
+          subscriptionRevenue: stat.subscriptionRevenue ?? 0,
+          totalRevenue: stat.totalRevenue ?? 0,
         },
       };
     });
@@ -282,10 +285,11 @@ export class RevenueTrendComponent {
 
   private parsePeriodToDate(period: string, periodType: string): Date {
     switch (periodType) {
-      case 'monthly':
+      case 'monthly': {
         // Format: "YYYY-MM"
         const [year, month] = period.split('-');
         return new Date(parseInt(year), parseInt(month) - 1, 1);
+      }
       case 'yearly':
         // Format: "YYYY"
         return new Date(parseInt(period), 0, 1);

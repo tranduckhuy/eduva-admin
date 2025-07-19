@@ -89,16 +89,12 @@ export class UserRegistrationTrendComponent {
       () => {
         const data = this.dashboardData();
 
-        if (
-          data &&
-          data.userRegistrations &&
-          data.userRegistrations.length > 0
-        ) {
+        if (data?.userRegistrations?.length) {
           // Check if the data format matches the current selection
           const firstPeriod = data.userRegistrations[0].period;
-          const isDailyData = firstPeriod.match(/^\d{4}-\d{2}-\d{2}$/);
-          const isMonthlyData = firstPeriod.match(/^\d{4}-\d{2}$/);
-          const isYearlyData = firstPeriod.match(/^\d{4}$/);
+          const isDailyData = /^\d{4}-\d{2}-\d{2}$/.exec(firstPeriod);
+          const isMonthlyData = /^\d{4}-\d{2}$/.exec(firstPeriod);
+          const isYearlyData = /^\d{4}$/.exec(firstPeriod);
 
           // Update timeSelect to match the actual data format
           if (isDailyData && this.timeSelect().code !== 'daily') {
@@ -119,7 +115,7 @@ export class UserRegistrationTrendComponent {
     const data = this.dashboardData();
     const timeSelectValue = this.timeSelect();
 
-    if (!data || !data.userRegistrations) {
+    if (!data?.userRegistrations) {
       return [];
     }
 
@@ -137,28 +133,28 @@ export class UserRegistrationTrendComponent {
           name: 'Quản trị viên trường',
           data: chartData.map(item => ({
             ...item,
-            y: item.meta?.schoolAdmins || 0,
+            y: item.meta?.schoolAdmins ?? 0,
           })),
         },
         {
           name: 'Giáo viên',
           data: chartData.map(item => ({
             ...item,
-            y: item.meta?.teachers || 0,
+            y: item.meta?.teachers ?? 0,
           })),
         },
         {
           name: 'Kiểm duyệt viên',
           data: chartData.map(item => ({
             ...item,
-            y: item.meta?.contentModerators || 0,
+            y: item.meta?.contentModerators ?? 0,
           })),
         },
         {
           name: 'Học sinh',
           data: chartData.map(item => ({
             ...item,
-            y: item.meta?.students || 0,
+            y: item.meta?.students ?? 0,
           })),
         },
       ],
@@ -298,10 +294,10 @@ export class UserRegistrationTrendComponent {
           },
         },
         meta: {
-          schoolAdmins: registration.schoolAdmins || 0,
-          teachers: registration.teachers || 0,
-          contentModerators: registration.contentModerators || 0,
-          students: registration.students || 0,
+          schoolAdmins: registration.schoolAdmins ?? 0,
+          teachers: registration.teachers ?? 0,
+          contentModerators: registration.contentModerators ?? 0,
+          students: registration.students ?? 0,
         },
       };
     });
@@ -312,10 +308,11 @@ export class UserRegistrationTrendComponent {
       case 'daily':
         // Format: "YYYY-MM-DD"
         return new Date(period);
-      case 'monthly':
+      case 'monthly': {
         // Format: "YYYY-MM"
         const [year, month] = period.split('-');
         return new Date(parseInt(year), parseInt(month) - 1, 1);
+      }
       case 'yearly':
         // Format: "YYYY"
         return new Date(parseInt(period), 0, 1);
