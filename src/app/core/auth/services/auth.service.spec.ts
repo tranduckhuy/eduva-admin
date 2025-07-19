@@ -370,7 +370,7 @@ describe('AuthService', () => {
       });
 
       // Mock Object.keys for localStorage
-      Object.keys = vi.fn().mockReturnValue(['accordion-open:test']);
+      Object.keys = vi.fn().mockReturnValue(['testKey']);
 
       // Mock window.dispatchEvent
       const mockDispatchEvent = vi.fn();
