@@ -1,10 +1,19 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  computed,
+  OnInit,
+} from '@angular/core';
 
 import { StatCardComponent } from './stat-card/stat-card.component';
 import { UserRegistrationTrendComponent } from './user-registration-trend/user-registration-trend.component';
 import { LessonCreationComponent } from './lesson-creation/lesson-creation.component';
 import { RevenueTrendComponent } from './revenue-trend/revenue-trend.component';
 import { TopActiveSchoolsComponent } from './top-active-schools/top-active-schools.component';
+import { DashboardService } from './service/dashboard.service';
+import { LoadingService } from '../../shared/services/core/loading/loading.service';
+import { PeriodType } from '../../shared/models/enum/period-type.enum';
 
 interface StatCard {
   title: string;
@@ -37,52 +46,121 @@ interface SubItem {
   styleUrl: './dashboard.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DashboardComponent {
-  usersStatCard = signal<StatCard>({
-    title: 'Người dùng',
-    description: 'Số lượng người dùng',
-    value: 5301,
-    icon: 'group',
-    iconColor: 'text-primary',
-    subItems: [
-      { title: 'School Admins', value: 50 },
-      { title: 'Giáo viên', value: 1000 },
-      { title: 'Học sinh', value: 4251 },
-    ],
+export class DashboardComponent implements OnInit {
+  private readonly dashboardService = inject(DashboardService);
+  private readonly loadingService = inject(LoadingService);
+
+  readonly dashboardData = this.dashboardService.dashboardData;
+  readonly isLoadingDashboard = this.loadingService.is('dashboard');
+
+  ngOnInit() {
+    this.dashboardService
+      .getDashboardData({
+        lessonActivityPeriod: PeriodType.Week, // Default to weekly view
+        userRegistrationPeriod: PeriodType.Day, // Default to daily view for registration
+        revenuePeriod: PeriodType.Month, // Default to monthly view for revenue
+      })
+      .subscribe({
+        next: value => {
+          console.log('Dashboard data loaded:', value);
+        },
+        error: error => {
+          console.error('Error loading dashboard data:', error);
+        },
+      });
+  }
+
+  readonly usersStatCard = computed<StatCard>(() => {
+    const data = this.dashboardData();
+    return {
+      title: 'Người dùng',
+      description: 'Số lượng người dùng',
+      value:
+        (data?.systemOverview.totalUsers ?? 0) -
+        (data?.systemOverview.systemAdmins ?? 0),
+      icon: 'group',
+      iconColor: 'text-primary',
+      subItems: [
+        {
+          title: 'School Admins',
+          value: data?.systemOverview.schoolAdmins ?? 0,
+        },
+        {
+          title: 'Giáo viên / Kiểm duyệt viên',
+          value:
+            (data?.systemOverview.teachers ?? 0) +
+            (data?.systemOverview.contentModerators ?? 0),
+        },
+        { title: 'Học sinh', value: data?.systemOverview.students ?? 0 },
+      ],
+    };
   });
-  lessonsStatCard = signal<StatCard>({
-    title: 'Bài học',
-    description: 'Số lượng bài học',
-    value: 5000,
-    icon: 'book_ribbon',
-    iconColor: 'text-success',
-    subItems: [
-      { title: 'Bài học được tải lên', value: 3000 },
-      { title: 'Bài học tạo bằng AI', value: 2000 },
-    ],
+
+  readonly lessonsStatCard = computed<StatCard>(() => {
+    const data = this.dashboardData();
+    return {
+      title: 'Bài học',
+      description: 'Số lượng bài học',
+      value: data?.systemOverview.totalLessons ?? 0,
+      icon: 'book_ribbon',
+      iconColor: 'text-success',
+      subItems: [
+        {
+          title: 'Bài học được tải lên',
+          value: data?.systemOverview.uploadedLessons ?? 0,
+        },
+        {
+          title: 'Bài học tạo bằng AI',
+          value: data?.systemOverview.aiGeneratedLessons ?? 0,
+        },
+      ],
+    };
   });
-  storageStatCard = signal<StatCard>({
-    title: 'Dung lượng',
-    description: 'Dung lượng đã sử dụng',
-    value: 5000,
-    icon: 'database',
-    compareValue: 8000,
-    unit: 'GB',
-    iconColor: 'text-danger',
+
+  readonly storageStatCard = computed<StatCard>(() => {
+    const data = this.dashboardData();
+    return {
+      title: 'Dung lượng (GB)',
+      description: 'Dung lượng đã sử dụng',
+      value: data?.systemOverview.totalStorageUsedGB ?? 0,
+      icon: 'database',
+      unit: 'GB',
+      iconColor: 'text-danger',
+    };
   });
-  schoolsStatCard = signal<StatCard>({
-    title: 'Trường học',
-    description: 'Số lượng trường học',
-    value: 50,
-    icon: 'school',
-    iconColor: 'text-danger',
+
+  readonly schoolsStatCard = computed<StatCard>(() => {
+    const data = this.dashboardData();
+    return {
+      title: 'Trường học',
+      description: 'Số lượng trường học',
+      value: data?.systemOverview.totalSchools ?? 0,
+      icon: 'school',
+      iconColor: 'text-danger',
+    };
   });
-  pricingPlanRevenueStatCard = signal<StatCard>({
-    title: 'Credit',
-    description: 'Doanh thu credit theo tháng',
-    value: 20000000,
-    icon: 'paid',
-    isRevenue: true,
-    iconColor: 'text-warning',
+
+  readonly pricingPlanRevenueStatCard = computed<StatCard>(() => {
+    const data = this.dashboardData();
+    return {
+      title: 'Credit',
+      description: 'Doanh thu credit',
+      value: data?.systemOverview.creditPackRevenue ?? 0,
+      icon: 'paid',
+      isRevenue: true,
+      iconColor: 'text-warning',
+    };
+  });
+
+  readonly subscriptionRevenueStatCard = computed<StatCard>(() => {
+    const data = this.dashboardData();
+    return {
+      title: 'Subscription',
+      description: 'Doanh thu subscription plan',
+      value: data?.systemOverview.subscriptionPlanRevenue ?? 0,
+      icon: 'paid',
+      isRevenue: true,
+      iconColor: 'text-warning',
+    };
   });
 }
