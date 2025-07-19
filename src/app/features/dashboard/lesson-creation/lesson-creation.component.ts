@@ -1,8 +1,11 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  OnInit,
+  input,
   signal,
+  computed,
+  inject,
+  effect,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -22,6 +25,10 @@ import {
 
 import { Select } from 'primeng/select';
 import { TableModule } from 'primeng/table';
+import { DashboardService } from '../service/dashboard.service';
+import { getLastNWeekNumbers } from '../../../shared/utils/util-functions';
+import { DashboardResponse } from '../../../shared/models/api/response/query/dashboard-response.model';
+import { PeriodType } from '../../../shared/models/enum/period-type.enum';
 
 type DataPoint = {
   x: string | number | Date;
@@ -67,9 +74,14 @@ interface TopCreator {
   styleUrl: './lesson-creation.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LessonCreationComponent implements OnInit {
-  chartOptions = signal<ChartOptions | undefined>(undefined);
+export class LessonCreationComponent {
+  private readonly dashboardService = inject(DashboardService);
+
+  dashboardData = input.required<DashboardResponse | null>();
+
   timeSelect = signal<SelectOption>({ name: 'Theo tuần', code: 'weekly' });
+  isChangingPeriod = signal<boolean>(false);
+  lastRequestedPeriod = signal<PeriodType>(PeriodType.Week);
 
   readonly timeSelectOptions = signal<SelectOption[]>([
     { name: 'Theo tuần', code: 'weekly' },
@@ -79,41 +91,59 @@ export class LessonCreationComponent implements OnInit {
   topCreators = signal<TopCreator[]>([]);
 
   constructor() {
-    this.chartOptions.set(this.initChartOptions());
+    // Effect to detect when dashboard data changes and ensure timeSelect matches the data
+    effect(
+      () => {
+        const data = this.dashboardData();
+
+        if (data && data.lessonActivity && data.lessonActivity.length > 0) {
+          // Check if the data format matches the current selection
+          const firstPeriod = data.lessonActivity[0].period;
+          const isWeeklyData = firstPeriod.includes('-W');
+          const isMonthlyData = firstPeriod.match(/^\d{4}-\d{2}$/);
+
+          // Update timeSelect to match the actual data format
+          if (isWeeklyData && this.timeSelect().code !== 'weekly') {
+            this.timeSelect.set({ name: 'Theo tuần', code: 'weekly' });
+          } else if (isMonthlyData && this.timeSelect().code !== 'monthly') {
+            this.timeSelect.set({ name: 'Theo tháng', code: 'monthly' });
+          }
+        }
+      },
+      { allowSignalWrites: true }
+    );
   }
 
-  ngOnInit(): void {
-    this.loadChartData();
-  }
+  // Computed chart data that reacts to dashboard data changes
+  readonly chartData = computed(() => {
+    const data = this.dashboardData();
+    const timeSelectValue = this.timeSelect();
 
-  private toApexDataPointArray(data: DataPoint[]): {
-    x: any;
-    y: any;
-    fill?: ApexFill;
-    fillColor?: string;
-    strokeColor?: string;
-    meta?: any;
-  }[] {
-    return data.map(({ x, y, fill, fillColor, strokeColor, meta }) => ({
-      x,
-      y,
-      fill,
-      fillColor,
-      strokeColor,
-      meta,
-    }));
-  }
+    if (!data) {
+      return { ai: [], uploaded: [] };
+    }
 
-  private initChartOptions(): ChartOptions {
+    if (timeSelectValue.code === 'weekly') {
+      return this.generateWeeklyData(7, data);
+    } else {
+      return this.generateMonthlyData(12, data);
+    }
+  });
+
+  // Computed chart options that react to chart data changes
+  readonly chartOptions = computed<ChartOptions>(() => {
+    const chartData = this.chartData();
+    const timeSelectValue = this.timeSelect();
+
     return {
       series: [
         {
           name: 'Tạo bởi AI',
-          data: [] as DataPoint[],
+          data: chartData.ai,
         },
         {
           name: 'Tải lên',
-          data: [] as DataPoint[],
+          data: chartData.uploaded,
         },
       ],
       chart: {
@@ -170,7 +200,7 @@ export class LessonCreationComponent implements OnInit {
         min: 0,
         labels: {
           formatter: (value: string | number) => {
-            if (this.timeSelect().code === 'weekly') {
+            if (timeSelectValue.code === 'weekly') {
               return `Tuần ${value}`;
             } else {
               return value.toString();
@@ -183,69 +213,102 @@ export class LessonCreationComponent implements OnInit {
         horizontalAlign: 'left',
       },
     };
-  }
+  });
 
   onTimeSelectChange(selected: SelectOption) {
+    // Only proceed if the selection actually changed
+    if (selected.code === this.timeSelect().code) {
+      return;
+    }
+
     this.timeSelect.set(selected);
-    this.loadChartData();
+    this.isChangingPeriod.set(true);
+
+    const periodType =
+      selected.code === 'weekly' ? PeriodType.Week : PeriodType.Month;
+    this.lastRequestedPeriod.set(periodType);
+
+    // Fetch new dashboard data based on the selected period
+    const request = {
+      lessonActivityPeriod: periodType,
+    };
+
+    this.dashboardService.getDashboardData(request).subscribe({
+      next: data => {
+        console.log('Dashboard data updated for period:', selected.code, data);
+        this.isChangingPeriod.set(false);
+      },
+      error: error => {
+        console.error('Error updating dashboard data:', error);
+        this.isChangingPeriod.set(false);
+        // Revert the selection on error
+        this.timeSelect.set({ name: 'Theo tuần', code: 'weekly' });
+        this.lastRequestedPeriod.set(PeriodType.Week);
+      },
+    });
   }
 
   private handleBarClick(index: number) {
     // Implement logic to show daily breakdown
   }
 
-  private loadChartData(): void {
-    let sampleData: { ai: DataPoint[]; uploaded: DataPoint[] };
-
-    if (this.timeSelect().code === 'weekly') {
-      sampleData = this.generateWeeklyData(8);
-    } else {
-      sampleData = this.generateMonthlyData(6);
-    }
-
-    this.updateChartData(sampleData.ai, sampleData.uploaded);
-  }
-
-  private generateWeeklyData(weeks: number): {
+  private generateWeeklyData(
+    weeks: number,
+    data: DashboardResponse
+  ): {
     ai: DataPoint[];
     uploaded: DataPoint[];
   } {
-    const aiData: DataPoint[] = [];
-    const uploadedData: DataPoint[] = [];
-    const now = new Date();
+    const lessonActivities = data?.lessonActivity;
 
-    for (let i = weeks; i >= 0; i--) {
-      const weekNumber = ((getWeek(now) - i + 52) % 52) + 1;
-      const aiCount = Math.floor(Math.random() * 30) + 10;
-      const uploadedCount = Math.floor(Math.random() * 15) + 5;
-
-      aiData.push({
-        x: weekNumber.toString(),
-        y: aiCount,
-        fill: {
-          type: 'solid',
-        },
-      });
-
-      uploadedData.push({
-        x: weekNumber.toString(),
-        y: uploadedCount,
-        fill: {
-          type: 'solid',
-        },
-      });
+    if (!lessonActivities || lessonActivities.length === 0) {
+      return { ai: [], uploaded: [] };
     }
 
-    return { ai: aiData, uploaded: uploadedData };
+    const lastWeekNumbers = getLastNWeekNumbers(weeks);
+
+    const filterLessonActivitiesByWeeks = lessonActivities.filter(item => {
+      const [year, week] = item.period.split('-W');
+      return lastWeekNumbers.some(weekNumber => {
+        return (
+          weekNumber.year === Number(year) && weekNumber.week === Number(week)
+        );
+      });
+    });
+
+    const result = {
+      aiData: filterLessonActivitiesByWeeks.map(item => ({
+        x: item.period.split('-W')[1],
+        y: item.aiGeneratedCount,
+        fill: {
+          type: 'solid',
+        },
+      })),
+      uploaded: filterLessonActivitiesByWeeks.map(item => ({
+        x: item.period.split('-W')[1],
+        y: item.uploadedCount,
+        fill: {
+          type: 'solid',
+        },
+      })),
+    };
+
+    return { ai: result.aiData, uploaded: result.uploaded };
   }
 
-  private generateMonthlyData(months: number): {
+  private generateMonthlyData(
+    months: number = 12,
+    data: DashboardResponse
+  ): {
     ai: DataPoint[];
     uploaded: DataPoint[];
   } {
-    const aiData: DataPoint[] = [];
-    const uploadedData: DataPoint[] = [];
-    const now = new Date();
+    const lessonActivities = data?.lessonActivity;
+
+    if (!lessonActivities || lessonActivities.length === 0) {
+      return { ai: [], uploaded: [] };
+    }
+
     const monthNames = [
       'Th1',
       'Th2',
@@ -261,68 +324,51 @@ export class LessonCreationComponent implements OnInit {
       'Th12',
     ];
 
-    for (let i = months; i >= 0; i--) {
-      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const monthName = monthNames[date.getMonth()];
-      const aiCount = Math.floor(Math.random() * 120) + 40;
-      const uploadedCount = Math.floor(Math.random() * 60) + 20;
+    const aiData = lessonActivities.map(item => {
+      // Handle both "YYYY-MM" and "YYYY-WXX" formats
+      const periodParts = item.period.split('-');
+      let monthNumber: number;
 
-      aiData.push({
-        x: monthName,
-        y: aiCount,
+      if (periodParts.length === 2) {
+        // For monthly data, period is "YYYY-MM"
+        monthNumber = parseInt(periodParts[1], 10) - 1; // Convert to 0-based index
+      } else {
+        // Fallback for other formats
+        monthNumber = 0;
+      }
+
+      return {
+        x: monthNames[monthNumber] || `Th${monthNumber + 1}`,
+        y: item.aiGeneratedCount,
         fill: {
           type: 'solid',
         },
-      });
+      };
+    });
 
-      uploadedData.push({
-        x: monthName,
-        y: uploadedCount,
+    const uploadedData = lessonActivities.map(item => {
+      // Handle both "YYYY-MM" and "YYYY-WXX" formats
+      const periodParts = item.period.split('-');
+      let monthNumber: number;
+
+      if (periodParts.length === 2) {
+        // For monthly data, period is "YYYY-MM"
+        monthNumber = parseInt(periodParts[1], 10) - 1; // Convert to 0-based index
+      } else {
+        // Fallback for other formats
+        monthNumber = 0;
+      }
+
+      return {
+        x: monthNames[monthNumber] || `Th${monthNumber + 1}`,
+        y: item.uploadedCount,
         fill: {
           type: 'solid',
         },
-      });
-    }
+      };
+    });
 
     return { ai: aiData, uploaded: uploadedData };
-  }
-
-  private updateChartData(
-    aiData: DataPoint[],
-    uploadedData: DataPoint[]
-  ): void {
-    const currentOptions = this.chartOptions();
-    if (!currentOptions) return;
-
-    this.chartOptions.set({
-      ...currentOptions,
-      series: [
-        {
-          name: 'Tạo bởi AI',
-          data: aiData,
-        },
-        {
-          name: 'Tải lên',
-          data: uploadedData,
-        },
-      ],
-      xaxis: {
-        ...currentOptions.xaxis,
-        type: 'category',
-      },
-      yaxis: {
-        ...currentOptions.yaxis,
-        labels: {
-          formatter: (value: string | number) => {
-            if (this.timeSelect().code === 'weekly') {
-              return `Tuần ${value}`;
-            } else {
-              return value.toString();
-            }
-          },
-        },
-      },
-    });
   }
 }
 
