@@ -1,5 +1,5 @@
 <div
-  class="relativesch w-full rounded border border-gray-100 bg-white shadow-main dark:border-gray-900 dark:bg-dark-200">
+  class="relative w-full rounded border border-gray-100 bg-white shadow-main dark:border-gray-900 dark:bg-dark-200">
   <div
     class="flex items-center gap-1 border-b border-gray-100 p-5 dark:border-gray-700">
     <div>
@@ -8,16 +8,25 @@
     <div class="ml-auto">
       <p-select
         [options]="timeSelectOptions()"
-        [ngModel]="timeSelect"
+        [ngModel]="timeSelect()"
         (ngModelChange)="onTimeSelectChange($event)"
         optionLabel="name"
         placeholder="Chọn khoảng thời gian"
+        [disabled]="isChangingPeriod()"
         class="!dark:bg-dark-200 flex h-11 w-full items-center sm:w-40" />
     </div>
   </div>
 
   <div id="chart" class="p-5">
-    @if (chartOptions()) {
+    @if (isChangingPeriod()) {
+      <div class="flex h-80 items-center justify-center">
+        <div class="text-center">
+          <div
+            class="mx-auto mb-2 h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+          <p class="text-sm text-gray-500">Đang tải dữ liệu...</p>
+        </div>
+      </div>
+    } @else if (chartOptions()) {
       <apx-chart
         [series]="chartOptions()!.series"
         [chart]="chartOptions()!.chart"
@@ -30,6 +39,12 @@
         [dataLabels]="chartOptions()!.dataLabels"
         [colors]="chartOptions()!.colors">
       </apx-chart>
+    } @else {
+      <div class="flex h-80 items-center justify-center">
+        <div class="text-center">
+          <p class="text-sm text-gray-500">Không có dữ liệu</p>
+        </div>
+      </div>
     }
   </div>
 </div>
