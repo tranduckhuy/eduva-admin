@@ -4,7 +4,7 @@ import {
   inject,
   input,
 } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { DatePipe, CurrencyPipe } from '@angular/common';
 
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -20,10 +20,12 @@ import { base64Img } from '../../../shared/constants/logoBase64.constant';
   imports: [ButtonComponent],
   templateUrl: './export-invoice-pdf.component.html',
   styleUrls: ['./export-invoice-pdf.component.css'],
+  providers: [CurrencyPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExportInvoicePdfComponent {
   private readonly datePipe = inject(DatePipe);
+  private readonly currencyPipe = inject(CurrencyPipe);
 
   readonly isCreditPack = input<boolean>(false);
   readonly creditTransactionDetail = input<CreditTransactionDetail | null>();
@@ -290,11 +292,21 @@ export class ExportInvoicePdfComponent {
     pdf.text(transaction?.transactionCode ?? '', 10, nextSectionY + 7);
     pdf.text('Tổng tiền:', 10, nextSectionY + 15);
     pdf.text(
-      `${isCredit ? creditDetail?.aiCreditPack.price : transaction?.amount} ₫`,
+      this.currencyPipe.transform(
+        isCredit ? creditDetail?.aiCreditPack.price : transaction?.amount,
+        'VND',
+        'symbol',
+        '1.0-0',
+        'vi-VN'
+      ) ?? '',
       10,
       nextSectionY + 22
     );
-    pdf.text('Ngày bắt đầu:', rightColX, nextSectionY);
+    pdf.text(
+      isCredit ? 'Thời gian giao dịch' : 'Ngày bắt đầu:',
+      rightColX,
+      nextSectionY
+    );
     pdf.text(
       this.datePipe.transform(
         isCredit ? creditDetail?.createdAt : subscriptionDetail?.startDate,
@@ -303,15 +315,17 @@ export class ExportInvoicePdfComponent {
       rightColX,
       nextSectionY + 7
     );
-    pdf.text('Ngày kết thúc:', rightColX, nextSectionY + 15);
-    pdf.text(
-      this.datePipe.transform(
-        isCredit ? creditDetail?.createdAt : subscriptionDetail?.endDate,
-        'mediumDate'
-      ) ?? '',
-      rightColX,
-      nextSectionY + 22
-    );
+    if (!this.isCreditPack()) {
+      pdf.text('Ngày kết thúc:', rightColX, nextSectionY + 15);
+      pdf.text(
+        this.datePipe.transform(
+          isCredit ? creditDetail?.createdAt : subscriptionDetail?.endDate,
+          'medium'
+        ) ?? '',
+        rightColX,
+        nextSectionY + 22
+      );
+    }
   }
 
   private getCreditTableData(creditDetail: any) {
@@ -325,11 +339,29 @@ export class ExportInvoicePdfComponent {
           creditDetail?.aiCreditPack.name ?? '',
           creditDetail?.aiCreditPack.credits ?? 0,
           creditDetail?.aiCreditPack.bonusCredits ?? 0,
-          `${creditDetail?.aiCreditPack.price ?? 0} đ`,
+          this.currencyPipe.transform(
+            creditDetail?.aiCreditPack.price ?? 0,
+            'VND',
+            'symbol',
+            '1.0-0',
+            'vi-VN'
+          ) ?? '',
         ],
       ],
       foot: [
-        ['', '', '', 'Tổng:', `${creditDetail?.aiCreditPack.price ?? 0} ₫`],
+        [
+          '',
+          '',
+          '',
+          'Tổng:',
+          this.currencyPipe.transform(
+            creditDetail?.aiCreditPack.price ?? 0,
+            'VND',
+            'symbol',
+            '1.0-0',
+            'vi-VN'
+          ) ?? '',
+        ],
       ],
     };
   }
@@ -358,12 +390,44 @@ export class ExportInvoicePdfComponent {
           plan?.maxUsers ?? 0,
           plan?.storageLimitGB ?? 0,
           subscriptionDetail?.billingCycle === 0 ? 'Tháng' : 'Năm',
-          `${plan?.price ?? 0} đ`,
+          this.currencyPipe.transform(
+            plan?.price ?? 0,
+            'VND',
+            'symbol',
+            '1.0-0',
+            'vi-VN'
+          ) ?? '',
         ],
       ],
       foot: [
-        ['', '', '', '', 'Giảm giá:', `${deductedAmount} ₫`],
-        ['', '', '', '', 'Tổng:', `${transaction?.amount ?? 0} ₫`],
+        [
+          '',
+          '',
+          '',
+          '',
+          'Giảm giá:',
+          this.currencyPipe.transform(
+            deductedAmount,
+            'VND',
+            'symbol',
+            '1.0-0',
+            'vi-VN'
+          ) ?? '',
+        ],
+        [
+          '',
+          '',
+          '',
+          '',
+          'Tổng:',
+          this.currencyPipe.transform(
+            transaction?.amount ?? 0,
+            'VND',
+            'symbol',
+            '1.0-0',
+            'vi-VN'
+          ) ?? '',
+        ],
       ],
     };
   }
