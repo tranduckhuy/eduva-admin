@@ -6,8 +6,7 @@ import { catchError, throwError } from 'rxjs';
 
 import { ConfirmationService } from 'primeng/api';
 
-import { JwtService } from '../auth/services/jwt.service';
-import { UserService } from '../../shared/services/api/user/user.service';
+import { AuthService } from '../auth/services/auth.service';
 import { GlobalModalService } from '../../shared/services/layout/global-modal/global-modal.service';
 
 import { BYPASS_AUTH_ERROR } from '../../shared/tokens/context/http-context.token';
@@ -16,8 +15,7 @@ let hasShownUnauthorizedDialog = false;
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
-  const jwtService = inject(JwtService);
-  const userService = inject(UserService);
+  const authService = inject(AuthService);
   const globalModalService = inject(GlobalModalService);
   const confirmationService = inject(ConfirmationService);
 
@@ -32,17 +30,29 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
     globalModalService.close();
     confirmationService.confirm({
-      message: 'Vui lòng đăng nhập lại.',
       header: 'Phiên đã hết hạn',
+      message: 'Vui lòng đăng nhập lại.',
       closable: false,
       rejectVisible: false,
       acceptButtonProps: { label: 'Đồng ý' },
       accept: () => {
-        jwtService.clearAll();
-        userService.clearCurrentUser();
-        router.navigateByUrl('/auth/login', {
-          replaceUrl: true,
+        // ? Clear cookie and user profile cache
+        authService.clearSession();
+
+        // ? Clear state cache
+        Object.keys(localStorage).forEach(key => {
+          if (key.startsWith('accordion-open:')) {
+            localStorage.removeItem(key);
+          }
         });
+
+        // ? Close modal
+        globalModalService.close();
+
+        // ? Close Submenus
+        window.dispatchEvent(new Event('close-all-submenus'));
+
+        router.navigateByUrl('/auth/login', { replaceUrl: true });
       },
     });
   };
