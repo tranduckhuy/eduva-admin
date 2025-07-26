@@ -83,7 +83,8 @@
             inputId="logoutBehavior"
             size="small"
             styleClass="relative -top-[3px]"
-            [binary]="true" />
+            [binary]="true"
+            (onChange)="onCheckedChange($event)" />
           <label for="logoutBehavior" class="ml-2 cursor-pointer select-none">
             Đăng xuất khỏi các thiết bị khác
           </label>
@@ -96,7 +97,7 @@
             variant="outlined"
             size="small"
             [loading]="isLoading()"
-            [disabled]="form.invalid || passwordMisMatch" />
+            [disabled]="form.invalid || passwordMisMatch || isLoading()" />
           <a
             routerLink="/auth/forgot-password"
             class="font-semibold text-primary underline">
