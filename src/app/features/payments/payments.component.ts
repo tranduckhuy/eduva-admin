@@ -2,33 +2,29 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  LOCALE_ID,
   OnInit,
   signal,
 } from '@angular/core';
-import localeVi from '@angular/common/locales/vi';
-import { CurrencyPipe, DatePipe, registerLocaleData } from '@angular/common';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
 import { SelectModule } from 'primeng/select';
 import { TooltipModule } from 'primeng/tooltip';
-import { TableLazyLoadEvent, TableModule } from 'primeng/table';
+import { TableModule, type TableLazyLoadEvent } from 'primeng/table';
 
 import { LeadingZeroPipe } from '../../shared/pipes/leading-zero.pipe';
 
 import { PaymentService } from './service/payment.service';
 import { LoadingService } from '../../shared/services/core/loading/loading.service';
 
-import { PaymentListParams } from './model/payment-list-params';
 import { PAYMENTS_LIMIT } from '../../shared/constants/common.constant';
+import { PaymentListParams } from './model/payment-list-params';
 
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { TableSkeletonComponent } from '../../shared/components/skeleton/table-skeleton/table-skeleton.component';
 import { BadgeComponent } from '../../shared/components/badge/badge.component';
 import { TableEmptyStateComponent } from '../../shared/components/table-empty-state/table-empty-state.component';
-
-registerLocaleData(localeVi);
 
 @Component({
   selector: 'app-payments',
@@ -49,7 +45,6 @@ registerLocaleData(localeVi);
   ],
   templateUrl: './payments.component.html',
   styleUrl: './payments.component.css',
-  providers: [{ provide: LOCALE_ID, useValue: 'vi-VN' }],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PaymentsComponent implements OnInit {

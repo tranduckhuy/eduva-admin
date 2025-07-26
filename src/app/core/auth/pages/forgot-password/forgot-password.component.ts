@@ -1,17 +1,25 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   inject,
   signal,
   viewChildren,
 } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 
 import { ButtonModule } from 'primeng/button';
 
 import { LoadingService } from '../../../../shared/services/core/loading/loading.service';
 import { PasswordService } from '../../services/password.service';
 import { UserService } from '../../../../shared/services/api/user/user.service';
+
+import { customEmailValidator } from '../../../../shared/utils/form-validators';
 
 import { AuthLayoutComponent } from '../../auth-layout/auth-layout.component';
 import { FormControlComponent } from '../../../../shared/components/form-control/form-control.component';
@@ -35,6 +43,7 @@ export class ForgotPasswordComponent {
   private readonly formControls = viewChildren(FormControlComponent);
 
   private readonly fb = inject(FormBuilder);
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly userService = inject(UserService);
   private readonly loadingService = inject(LoadingService);
   private readonly passwordService = inject(PasswordService);
@@ -48,7 +57,14 @@ export class ForgotPasswordComponent {
 
   constructor() {
     this.form = this.fb.group({
-      email: this.currentUser() ? this.currentUser()?.email : '',
+      email: [
+        this.currentUser() ? this.currentUser()?.email : '',
+        [Validators.required, customEmailValidator],
+      ],
+    });
+
+    this.form.statusChanges.subscribe(() => {
+      this.cdr.markForCheck();
     });
   }
 
@@ -67,7 +83,7 @@ export class ForgotPasswordComponent {
 
         if (this.currentUser()) {
           this.form.patchValue({
-            email: [this.currentUser()?.email],
+            email: this.currentUser()?.email,
           });
         } else {
           this.form.reset();
