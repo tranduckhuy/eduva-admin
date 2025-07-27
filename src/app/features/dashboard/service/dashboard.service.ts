@@ -19,7 +19,7 @@ export class DashboardService {
   private readonly loadingService = inject(LoadingService);
 
   // API URLs
-  private readonly BASE_URL = `${environment.baseApiUrl}/dashboards/overview`;
+  private readonly BASE_URL = `${environment.baseApiUrl}/dashboards/system-admin`;
 
   // Signals
   private readonly dashboardSignal = signal<DashboardResponse | null>(null);
