@@ -5,21 +5,20 @@ import {
   signal,
 } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 import { ToggleSwitch } from 'primeng/toggleswitch';
-
-import { ButtonComponent } from '../../../shared/components/button/button.component';
-import { FormsModule } from '@angular/forms';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-subscription-plan-card',
   standalone: true,
   imports: [
-    ButtonComponent,
-    CurrencyPipe,
-    ToggleSwitch,
-    FormsModule,
     CommonModule,
+    CurrencyPipe,
+    FormsModule,
+    ToggleSwitch,
+    ButtonModule,
   ],
   templateUrl: './subscription-plan-card.component.html',
   styleUrl: './subscription-plan-card.component.css',
