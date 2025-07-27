@@ -23,11 +23,13 @@ import { LoadingService } from '../../../services/core/loading/loading.service';
 import { GlobalModalService } from '../../../services/layout/global-modal/global-modal.service';
 import { ToastHandlingService } from '../../../services/core/toast/toast-handling.service';
 
+import { VIETNAM_PHONE_REGEX } from '../../../constants/common.constant';
+import { noSpecialCharactersOrNumbersValidator } from '../../../utils/form-validators';
+
 import { FormControlComponent } from '../../../components/form-control/form-control.component';
 import { UpdateAvatarModalComponent } from './update-avatar-modal/update-avatar-modal.component';
 
 import { type User } from '../../../models/entities/user.model';
-import { VIETNAM_PHONE_REGEX } from '../../../constants/common.constant';
 
 @Component({
   selector: 'app-personal-information',
@@ -58,8 +60,14 @@ export class PersonalInformationComponent implements OnInit {
   constructor() {
     this.form = this.fb.group({
       avatar: [''],
-      firstName: ['', Validators.required],
-      lastName: ['', Validators.required],
+      firstName: [
+        '',
+        [Validators.required, noSpecialCharactersOrNumbersValidator],
+      ],
+      lastName: [
+        '',
+        [Validators.required, noSpecialCharactersOrNumbersValidator],
+      ],
       fullName: [''],
       phoneNumber: ['', [Validators.pattern(VIETNAM_PHONE_REGEX)]],
     });

@@ -483,10 +483,6 @@ describe('AuthService', () => {
 
   describe('private methods', () => {
     it('should handle token storage correctly', () => {
-      const expiresDate = new Date(
-        Date.now() + mockAuthTokenResponse.expiresIn * 1000
-      ).toISOString();
-
       // Access private method through public method
       service.handleLoginSuccess(mockAuthTokenResponse);
 
@@ -496,7 +492,15 @@ describe('AuthService', () => {
       expect(jwtService.setRefreshToken).toHaveBeenCalledWith(
         mockAuthTokenResponse.refreshToken
       );
-      expect(jwtService.setExpiresDate).toHaveBeenCalledWith(expiresDate);
+
+      // Test that setExpiresDate was called with a date that is approximately the expected time
+      expect(jwtService.setExpiresDate).toHaveBeenCalled();
+      const actualCall = jwtService.setExpiresDate.mock.calls[0][0];
+      const expectedTime = Date.now() + mockAuthTokenResponse.expiresIn * 1000;
+      const actualTime = new Date(actualCall).getTime();
+
+      // Allow for a small timing difference (within 100ms)
+      expect(Math.abs(actualTime - expectedTime)).toBeLessThan(100);
     });
 
     it('should clear session correctly', async () => {
