@@ -144,7 +144,7 @@ describe('DashboardService', () => {
       expect(loadingService.start).toHaveBeenCalledWith('dashboard');
       expect(loadingService.stop).toHaveBeenCalledWith('dashboard');
       expect(requestService.get).toHaveBeenCalledWith(
-        expect.stringContaining('/dashboards/overview'),
+        expect.stringContaining('/dashboards/system-admin'),
         mockDashboardRequest
       );
     });
@@ -216,7 +216,7 @@ describe('DashboardService', () => {
       // Assert
       expect(result).toEqual(mockDashboardResponse);
       expect(requestService.get).toHaveBeenCalledWith(
-        expect.stringContaining('/dashboards/overview'),
+        expect.stringContaining('/dashboards/system-admin'),
         emptyRequest
       );
     });
@@ -346,7 +346,7 @@ describe('DashboardService', () => {
 
       // Assert
       expect(requestService.get).toHaveBeenCalledWith(
-        expect.stringContaining('/dashboards/overview'),
+        expect.stringContaining('/dashboards/system-admin'),
         mockDashboardRequest
       );
     });

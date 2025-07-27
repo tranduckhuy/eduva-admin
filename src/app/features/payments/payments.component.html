@@ -94,7 +94,9 @@
                 </h3>
               </div>
             </td>
-            <td>{{ payment.createdAt | date: 'mediumDate' }}</td>
+            <td>
+              {{ payment.createdAt | date: "dd 'thg' MM, YYYY 'lúc' HH:mm" }}
+            </td>
             <td class="uppercase text-primary">
               #{{ payment.transactionCode }}
             </td>

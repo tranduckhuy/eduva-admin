@@ -9,10 +9,12 @@ import { DatePipe, CurrencyPipe } from '@angular/common';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-import { CreditTransactionDetail } from '../model/credit-transaction-detail';
-import { SchoolSubscriptionDetail } from '../model/school-subscription-detail.model';
-import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { base64Img } from '../../../shared/constants/logoBase64.constant';
+
+import { ButtonComponent } from '../../../shared/components/button/button.component';
+
+import { type CreditTransactionDetail } from '../model/credit-transaction-detail';
+import { type SchoolSubscriptionDetail } from '../model/school-subscription-detail.model';
 
 @Component({
   selector: 'app-export-invoice-pdf',
@@ -310,7 +312,7 @@ export class ExportInvoicePdfComponent {
     pdf.text(
       this.datePipe.transform(
         isCredit ? creditDetail?.createdAt : subscriptionDetail?.startDate,
-        'medium'
+        "dd 'thg' MM, YYYY 'lúc' HH:mm"
       ) ?? '',
       rightColX,
       nextSectionY + 7
@@ -320,7 +322,7 @@ export class ExportInvoicePdfComponent {
       pdf.text(
         this.datePipe.transform(
           isCredit ? creditDetail?.createdAt : subscriptionDetail?.endDate,
-          'medium'
+          "dd 'thg' MM, YYYY 'lúc' HH:mm"
         ) ?? '',
         rightColX,
         nextSectionY + 22
