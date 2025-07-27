@@ -24,15 +24,12 @@
   <p class="mx-auto mb-4 line-clamp-3 text-center dark:text-dark-100">
     {{ description() }}
   </p>
-  <app-button
-    [width]="'full'"
-    class="flex items-center gap-2 py-[10px] text-lg font-extrabold sm:py-2">
-    <span class="ml-1">Mua Ngay</span>
-    <span
-      class="material-symbols-outlined relative top-[5px] ml-1 text-xl leading-none">
-      arrow_outward
-    </span>
-  </app-button>
+  <p-button
+    label="Mua ngay"
+    icon="pi pi-arrow-up-right"
+    iconPos="right"
+    styleClass="rounded"
+    [fluid]="true" />
   <ul class="mt-6 flex flex-col gap-3">
     <li class="flex items-center gap-4">
       <span class="material-symbols-outlined text-success-500"> check </span>
