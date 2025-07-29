@@ -101,9 +101,9 @@ export class EditSubscriptionPlanComponent implements OnInit {
     }
 
     if (!this.hasDataChanged()) {
-      this.toastHandlingService.warn(
-        'Chú ý',
-        'Thông tin cập nhật không có sự thay đổi!'
+      this.toastHandlingService.success(
+        'Thành công',
+        'Gói đăng ký cập nhật thông tin thành công!'
       );
       return;
     }
