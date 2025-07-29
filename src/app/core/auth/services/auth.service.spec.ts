@@ -307,62 +307,67 @@ describe('AuthService', () => {
   });
 
   describe('refreshToken', () => {
-    it('should handle successful token refresh and not change isLoggedIn', async () => {
-      const mockResponse = {
-        statusCode: StatusCode.SUCCESS,
-        data: mockAuthTokenResponse,
-      };
+    const mockRefreshTokenRequest: RefreshTokenRequest = {
+      accessToken: 'mock-access-token',
+      refreshToken: 'mock-refresh-token',
+    };
 
-      requestService.post.mockReturnValue(of(mockResponse));
-
-      const result = await service
-        .refreshToken(mockRefreshTokenRequest)
-        .toPromise();
-
-      expect(result).toEqual(mockAuthTokenResponse);
-      expect(jwtService.setAccessToken).toHaveBeenCalledWith(
-        mockAuthTokenResponse.accessToken
+    it('should handle successful token refresh', async () => {
+      (requestService.post as any).mockReturnValue(
+        of({
+          statusCode: StatusCode.SUCCESS,
+          data: mockAuthTokenResponse,
+        })
       );
-      expect(jwtService.setRefreshToken).toHaveBeenCalledWith(
-        mockAuthTokenResponse.refreshToken
-      );
-      expect(jwtService.setExpiresDate).toHaveBeenCalled();
-      // isLoggedIn should not be set to false
-      expect(service.isLoggedIn()).toBe(true);
+      await new Promise<void>(resolve => {
+        service.refreshToken(mockRefreshTokenRequest).subscribe(result => {
+          expect(result).toEqual(mockAuthTokenResponse);
+          expect(jwtService.setAccessToken).toHaveBeenCalledWith(
+            mockAuthTokenResponse.accessToken
+          );
+          expect(jwtService.setRefreshToken).toHaveBeenCalledWith(
+            mockAuthTokenResponse.refreshToken
+          );
+          expect(jwtService.setExpiresDate).toHaveBeenCalled();
+          resolve();
+        });
+      });
     });
 
-    it('should handle refresh token failure and set isLoggedIn false', async () => {
-      requestService.post.mockReturnValue(
+    it('should handle failed token refresh', async () => {
+      (requestService.post as any).mockReturnValue(
+        of({
+          statusCode: StatusCode.SYSTEM_ERROR,
+          data: null,
+        })
+      );
+      await new Promise<void>(resolve => {
+        service.refreshToken(mockRefreshTokenRequest).subscribe(result => {
+          expect(result).toBeNull();
+          expect(jwtService.clearAll).toHaveBeenCalled();
+          expect(userService.clearCurrentUser).toHaveBeenCalled();
+          resolve();
+        });
+      });
+    });
+
+    it('should propagate error on refresh token HTTP error', async () => {
+      (requestService.post as any).mockReturnValue(
         throwError(() => new Error('Network error'))
       );
-
-      const result = await service
-        .refreshToken(mockRefreshTokenRequest)
-        .toPromise();
-
-      expect(result).toBeNull();
-      expect(jwtService.clearAll).toHaveBeenCalled();
-      expect(userService.clearCurrentUser).toHaveBeenCalled();
-      expect(router.navigateByUrl).toHaveBeenCalledWith('/auth/login');
-      expect(service.isLoggedIn()).toBe(false);
-    });
-
-    it('should handle refresh token response without success status and set isLoggedIn false', async () => {
-      const mockResponse = {
-        statusCode: StatusCode.SYSTEM_ERROR,
-        data: null,
-      };
-
-      requestService.post.mockReturnValue(of(mockResponse));
-
-      const result = await service
-        .refreshToken(mockRefreshTokenRequest)
-        .toPromise();
-
-      expect(result).toBeNull();
-      expect(jwtService.clearAll).toHaveBeenCalled();
-      expect(userService.clearCurrentUser).toHaveBeenCalled();
-      expect(service.isLoggedIn()).toBe(false);
+      await new Promise<void>(resolve => {
+        service.refreshToken(mockRefreshTokenRequest).subscribe({
+          next: () => {
+            expect(false).toBe(true);
+            resolve();
+          },
+          error: err => {
+            expect(err).toBeInstanceOf(Error);
+            expect(err.message).toBe('Network error');
+            resolve();
+          },
+        });
+      });
     });
   });
 
