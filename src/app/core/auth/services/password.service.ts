@@ -38,11 +38,15 @@ export class PasswordService {
   }
 
   resetPassword(request: ResetPasswordRequest): Observable<void> {
-    return this.requestService.post(this.RESET_PASSWORD_API_URL, request).pipe(
-      tap(res => this.handleResetPasswordResponse(res)),
-      map(() => void 0),
-      catchError(err => this.handleResetPasswordError(err))
-    );
+    return this.requestService
+      .post(this.RESET_PASSWORD_API_URL, request, {
+        bypassAuthError: true,
+      })
+      .pipe(
+        tap(res => this.handleResetPasswordResponse(res)),
+        map(() => void 0),
+        catchError(err => this.handleResetPasswordError(err))
+      );
   }
 
   changePassword(request: ChangePasswordRequest): Observable<void> {
@@ -101,7 +105,7 @@ export class PasswordService {
         break;
       case StatusCode.NEW_PASSWORD_SAME_AS_OLD:
         this.toastHandlingService.warn(
-          'Cảnh báo',
+          'Cảnh báo xác thực',
           'Mật khẩu mới không được trùng với mật khẩu hiện tại.'
         );
         break;
@@ -124,15 +128,15 @@ export class PasswordService {
 
   private handleChangePasswordError(err: HttpErrorResponse): Observable<void> {
     switch (err.error?.statusCode) {
-      case StatusCode.PROVIDED_INFORMATION_IS_INVALID:
-        this.toastHandlingService.error(
-          'Lỗi xác thực',
+      case StatusCode.INCORRECT_CURRENT_PASSWORD:
+        this.toastHandlingService.warn(
+          'Cảnh báo xác thực',
           'Mật khẩu hiện tại không chính xác. Vui lòng kiểm tra và thử lại.'
         );
         break;
       case StatusCode.NEW_PASSWORD_SAME_AS_OLD:
         this.toastHandlingService.warn(
-          'Cảnh báo',
+          'Cảnh báo xác thực',
           'Mật khẩu mới không được trùng với mật khẩu hiện tại.'
         );
         break;

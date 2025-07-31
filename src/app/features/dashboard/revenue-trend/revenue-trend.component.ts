@@ -1,8 +1,11 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  OnInit,
+  inject,
+  input,
   signal,
+  computed,
+  effect,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -21,6 +24,9 @@ import {
 } from 'ng-apexcharts';
 
 import { Select } from 'primeng/select';
+import { DashboardResponse } from '../../../shared/models/api/response/query/dashboard-response.model';
+import { DashboardService } from '../service/dashboard.service';
+import { PeriodType } from '../../../shared/models/enum/period-type.enum';
 
 type DataPoint = {
   x: number;
@@ -60,9 +66,14 @@ interface SelectOption {
   styleUrl: './revenue-trend.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RevenueTrendComponent implements OnInit {
-  chartOptions = signal<ChartOptions | undefined>(undefined);
+export class RevenueTrendComponent {
+  private readonly dashboardService = inject(DashboardService);
+
+  dashboardData = input.required<DashboardResponse | null>();
+
   timeSelect = signal<SelectOption>({ name: 'Theo tháng', code: 'monthly' });
+  isChangingPeriod = signal<boolean>(false);
+  lastRequestedPeriod = signal<PeriodType>(PeriodType.Month);
 
   readonly timeSelectOptions = signal<SelectOption[]>([
     { name: 'Theo tháng', code: 'monthly' },
@@ -70,23 +81,64 @@ export class RevenueTrendComponent implements OnInit {
   ]);
 
   constructor() {
-    this.chartOptions.set(this.initChartOptions());
+    // Effect to detect when dashboard data changes and ensure timeSelect matches the data
+    effect(
+      () => {
+        const data = this.dashboardData();
+        const revenueStats = data?.revenueStats;
+
+        if (revenueStats && revenueStats.length > 0) {
+          // Check if the data format matches the current selection
+          const firstPeriod = revenueStats[0]?.period;
+          if (firstPeriod) {
+            const isMonthlyData = /^\d{4}-\d{2}$/.exec(firstPeriod);
+            const isYearlyData = /^\d{4}$/.exec(firstPeriod);
+
+            // Update timeSelect to match the actual data format
+            if (isMonthlyData && this.timeSelect().code !== 'monthly') {
+              this.timeSelect.set({ name: 'Theo tháng', code: 'monthly' });
+            } else if (isYearlyData && this.timeSelect().code !== 'yearly') {
+              this.timeSelect.set({ name: 'Theo năm', code: 'yearly' });
+            }
+          }
+        }
+      },
+      { allowSignalWrites: true }
+    );
   }
 
-  ngOnInit(): void {
-    this.loadChartData();
-  }
+  // Computed chart data that reacts to dashboard data changes
+  readonly chartData = computed(() => {
+    const data = this.dashboardData();
+    const timeSelectValue = this.timeSelect();
 
-  private initChartOptions(): ChartOptions {
+    if (!data?.revenueStats) {
+      return [];
+    }
+
+    return this.generateChartData(data.revenueStats, timeSelectValue.code);
+  });
+
+  // Computed chart options that react to chart data changes
+  readonly chartOptions = computed<ChartOptions>(() => {
+    const chartData = this.chartData();
+    const timeSelectValue = this.timeSelect();
+
     return {
       series: [
         {
           name: 'Credit Points',
-          data: [] as DataPoint[],
+          data: chartData.map(item => ({
+            ...item,
+            y: item.meta?.creditPackRevenue ?? 0,
+          })),
         },
         {
-          name: 'Pricing Plan',
-          data: [] as DataPoint[],
+          name: 'Subscription Plan',
+          data: chartData.map(item => ({
+            ...item,
+            y: item.meta?.subscriptionRevenue ?? 0,
+          })),
         },
       ],
       chart: {
@@ -122,7 +174,7 @@ export class RevenueTrendComponent implements OnInit {
         type: 'datetime',
         labels: {
           formatter: (value: string) => {
-            if (this.timeSelect().code === 'monthly') {
+            if (timeSelectValue.code === 'monthly') {
               return new Date(value).toLocaleDateString('vi-VN', {
                 month: 'short',
                 year: 'numeric',
@@ -147,7 +199,7 @@ export class RevenueTrendComponent implements OnInit {
         strokeDashArray: 3,
       },
     };
-  }
+  });
 
   private formatVND(value: number): string {
     return new Intl.NumberFormat('vi-VN', {
@@ -159,107 +211,90 @@ export class RevenueTrendComponent implements OnInit {
   }
 
   onTimeSelectChange(selected: SelectOption) {
+    // Only proceed if the selection actually changed
+    if (selected.code === this.timeSelect().code) {
+      return;
+    }
+
     this.timeSelect.set(selected);
-    this.loadChartData();
-  }
+    this.isChangingPeriod.set(true);
 
-  private loadChartData(): void {
-    let creditPointsData: DataPoint[] = [];
-    let pricingPlanData: DataPoint[] = [];
+    const periodType = this.getPeriodTypeFromCode(selected.code);
+    this.lastRequestedPeriod.set(periodType);
 
-    if (this.timeSelect().code === 'monthly') {
-      creditPointsData = this.generateMonthlyData(12, 5000000, 15000000);
-      pricingPlanData = this.generateMonthlyData(12, 3000000, 10000000);
-    } else {
-      creditPointsData = this.generateYearlyData(5, 50000000, 150000000);
-      pricingPlanData = this.generateYearlyData(5, 30000000, 100000000);
-    }
+    // Fetch new dashboard data based on the selected period
+    const request = {
+      revenuePeriod: periodType,
+    };
 
-    this.updateChartData(creditPointsData, pricingPlanData);
-  }
-
-  private generateMonthlyData(
-    months: number,
-    min: number,
-    max: number
-  ): DataPoint[] {
-    const data: DataPoint[] = [];
-    const now = new Date();
-
-    for (let i = months; i >= 0; i--) {
-      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const revenue = Math.floor(Math.random() * (max - min + 1)) + min;
-
-      data.push({
-        x: date.getTime(),
-        y: revenue,
-        fill: {
-          type: 'solid',
-        },
-      });
-    }
-
-    return data;
-  }
-
-  private generateYearlyData(
-    years: number,
-    min: number,
-    max: number
-  ): DataPoint[] {
-    const data: DataPoint[] = [];
-    const now = new Date();
-
-    for (let i = years; i >= 0; i--) {
-      const date = new Date(now.getFullYear() - i, 0, 1);
-      const revenue = Math.floor(Math.random() * (max - min + 1)) + min;
-
-      data.push({
-        x: date.getTime(),
-        y: revenue,
-        fill: {
-          type: 'solid',
-        },
-      });
-    }
-
-    return data;
-  }
-
-  private updateChartData(
-    creditPoints: DataPoint[],
-    pricingPlan: DataPoint[]
-  ): void {
-    const currentOptions = this.chartOptions();
-    if (!currentOptions) return;
-
-    this.chartOptions.set({
-      ...currentOptions,
-      series: [
-        {
-          name: 'Credit Points',
-          data: creditPoints,
-        },
-        {
-          name: 'Pricing Plan',
-          data: pricingPlan,
-        },
-      ],
-      xaxis: {
-        ...currentOptions.xaxis,
-        labels: {
-          formatter: (value: string) => {
-            if (this.timeSelect().code === 'monthly') {
-              return new Date(value).toLocaleDateString('vi-VN', {
-                month: 'short',
-                year: 'numeric',
-              });
-            } else {
-              return new Date(value).getFullYear().toString();
-            }
-          },
-        },
+    this.dashboardService.getDashboardData(request).subscribe({
+      next: data => {
+        console.log(
+          'Dashboard data updated for revenue period:',
+          selected.code,
+          data
+        );
+        this.isChangingPeriod.set(false);
+      },
+      error: error => {
+        console.error('Error updating dashboard data:', error);
+        this.isChangingPeriod.set(false);
+        // Revert the selection on error
+        this.timeSelect.set({ name: 'Theo tháng', code: 'monthly' });
+        this.lastRequestedPeriod.set(PeriodType.Month);
       },
     });
+  }
+
+  private getPeriodTypeFromCode(code: string): PeriodType {
+    switch (code) {
+      case 'monthly':
+        return PeriodType.Month;
+      case 'yearly':
+        return PeriodType.Year;
+      default:
+        return PeriodType.Month;
+    }
+  }
+
+  private generateChartData(
+    revenueStats: any[],
+    periodType: string
+  ): DataPoint[] {
+    if (!revenueStats || revenueStats.length === 0) {
+      return [];
+    }
+
+    return revenueStats.map(stat => {
+      const date = this.parsePeriodToDate(stat.period, periodType);
+
+      return {
+        x: date.getTime(),
+        y: stat.totalRevenue,
+        fill: {
+          type: 'solid',
+        },
+        meta: {
+          creditPackRevenue: stat.creditPackRevenue ?? 0,
+          subscriptionRevenue: stat.subscriptionRevenue ?? 0,
+          totalRevenue: stat.totalRevenue ?? 0,
+        },
+      };
+    });
+  }
+
+  private parsePeriodToDate(period: string, periodType: string): Date {
+    switch (periodType) {
+      case 'monthly': {
+        // Format: "YYYY-MM"
+        const [year, month] = period.split('-');
+        return new Date(parseInt(year), parseInt(month) - 1, 1);
+      }
+      case 'yearly':
+        // Format: "YYYY"
+        return new Date(parseInt(period), 0, 1);
+      default:
+        return new Date();
+    }
   }
 }

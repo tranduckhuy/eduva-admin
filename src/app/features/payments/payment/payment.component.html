@@ -39,21 +39,21 @@
             </p>
             <p class="mb-2 text-[15px]">
               <span class="font-semibold dark:text-[#ffffffB3]">Địa chỉ:</span>
-              thành phố Quy Nhơn, tỉnh Bình Định
+              Đại học FPT Quy Nhơn, Tỉnh Gia Lai
             </p>
             <p class="mb-2 text-[15px]">
-              <span class="font-semibold dark:text-[#ffffffB3]"
-                >Số điện thoại:</span
-              >
+              <span class="font-semibold dark:text-[#ffffffB3]">
+                Số điện thoại:
+              </span>
               01234543234
             </p>
             <p class="mb-2 text-[15px]">
               <span class="font-semibold dark:text-[#ffffffB3]">Email:</span>
-              eduva&#64;gmail.com
+              eduva&#64;contact.com
             </p>
           </div>
           <div
-            class="e-col-4 e-col-xl-5 e-col-lg-6 e-col-md-12 ml-auto dark:text-[#ffffff80]">
+            class="e-col-5 e-col-xl-5 e-col-lg-6 e-col-md-12 ml-auto dark:text-[#ffffff80]">
             <p class="mb-2 text-[15px] font-semibold dark:text-[#ffffffB3]">
               Hóa đơn đến:
             </p>
@@ -65,9 +65,9 @@
               }}
             </p>
             <p class="mb-2 text-[15px]">
-              <span class="font-semibold dark:text-[#ffffffB3]"
-                >Số điện thoại:</span
-              >
+              <span class="font-semibold dark:text-[#ffffffB3]">
+                Số điện thoại:
+              </span>
               {{
                 isCreditPack()
                   ? creditTransactionDetail()?.user?.phoneNumber
@@ -92,7 +92,11 @@
         </div>
 
         <div
-          class="e-row e-row-cols-4 e-row-cols-md-12 e-row-cols-lg-2 e-g-4 mb-6 dark:text-[#ffffff80]">
+          class="e-row e-row-cols-md-12 e-row-cols-lg-2 e-g-4 mb-6 dark:text-[#ffffff80]"
+          [ngClass]="{
+            'e-row-cols-3': isCreditPack(),
+            'e-row-cols-4': !isCreditPack(),
+          }">
           <div class="e-col">
             <p class="mb-2 text-[15px] font-semibold dark:text-[#ffffffB3]">
               Mã hóa đơn:
@@ -100,35 +104,42 @@
             <p class="mb-2 text-[15px]">
               #{{
                 isCreditPack()
-                  ? creditTransactionDetail()?.aiCreditPack?.id
-                  : schoolSubscriptionDetail()?.id
+                  ? creditTransactionDetail()?.transactionCode
+                  : schoolSubscriptionDetail()?.paymentTransaction
+                      ?.transactionCode
               }}
             </p>
           </div>
           <div class="e-col">
             <p class="mb-2 text-[15px] font-semibold dark:text-[#ffffffB3]">
-              Ngày bắt đầu:
+              {{ isCreditPack() ? 'Thời gian giao dịch' : 'Ngày bắt đầu:' }}
             </p>
             <p class="mb-2 text-[15px]">
               {{
                 isCreditPack()
-                  ? (creditTransactionDetail()?.createdAt | date: 'mediumDate')
-                  : (schoolSubscriptionDetail()?.startDate | date: 'medium')
+                  ? (creditTransactionDetail()?.createdAt
+                    | date: "dd 'thg' MM, YYYY 'lúc' HH:mm")
+                  : (schoolSubscriptionDetail()?.startDate
+                    | date: "dd 'thg' MM, YYYY 'lúc' HH:mm")
               }}
             </p>
           </div>
-          <div class="e-col">
-            <p class="mb-2 text-[15px] font-semibold dark:text-[#ffffffB3]">
-              Ngày kết thúc:
-            </p>
-            <p class="mb-2 text-[15px]">
-              {{
-                isCreditPack()
-                  ? (creditTransactionDetail()?.createdAt | date: 'medium')
-                  : (schoolSubscriptionDetail()?.endDate | date: 'mediumDate')
-              }}
-            </p>
-          </div>
+          @if (!isCreditPack()) {
+            <div class="e-col">
+              <p class="mb-2 text-[15px] font-semibold dark:text-[#ffffffB3]">
+                Ngày kết thúc:
+              </p>
+              <p class="mb-2 text-[15px]">
+                {{
+                  isCreditPack()
+                    ? (creditTransactionDetail()?.createdAt
+                      | date: "dd 'thg' MM, YYYY 'lúc' HH:mm")
+                    : (schoolSubscriptionDetail()?.endDate
+                      | date: "dd 'thg' MM, YYYY 'lúc' HH:mm")
+                }}
+              </p>
+            </div>
+          }
           <div class="e-col">
             <p class="mb-2 text-[15px] font-semibold dark:text-[#ffffffB3]">
               Tổng tiền:
@@ -155,11 +166,11 @@
                   <th class="w-[20%] whitespace-nowrap">Số lượng Credits</th>
                   <th class="w-[20%] whitespace-nowrap">Credits tặng thêm</th>
                 } @else {
-                  <th class="w-[15%] whitespace-nowrap">Lưu trữ</th>
+                  <th class="w-[15%] whitespace-nowrap">Dung lượng Lưu trữ</th>
                   <th class="w-[20%] whitespace-nowrap">Số lượng tài khoản</th>
-                  <th class="w-[15%] whitespace-nowrap">Loại</th>
+                  <th class="w-[15%] whitespace-nowrap">Loại gói</th>
                 }
-                <th class="w-[15%] whitespace-nowrap">Giá</th>
+                <th class="w-[5%] whitespace-nowrap !pr-6 text-right">Giá</th>
               </tr>
             </thead>
             <tbody>
@@ -186,8 +197,11 @@
                         | storageFormat
                     }}
                   </td>
-                  <td>{{ schoolSubscriptionDetail()?.plan?.maxUsers }}</td>
                   <td>
+                    {{ schoolSubscriptionDetail()?.plan?.maxUsers }} tài khoản
+                  </td>
+                  <td>
+                    Gói
                     {{
                       schoolSubscriptionDetail()?.billingCycle === 0
                         ? 'Tháng'
@@ -195,7 +209,7 @@
                     }}
                   </td>
                 }
-                <td>
+                <td class="!pr-6 text-right">
                   {{
                     isCreditPack()
                       ? (creditTransactionDetail()?.aiCreditPack?.price
@@ -205,15 +219,22 @@
                   }}
                 </td>
               </tr>
+              @if (!isCreditPack()) {
+                <tr>
+                  <td colspan="4"></td>
+                  <td>Giảm giá:</td>
+                  <td class="!pr-6 text-right">
+                    {{
+                      deductedAmount
+                        | currency: 'VND' : 'symbol' : '1.0-0' : 'vi-VN'
+                    }}
+                  </td>
+                </tr>
+              }
               <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                @if (!isCreditPack()) {
-                  <td></td>
-                }
-                <td>Tổng:</td>
-                <td class="text-lg font-bold text-success-500">
+                <td [colSpan]="isCreditPack() ? '3' : '4'"></td>
+                <td class="font-bold">Tổng:</td>
+                <td class="!pr-6 text-right text-lg font-bold text-primary">
                   {{
                     isCreditPack()
                       ? (creditTransactionDetail()?.aiCreditPack?.price

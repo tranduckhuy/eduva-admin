@@ -10,15 +10,24 @@
     <div class="ml-auto">
       <p-select
         [options]="timeSelectOptions()"
-        [ngModel]="timeSelect"
+        [ngModel]="timeSelect()"
         (ngModelChange)="onTimeSelectChange($event)"
         optionLabel="name"
         placeholder="Chọn hiển thị theo thời gian"
+        [disabled]="isChangingPeriod()"
         class="!dark:bg-dark-200 flex h-11 w-full items-center sm:w-56" />
     </div>
   </div>
   <div id="chart" class="p-5">
-    @if (chartOptions()) {
+    @if (isChangingPeriod()) {
+      <div class="flex h-80 items-center justify-center">
+        <div class="text-center">
+          <div
+            class="mx-auto mb-2 h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+          <p class="text-sm text-gray-500">Đang tải dữ liệu...</p>
+        </div>
+      </div>
+    } @else if (chartOptions()) {
       <apx-chart
         [series]="chartOptions()!.series"
         [chart]="chartOptions()!.chart"
@@ -28,7 +37,15 @@
         [tooltip]="chartOptions()!.tooltip"
         [dataLabels]="chartOptions()!.dataLabels"
         [stroke]="chartOptions()!.stroke"
-        [colors]="chartOptions()!.colors"></apx-chart>
+        [colors]="chartOptions()!.colors"
+        [markers]="chartOptions()!.markers"
+        [annotations]="chartOptions()!.annotations"></apx-chart>
+    } @else {
+      <div class="flex h-80 items-center justify-center">
+        <div class="text-center">
+          <p class="text-sm text-gray-500">Không có dữ liệu</p>
+        </div>
+      </div>
     }
   </div>
 </div>

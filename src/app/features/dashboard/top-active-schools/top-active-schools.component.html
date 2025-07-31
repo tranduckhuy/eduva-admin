@@ -9,13 +9,11 @@
     [tableStyle]="{ 'min-width': '100%' }"
     [paginator]="false"
     [rows]="5"
-    [showCurrentPageReport]="false"
-    [loading]="loading()">
+    [showCurrentPageReport]="false">
     <ng-template pTemplate="header">
       <tr>
         <th scope="col" class="!w-[40%]">Tên</th>
-        <th scope="col" class="!text-center">Giáo viên</th>
-        <th scope="col" class="!text-center">Học sinh</th>
+        <th scope="col" class="!text-center">Người dùng</th>
         <th scope="col" class="!w-[25%] !text-center">Bài học</th>
       </tr>
     </ng-template>
@@ -25,19 +23,14 @@
           <a
             [pTooltip]="school.name"
             tooltipPosition="top"
-            [routerLink]="['/schools', school.id]"
+            [routerLink]="['/admin/schools', school.id]"
             class="line-clamp-1 text-ellipsis font-medium text-primary hover:underline">
             {{ school.name }}
           </a>
         </td>
-        <td class="!text-center">{{ school.teacherCount | number }}</td>
-        <td class="!text-center">{{ school.studentCount | number }}</td>
+        <td class="!text-center">{{ school.userCount | number }}</td>
         <td class="!text-center">
-          <a
-            [routerLink]="['/schools', school.id, 'lessons']"
-            class="!pr-2 font-medium text-primary hover:underline">
-            {{ school.lessonCount | number }}
-          </a>
+          {{ school.lessonCount | number }}
         </td>
       </tr>
     </ng-template>

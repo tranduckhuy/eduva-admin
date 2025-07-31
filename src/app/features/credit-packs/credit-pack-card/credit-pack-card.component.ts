@@ -7,12 +7,12 @@ import {
 import { FormsModule } from '@angular/forms';
 import { CurrencyPipe } from '@angular/common';
 
-import { ButtonComponent } from '../../../shared/components/button/button.component';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-credit-pack-card',
   standalone: true,
-  imports: [ButtonComponent, CurrencyPipe, FormsModule],
+  imports: [CurrencyPipe, FormsModule, ButtonModule],
   templateUrl: './credit-pack-card.component.html',
   styleUrl: './credit-pack-card.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

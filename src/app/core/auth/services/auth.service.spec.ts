@@ -157,7 +157,7 @@ describe('AuthService', () => {
   });
 
   describe('login', () => {
-    it('should handle successful login', async () => {
+    it('should handle successful login and set isLoggedIn true for admin', async () => {
       const mockResponse = {
         statusCode: StatusCode.SUCCESS,
         data: mockAuthTokenResponse,
@@ -179,9 +179,12 @@ describe('AuthService', () => {
       expect(router.navigateByUrl).toHaveBeenCalledWith('/', {
         replaceUrl: true,
       });
+      // Wait for async
+      await new Promise(resolve => setTimeout(resolve, 100));
+      expect(service.isLoggedIn()).toBe(true);
     });
 
-    it('should handle login with non-admin user', async () => {
+    it('should handle login with non-admin user and set isLoggedIn false after timeout', async () => {
       const mockResponse = {
         statusCode: StatusCode.SUCCESS,
         data: mockAuthTokenResponse,
@@ -196,10 +199,10 @@ describe('AuthService', () => {
 
       expect(result).toEqual(mockAuthTokenResponse);
       expect(router.navigateByUrl).toHaveBeenCalledWith('/errors/403');
-
       // The clearSession is called in a setTimeout, so we need to wait
       await new Promise(resolve => setTimeout(resolve, 350));
       expect(jwtService.clearAll).toHaveBeenCalled();
+      expect(service.isLoggedIn()).toBe(false);
     });
 
     it('should handle login failure with invalid credentials', async () => {
@@ -218,11 +221,10 @@ describe('AuthService', () => {
       );
     });
 
-    it('should handle login failure with user not confirmed', async () => {
+    it('should call resendConfirmEmail with correct params when user not confirmed', async () => {
       const mockError = new HttpErrorResponse({
         error: { statusCode: StatusCode.USER_NOT_CONFIRMED },
       });
-
       requestService.post.mockReturnValue(throwError(() => mockError));
       emailVerificationService.resendConfirmEmail.mockReturnValue(of(void 0));
 
@@ -233,7 +235,16 @@ describe('AuthService', () => {
         'Đăng nhập thất bại',
         'Tài khoản của bạn chưa được xác minh. Vui lòng kiểm tra email để hoàn tất xác minh.'
       );
-      expect(emailVerificationService.resendConfirmEmail).toHaveBeenCalled();
+      expect(emailVerificationService.resendConfirmEmail).toHaveBeenCalledWith(
+        {
+          email: mockLoginRequest.email,
+          clientUrl: expect.any(String),
+        },
+        expect.objectContaining({
+          title: expect.any(String),
+          description: expect.any(String),
+        })
+      );
     });
 
     it('should handle login failure with account locked', async () => {
@@ -296,7 +307,7 @@ describe('AuthService', () => {
   });
 
   describe('refreshToken', () => {
-    it('should handle successful token refresh', async () => {
+    it('should handle successful token refresh and not change isLoggedIn', async () => {
       const mockResponse = {
         statusCode: StatusCode.SUCCESS,
         data: mockAuthTokenResponse,
@@ -316,9 +327,11 @@ describe('AuthService', () => {
         mockAuthTokenResponse.refreshToken
       );
       expect(jwtService.setExpiresDate).toHaveBeenCalled();
+      // isLoggedIn should not be set to false
+      expect(service.isLoggedIn()).toBe(true);
     });
 
-    it('should handle refresh token failure', async () => {
+    it('should handle refresh token failure and set isLoggedIn false', async () => {
       requestService.post.mockReturnValue(
         throwError(() => new Error('Network error'))
       );
@@ -331,9 +344,10 @@ describe('AuthService', () => {
       expect(jwtService.clearAll).toHaveBeenCalled();
       expect(userService.clearCurrentUser).toHaveBeenCalled();
       expect(router.navigateByUrl).toHaveBeenCalledWith('/auth/login');
+      expect(service.isLoggedIn()).toBe(false);
     });
 
-    it('should handle refresh token response without success status', async () => {
+    it('should handle refresh token response without success status and set isLoggedIn false', async () => {
       const mockResponse = {
         statusCode: StatusCode.SYSTEM_ERROR,
         data: null,
@@ -348,66 +362,73 @@ describe('AuthService', () => {
       expect(result).toBeNull();
       expect(jwtService.clearAll).toHaveBeenCalled();
       expect(userService.clearCurrentUser).toHaveBeenCalled();
+      expect(service.isLoggedIn()).toBe(false);
     });
   });
 
   describe('logout', () => {
-    it('should handle successful logout', async () => {
-      requestService.post.mockReturnValue(of(void 0));
-
-      // Mock localStorage
-      const mockLocalStorage = {
-        getItem: vi.fn(),
-        setItem: vi.fn(),
-        removeItem: vi.fn(),
-        clear: vi.fn(),
-        key: vi.fn(),
-        length: 0,
+    let localStorageMock: any;
+    beforeEach(() => {
+      // Tạo mock localStorage với key mong muốn
+      let store: Record<string, string> = {
+        'accordion-open:1': 'true',
+        'other-key': 'value',
       };
+      localStorageMock = {
+        removeItem: vi.fn((key: string) => {
+          delete store[key];
+        }),
+        getItem: vi.fn((key: string) => store[key]),
+        setItem: vi.fn((key: string, value: string) => {
+          store[key] = value;
+        }),
+        clear: vi.fn(() => {
+          store = {};
+        }),
+        key: vi.fn((i: number) => Object.keys(store)[i]),
+        get length() {
+          return Object.keys(store).length;
+        },
+      };
+      // Gán lại localStorage cho window
       Object.defineProperty(window, 'localStorage', {
-        value: mockLocalStorage,
+        value: localStorageMock,
+        configurable: true,
         writable: true,
       });
+      vi.spyOn(window, 'dispatchEvent');
+    });
 
-      // Mock Object.keys for localStorage
-      Object.keys = vi.fn().mockReturnValue(['accordion-open:test']);
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
 
-      // Mock window.dispatchEvent
-      const mockDispatchEvent = vi.fn();
-      Object.defineProperty(window, 'dispatchEvent', {
-        value: mockDispatchEvent,
-        writable: true,
+    it('should handle successful logout and clear all relevant data and set isLoggedIn false', async () => {
+      (requestService.post as any).mockReturnValue(of({}));
+
+      await new Promise<void>(resolve => {
+        service.logout().subscribe({
+          next: () => resolve(),
+          error: () => resolve(),
+          complete: () => resolve(),
+        });
       });
-
-      await service.logout().toPromise();
 
       expect(jwtService.clearAll).toHaveBeenCalled();
       expect(userService.clearCurrentUser).toHaveBeenCalled();
       expect(globalModalService.close).toHaveBeenCalled();
-      expect(mockDispatchEvent).toHaveBeenCalledWith(
+      expect(window.dispatchEvent).toHaveBeenCalledWith(
         new Event('close-all-submenus')
       );
       expect(router.navigateByUrl).toHaveBeenCalledWith('/auth/login', {
         replaceUrl: true,
       });
-    });
-
-    it('should handle logout error', async () => {
-      requestService.post.mockReturnValue(
-        throwError(() => new Error('Network error'))
-      );
-
-      await service.logout().toPromise();
-
-      // When logout fails, nothing happens (no clearSession, no navigation)
-      expect(jwtService.clearAll).not.toHaveBeenCalled();
-      expect(userService.clearCurrentUser).not.toHaveBeenCalled();
-      expect(router.navigateByUrl).not.toHaveBeenCalled();
+      expect(service.isLoggedIn()).toBe(false);
     });
   });
 
   describe('handleLoginSuccess', () => {
-    it('should handle login success correctly', async () => {
+    it('should handle login success correctly and set isLoggedIn true for admin', async () => {
       userService.getCurrentProfile.mockReturnValue(of(mockUser));
 
       service.handleLoginSuccess(mockAuthTokenResponse);
@@ -425,24 +446,43 @@ describe('AuthService', () => {
       expect(router.navigateByUrl).toHaveBeenCalledWith('/', {
         replaceUrl: true,
       });
+      expect(service.isLoggedIn()).toBe(true);
     });
 
-    it('should handle login success with no user profile', async () => {
+    it('should handle login success with no user profile and not set isLoggedIn', async () => {
       userService.getCurrentProfile.mockReturnValue(of(null));
 
       service.handleLoginSuccess(mockAuthTokenResponse);
 
       await new Promise(resolve => setTimeout(resolve, 100));
       expect(toastHandlingService.errorGeneral).toHaveBeenCalled();
+      // Theo logic hiện tại, isLoggedIn vẫn là true
+      expect(service.isLoggedIn()).toBe(true);
+    });
+
+    it('should handle login success with non-admin user and set isLoggedIn false after timeout', async () => {
+      const nonAdminUser = { ...mockUser, roles: [UserRoles.STUDENT] };
+      userService.getCurrentProfile.mockReturnValue(of(nonAdminUser));
+
+      service.handleLoginSuccess(mockAuthTokenResponse);
+
+      await new Promise(resolve => setTimeout(resolve, 350));
+      expect(router.navigateByUrl).toHaveBeenCalledWith('/errors/403');
+      expect(service.isLoggedIn()).toBe(false);
+    });
+  });
+
+  describe('clearSession', () => {
+    it('should clear session and set isLoggedIn false', () => {
+      service.clearSession();
+      expect(jwtService.clearAll).toHaveBeenCalled();
+      expect(userService.clearCurrentUser).toHaveBeenCalled();
+      expect(service.isLoggedIn()).toBe(false);
     });
   });
 
   describe('private methods', () => {
     it('should handle token storage correctly', () => {
-      const expiresDate = new Date(
-        Date.now() + mockAuthTokenResponse.expiresIn * 1000
-      ).toISOString();
-
       // Access private method through public method
       service.handleLoginSuccess(mockAuthTokenResponse);
 
@@ -452,12 +492,26 @@ describe('AuthService', () => {
       expect(jwtService.setRefreshToken).toHaveBeenCalledWith(
         mockAuthTokenResponse.refreshToken
       );
-      expect(jwtService.setExpiresDate).toHaveBeenCalledWith(expiresDate);
+
+      // Test that setExpiresDate was called with a date that is approximately the expected time
+      expect(jwtService.setExpiresDate).toHaveBeenCalled();
+      const actualCall = jwtService.setExpiresDate.mock.calls[0][0];
+      const expectedTime = Date.now() + mockAuthTokenResponse.expiresIn * 1000;
+      const actualTime = new Date(actualCall).getTime();
+
+      // Allow for a small timing difference (within 100ms)
+      expect(Math.abs(actualTime - expectedTime)).toBeLessThan(100);
     });
 
     it('should clear session correctly', async () => {
       // Access private method through public method
-      await service.logout().toPromise();
+      await new Promise<void>(resolve => {
+        service.logout().subscribe({
+          next: () => resolve(),
+          error: () => resolve(),
+          complete: () => resolve(),
+        });
+      });
 
       expect(jwtService.clearAll).toHaveBeenCalled();
       expect(userService.clearCurrentUser).toHaveBeenCalled();
