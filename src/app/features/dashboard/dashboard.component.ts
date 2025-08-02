@@ -82,7 +82,7 @@ export class DashboardComponent implements OnInit {
       iconColor: 'text-primary',
       subItems: [
         {
-          title: 'School Admins',
+          title: 'Quản trị viên trường',
           value: data?.systemOverview.schoolAdmins ?? 0,
         },
         {
