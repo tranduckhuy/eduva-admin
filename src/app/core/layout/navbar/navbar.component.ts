@@ -170,9 +170,9 @@ export class NavbarComponent implements OnInit {
         section: 'Khác',
         navItems: [
           {
-            label: 'Trang cá nhân',
-            icon: 'account_circle',
-            link: '/admin/settings',
+            label: 'Cài đặt',
+            icon: 'settings',
+            link: '/admin/settings/account-settings',
             type: 'link',
             isActive: false,
             submenuItems: [],
