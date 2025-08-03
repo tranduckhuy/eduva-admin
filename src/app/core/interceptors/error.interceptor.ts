@@ -60,27 +60,24 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   };
 
   const handleErrorByStatusCode = (error: HttpErrorResponse) => {
-    const { status, error: errorData } = error;
-    const errorStatusCode = errorData?.statusCode;
+    const status = error.status;
 
     if (status === 0 || status >= 500) {
       handleServerError();
       return;
     }
 
-    if (status === 401 && !isByPassAuth) {
-      handleUnauthorized();
-      return;
-    }
-
-    if (status === 403 && !isByPassAuth) {
-      handleForbidden();
+    if (!isByPassAuth && (status === 401 || status === 403)) {
+      if (status === 401) {
+        handleUnauthorized();
+      } else {
+        handleForbidden();
+      }
       return;
     }
 
     if (status === 404 && !isByPassNotFound) {
       handleNotFound();
-      return;
     }
   };
 
