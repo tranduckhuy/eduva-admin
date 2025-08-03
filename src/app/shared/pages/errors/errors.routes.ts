@@ -36,6 +36,13 @@ export const errorRoutes: Routes = [
                 mod => mod.UnauthorizedErrorComponent
               ),
           },
+          {
+            path: '429',
+            loadComponent: () =>
+              import(
+                './too-many-request-error/too-many-request-error.component'
+              ).then(mod => mod.TooManyRequestErrorComponent),
+          },
         ],
       },
     ],
