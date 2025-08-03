@@ -40,7 +40,7 @@
         (onLazyLoad)="loadDataLazy($event)"
         [totalRecords]="totalUsers()"
         currentPageReportTemplate="
-        Hiển thị {first} đến {last} trên {totalRecords} người kiểm duyệt nội dung
+        Hiển thị {first} đến {last} trên {totalRecords} kiểm duyệt viên
       ">
         <ng-template #header>
           <tr>
@@ -49,7 +49,7 @@
               scope="col"
               class="!w-[25%] !min-w-[200px]"
               pSortableColumn="fullname">
-              <span class="mr-2">Kiểm duyệt nội dung</span
+              <span class="mr-2">Kiểm duyệt viên</span
               ><p-sortIcon field="fullname" />
             </th>
             <th

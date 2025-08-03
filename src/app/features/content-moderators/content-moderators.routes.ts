@@ -8,8 +8,8 @@ export const contentModeratorsRoute: Routes = [
         mod => mod.ContentModeratorsComponent
       ),
     data: {
-      heading: 'Danh sách kiểm duyệt nội dung',
-      breadcrumb: 'Danh sách kiểm duyệt nội dung',
+      heading: 'Danh sách kiểm duyệt viên',
+      breadcrumb: 'Danh sách kiểm duyệt viên',
     },
   },
   {
@@ -19,8 +19,8 @@ export const contentModeratorsRoute: Routes = [
         mod => mod.ContentModeratorComponent
       ),
     data: {
-      heading: 'Chi tiết kiểm duyệt nội dung',
-      breadcrumb: 'Chi tiết kiểm duyệt nội dung',
+      heading: 'Chi tiết kiểm duyệt viên',
+      breadcrumb: 'Chi tiết kiểm duyệt viên',
     },
   },
 ];
