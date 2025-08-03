@@ -9,9 +9,10 @@ import { ConfirmationService } from 'primeng/api';
 import { AuthService } from '../auth/services/auth.service';
 import { GlobalModalService } from '../../shared/services/layout/global-modal/global-modal.service';
 
-import { BYPASS_AUTH_ERROR } from '../../shared/tokens/context/http-context.token';
-
-let hasShownUnauthorizedDialog = false;
+import {
+  BYPASS_AUTH_ERROR,
+  BYPASS_NOT_FOUND_ERROR,
+} from '../../shared/tokens/context/http-context.token';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
@@ -19,15 +20,16 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const globalModalService = inject(GlobalModalService);
   const confirmationService = inject(ConfirmationService);
 
-  const isByPass = req.context.get(BYPASS_AUTH_ERROR);
+  const isByPassAuth = req.context.get(BYPASS_AUTH_ERROR);
+  const isByPassNotFound = req.context.get(BYPASS_NOT_FOUND_ERROR);
 
   const handleServerError = () => router.navigateByUrl('/errors/500');
 
+  const handleForbidden = () => router.navigateByUrl('/errors/403');
+
+  const handleNotFound = () => router.navigateByUrl('/errors/404');
+
   const handleUnauthorized = () => {
-    if (hasShownUnauthorizedDialog) return;
-
-    hasShownUnauthorizedDialog = true;
-
     globalModalService.close();
     confirmationService.confirm({
       header: 'Phiên đã hết hạn',
@@ -57,29 +59,34 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
     });
   };
 
-  const handleForbidden = () => router.navigateByUrl('/errors/403');
+  const handleErrorByStatusCode = (error: HttpErrorResponse) => {
+    const { status, error: errorData } = error;
+    const errorStatusCode = errorData?.statusCode;
+
+    if (status === 0 || status >= 500) {
+      handleServerError();
+      return;
+    }
+
+    if (status === 401 && !isByPassAuth) {
+      handleUnauthorized();
+      return;
+    }
+
+    if (status === 403 && !isByPassAuth) {
+      handleForbidden();
+      return;
+    }
+
+    if (status === 404 && !isByPassNotFound) {
+      handleNotFound();
+      return;
+    }
+  };
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      const isAuthError = error.status === 401;
-      const isForbidden = error.status === 403;
-      const isServerError = error.status === 0 || error.status >= 500;
-
-      if (isServerError) {
-        handleServerError();
-        return throwError(() => error);
-      }
-
-      if (isAuthError && !isByPass) {
-        handleUnauthorized();
-        return throwError(() => error);
-      }
-
-      if (isForbidden && !isByPass) {
-        handleForbidden();
-        return throwError(() => error);
-      }
-
+      handleErrorByStatusCode(error);
       return throwError(() => error);
     })
   );

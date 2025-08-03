@@ -50,6 +50,7 @@ export class AuthService {
       .post<AuthTokenResponse>(this.LOGIN_API_URL, request, {
         bypassAuth: true,
         bypassAuthError: true,
+        bypassNotFoundError: true,
       })
       .pipe(
         map(res => {
