@@ -1,6 +1,12 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 
 import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
@@ -8,14 +14,17 @@ import { InputTextModule } from 'primeng/inputtext';
 
 import { LeadingZeroPipe } from '../../shared/pipes/leading-zero.pipe';
 import { ButtonComponent } from '../../shared/components/button/button.component';
-import { SearchInputComponent } from '../../shared/components/search-input/search-input.component';
 import { TableEmptyStateComponent } from '../../shared/components/table-empty-state/table-empty-state.component';
+import { SystemConfigService } from './service/system-config.service';
+import { LoadingService } from '../../shared/services/core/loading/loading.service';
+import { TableSkeletonComponent } from '../../shared/components/skeleton/table-skeleton/table-skeleton.component';
+import { SystemConfig } from '../../shared/models/entities/system-config.model';
+import { ToastHandlingService } from '../../shared/services/core/toast/toast-handling.service';
 
 @Component({
   selector: 'app-system-config',
   standalone: true,
   imports: [
-    SearchInputComponent,
     TableModule,
     InputTextModule,
     CommonModule,
@@ -24,30 +33,74 @@ import { TableEmptyStateComponent } from '../../shared/components/table-empty-st
     FormsModule,
     ButtonComponent,
     TableEmptyStateComponent,
+    TableSkeletonComponent,
+    DatePipe,
   ],
   templateUrl: './system-config.component.html',
   styleUrl: './system-config.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SystemConfigComponent {
-  items = signal<any>([
-    { id: 1, code: 'C001', name: 'Item One', value: 'Value 1' },
-    { id: 2, code: 'C002', name: 'Item Two', value: 'Value 2' },
-    { id: 3, code: 'C003', name: 'Item Three', value: 'Value 3' },
-    { id: 4, code: 'C004', name: 'Item Four', value: 'Value 4' },
-    { id: 5, code: 'C005', name: 'Item Five', value: 'Value 5' },
-    { id: 6, code: 'C006', name: 'Item Six', value: 'Value 6' },
-    { id: 7, code: 'C007', name: 'Item Seven', value: 'Value 7' },
-    { id: 8, code: 'C008', name: 'Item Eight', value: 'Value 8' },
-    { id: 9, code: 'C009', name: 'Item Nine', value: 'Value 9' },
-    { id: 10, code: 'C010', name: 'Item Ten', value: 'Value 10' },
+export class SystemConfigComponent implements OnInit {
+  private readonly systemConfigService = inject(SystemConfigService);
+  private readonly loadingService = inject(LoadingService);
+  private readonly toastService = inject(ToastHandlingService);
+
+  tableHeadSkeleton = signal([
+    'STT',
+    'Mã',
+    'Cập nhật gần nhất',
+    'Giá trị',
+    'Mô tả',
+    '',
   ]);
 
-  onSearchTriggered(term: string) {}
+  // Signals from service
+  isLoadingGet = this.loadingService.is('get-system-config');
+  isLoadingUpdate = this.loadingService.is('update-system-config');
+  systemConfig = this.systemConfigService.systemConfig;
 
-  onEditComplete(event: any) {
-    // event.data: the row data
-    // event.field: the field that was edited
-    // event.newValue: the new value entered
+  clonedItems: { [s: string]: SystemConfig } = {};
+
+  ngOnInit() {
+    this.systemConfigService.getSystemConfig().subscribe();
+  }
+
+  onRowEditInit(systemConfig: SystemConfig) {
+    this.clonedItems[systemConfig.id as number] = { ...systemConfig };
+  }
+
+  onRowEditSave(systemConfig: SystemConfig) {
+    if (systemConfig.value && systemConfig.description) {
+      delete this.clonedItems[systemConfig.id as number];
+      this.systemConfigService
+        .updateSystemConfig(systemConfig.key, {
+          key: systemConfig.key,
+          value: systemConfig.value,
+          description: systemConfig.description,
+        })
+        .subscribe({
+          next: () => {
+            this.systemConfigService.getSystemConfig().subscribe();
+          },
+        });
+    } else {
+      const currentIndex = this.systemConfig().findIndex(
+        item => item.id === systemConfig.id
+      );
+      if (currentIndex !== -1) {
+        this.systemConfig()[currentIndex] =
+          this.clonedItems[systemConfig.id as number];
+      }
+
+      this.toastService.error(
+        'Cập nhật cấu hình hệ thống thất bại',
+        'Vui lòng điền đầy đủ thông tin giá trị và mô tả.'
+      );
+    }
+  }
+
+  onRowEditCancel(systemConfig: SystemConfig, index: number) {
+    this.systemConfig()[index] = this.clonedItems[systemConfig.id as number];
+    delete this.clonedItems[systemConfig.id as number];
   }
 }

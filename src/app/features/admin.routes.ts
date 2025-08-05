@@ -77,6 +77,16 @@ export const adminRoutes: Routes = [
             mod => mod.settingRoutes
           ),
       },
+      {
+        path: 'system-config',
+        data: {
+          breadcrumb: 'Cấu hình hệ thống',
+        },
+        loadChildren: () =>
+          import('./system-config/system-config.routes').then(
+            mod => mod.systemConfigRoute
+          ),
+      },
     ],
   },
   {

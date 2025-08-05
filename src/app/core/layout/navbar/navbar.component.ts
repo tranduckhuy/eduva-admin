@@ -178,6 +178,14 @@ export class NavbarComponent implements OnInit {
             submenuItems: [],
           },
           {
+            label: 'Cấu hình hệ thống',
+            icon: 'manufacturing',
+            link: '/admin/system-config',
+            type: 'link',
+            isActive: false,
+            submenuItems: [],
+          },
+          {
             label: 'Đăng xuất',
             icon: 'logout',
             type: 'button',
