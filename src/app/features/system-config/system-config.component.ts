@@ -66,12 +66,12 @@ export class SystemConfigComponent implements OnInit {
   }
 
   onRowEditInit(systemConfig: SystemConfig) {
-    this.clonedItems[systemConfig.id as number] = { ...systemConfig };
+    this.clonedItems[systemConfig.id] = { ...systemConfig };
   }
 
   onRowEditSave(systemConfig: SystemConfig) {
     if (systemConfig.value && systemConfig.description) {
-      delete this.clonedItems[systemConfig.id as number];
+      delete this.clonedItems[systemConfig.id];
       this.systemConfigService
         .updateSystemConfig(systemConfig.key, {
           key: systemConfig.key,
@@ -88,8 +88,7 @@ export class SystemConfigComponent implements OnInit {
         item => item.id === systemConfig.id
       );
       if (currentIndex !== -1) {
-        this.systemConfig()[currentIndex] =
-          this.clonedItems[systemConfig.id as number];
+        this.systemConfig()[currentIndex] = this.clonedItems[systemConfig.id];
       }
 
       this.toastService.error(
@@ -100,7 +99,7 @@ export class SystemConfigComponent implements OnInit {
   }
 
   onRowEditCancel(systemConfig: SystemConfig, index: number) {
-    this.systemConfig()[index] = this.clonedItems[systemConfig.id as number];
-    delete this.clonedItems[systemConfig.id as number];
+    this.systemConfig()[index] = this.clonedItems[systemConfig.id];
+    delete this.clonedItems[systemConfig.id];
   }
 }

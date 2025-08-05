@@ -4,7 +4,6 @@ import { ToastHandlingService } from '../../../shared/services/core/toast/toast-
 import { environment } from '../../../../environments/environment';
 import { SystemConfig } from '../../../shared/models/entities/system-config.model';
 import { catchError, EMPTY, map, Observable } from 'rxjs';
-import { EntityListResponse } from '../../../shared/models/api/response/query/entity-list-response.model';
 import { BaseResponse } from '../../../shared/models/api/base-response.model';
 import { StatusCode } from '../../../shared/constants/status-code.constant';
 import { UpdateSystemConfigRequest } from '../../../shared/models/api/request/command/update-system-config-request.model';
