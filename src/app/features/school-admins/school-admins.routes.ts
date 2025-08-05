@@ -20,7 +20,7 @@ export const schoolAdminsRoute: Routes = [
       ),
     data: {
       heading: 'Chi tiết quản lý trường học',
-      breadcrumb: 'Chi quản lý tiết trường học',
+      breadcrumb: 'Chi tiết quản lý trường học',
     },
   },
 ];
