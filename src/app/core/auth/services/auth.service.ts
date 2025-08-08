@@ -54,13 +54,24 @@ export class AuthService {
       })
       .pipe(
         map(res => {
-          if (res.statusCode === StatusCode.SUCCESS && res.data) {
-            this.handleLoginSuccess(res.data);
-            return res.data;
+          if (!res.statusCode || !res.data) {
+            this.toastHandlingService.errorGeneral();
+            return null;
           }
 
-          this.toastHandlingService.errorGeneral();
-          return null;
+          switch (res.statusCode) {
+            case StatusCode.SUCCESS:
+              this.handleLoginSuccess(res.data);
+              return res.data;
+
+            case StatusCode.REQUIRES_OTP_VERIFICATION:
+              this.handleRequiresOtpVerification(res.data.email);
+              return res.data;
+
+            default:
+              this.toastHandlingService.errorGeneral();
+              return null;
+          }
         }),
         catchError(err => {
           this.handleLoginError(err, request.email);
@@ -166,6 +177,12 @@ export class AuthService {
     });
   }
 
+  private handleRequiresOtpVerification(email: string) {
+    this.router.navigate(['/auth/otp-confirmation'], {
+      queryParams: { email },
+    });
+  }
+
   private handleLoginError(err: HttpErrorResponse, email: string): void {
     const statusCode = err.error?.statusCode;
 
@@ -191,12 +208,6 @@ export class AuthService {
           'Đăng nhập thất bại',
           'Tài khoản của bạn đã bị vô hiệu hóa.'
         );
-        break;
-
-      case StatusCode.REQUIRES_OTP_VERIFICATION:
-        this.router.navigate(['/auth/otp-confirmation'], {
-          queryParams: { email },
-        });
         break;
 
       default:
