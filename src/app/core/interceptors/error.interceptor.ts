@@ -23,13 +23,20 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const isByPassAuth = req.context.get(BYPASS_AUTH_ERROR);
   const isByPassNotFound = req.context.get(BYPASS_NOT_FOUND_ERROR);
 
-  const handleServerError = () => router.navigateByUrl('/errors/500');
+  const handleServerError = () => {
+    globalModalService.close();
+    router.navigateByUrl('/errors/500');
+  };
 
-  const handleForbidden = () => router.navigateByUrl('/errors/403');
+  const handleForbidden = () => {
+    globalModalService.close();
+    router.navigateByUrl('/errors/403');
+  };
 
-  const handleNotFound = () => router.navigateByUrl('/errors/404');
-
-  const handleTooManyRequest = () => router.navigateByUrl('/errors/429');
+  const handleNotFound = () => {
+    globalModalService.close();
+    router.navigateByUrl('/errors/404');
+  };
 
   const handleUnauthorized = () => {
     globalModalService.close();
@@ -61,12 +68,31 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
     });
   };
 
+  const handleTooManyRequest = (error: HttpErrorResponse) => {
+    globalModalService.close();
+
+    let waitTimeMinutes = 1;
+
+    const requestUrl = error.url ?? '';
+
+    if (requestUrl.includes('/auth')) {
+      waitTimeMinutes = 10;
+    }
+
+    if (waitTimeMinutes <= 0) {
+      waitTimeMinutes = 1;
+    } else if (waitTimeMinutes > 1440) {
+      waitTimeMinutes = 60;
+    }
+
+    router.navigateByUrl(`/errors/429?waitTime=${waitTimeMinutes}`);
+  };
+
   const handleErrorByStatusCode = (error: HttpErrorResponse) => {
     const status = error.status;
 
     if (status === 0 || status >= 500) {
       handleServerError();
-      return;
     }
 
     if (!isByPassAuth && (status === 401 || status === 403)) {
@@ -75,16 +101,14 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       } else {
         handleForbidden();
       }
-      return;
     }
 
     if (status === 404 && !isByPassNotFound) {
       handleNotFound();
-      return;
     }
 
     if (status === 429) {
-      handleTooManyRequest();
+      handleTooManyRequest(error);
     }
   };
 
