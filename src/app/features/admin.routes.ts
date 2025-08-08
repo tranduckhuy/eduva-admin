@@ -77,6 +77,13 @@ export const adminRoutes: Routes = [
             mod => mod.settingRoutes
           ),
       },
+      {
+        path: 'system-config',
+        loadChildren: () =>
+          import('./system-config/system-config.routes').then(
+            mod => mod.systemConfigRoute
+          ),
+      },
     ],
   },
   {
