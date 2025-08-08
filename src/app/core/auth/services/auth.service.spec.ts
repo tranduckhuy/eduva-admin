@@ -264,15 +264,16 @@ describe('AuthService', () => {
     });
 
     it('should handle OTP verification required', async () => {
-      const mockError = new HttpErrorResponse({
-        error: { statusCode: StatusCode.REQUIRES_OTP_VERIFICATION },
-      });
+      const mockResponse = {
+        statusCode: StatusCode.REQUIRES_OTP_VERIFICATION,
+        data: mockAuthTokenResponse,
+      };
 
-      requestService.post.mockReturnValue(throwError(() => mockError));
+      requestService.post.mockReturnValue(of(mockResponse));
 
       const result = await service.login(mockLoginRequest).toPromise();
 
-      expect(result).toBeNull();
+      expect(result).toEqual(mockAuthTokenResponse);
       expect(router.navigate).toHaveBeenCalledWith(['/auth/otp-confirmation'], {
         queryParams: { email: mockLoginRequest.email },
       });
