@@ -19,7 +19,7 @@ import { AuthLayoutComponent } from '../../auth-layout/auth-layout.component';
 import { FormControlComponent } from '../../../../shared/components/form-control/form-control.component';
 
 import { type LoginRequest } from './models/login-request.model';
-import { ConfirmEmailRequest } from '../../models/request/confirm-email-request.model';
+import { type ConfirmEmailRequest } from '../../models/request/confirm-email-request.model';
 
 @Component({
   selector: 'app-login',
