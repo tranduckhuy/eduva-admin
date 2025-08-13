@@ -8,6 +8,7 @@ export const schoolAdminsRoute: Routes = [
         mod => mod.SchoolAdminsComponent
       ),
     data: {
+      title: 'Danh sách quản lý trường học',
       heading: 'Danh sách quản lý trường học',
       breadcrumb: 'Danh sách quản lý trường học',
     },
@@ -19,6 +20,7 @@ export const schoolAdminsRoute: Routes = [
         mod => mod.SchoolAdminComponent
       ),
     data: {
+      title: 'Chi tiết quản lý trường học',
       heading: 'Chi tiết quản lý trường học',
       breadcrumb: 'Chi tiết quản lý trường học',
     },

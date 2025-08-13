@@ -4,6 +4,7 @@ export const settingRoutes: Routes = [
   {
     path: '',
     data: {
+      title: 'Thông tin cá nhân',
       heading: 'Thông tin cá nhân',
       breadcrumb: 'Thông tin cá nhân',
     },
@@ -15,6 +16,7 @@ export const settingRoutes: Routes = [
   {
     path: 'account-settings',
     data: {
+      title: 'Mật khẩu và bảo mật',
       heading: 'Mật khẩu và bảo mật',
       breadcrumb: 'Mật khẩu và bảo mật',
     },
@@ -26,6 +28,7 @@ export const settingRoutes: Routes = [
   {
     path: 'terms-conditions',
     data: {
+      title: 'Điều khoản sử dụng',
       heading: 'Điều khoản sử dụng',
       breadcrumb: 'Điều khoản sử dụng',
     },
@@ -37,6 +40,7 @@ export const settingRoutes: Routes = [
   {
     path: 'privacy-policy',
     data: {
+      title: 'Chính sách bảo mật',
       heading: 'Chính sách bảo mật',
       breadcrumb: 'Chính sách bảo mật',
     },

@@ -8,6 +8,7 @@ export const subscriptionPlansRoute: Routes = [
         mod => mod.SubscriptionPlansComponent
       ),
     data: {
+      title: 'Danh sách gói đăng ký',
       heading: 'Danh sách gói đăng ký',
       breadcrumb: 'Danh sách gói đăng ký',
     },
@@ -19,6 +20,7 @@ export const subscriptionPlansRoute: Routes = [
         mod => mod.EditSubscriptionPlanComponent
       ),
     data: {
+      title: 'Cập nhật gói đăng ký',
       heading: 'Cập nhật gói đăng ký',
       breadcrumb: 'Cập nhật gói đăng ký',
     },
@@ -30,6 +32,7 @@ export const subscriptionPlansRoute: Routes = [
         './subscription-plan-create/subscription-plan-create.component'
       ).then(mod => mod.SubscriptionPlanCreateComponent),
     data: {
+      title: 'Tạo mới gói đăng ký',
       heading: 'Tạo gói đăng ký',
       breadcrumb: 'Tạo gói đăng ký',
     },
@@ -41,6 +44,7 @@ export const subscriptionPlansRoute: Routes = [
         mod => mod.SubscriptionPlanComponent
       ),
     data: {
+      title: 'Chi tiết gói đăng ký',
       heading: 'Chi tiết gói đăng ký',
       breadcrumb: 'Chi tiết gói đăng ký',
     },
