@@ -6,6 +6,7 @@ export const paymentRoute: Routes = [
     loadComponent: () =>
       import('./payments.component').then(mod => mod.PaymentsComponent),
     data: {
+      title: 'Lịch sử thanh toán',
       heading: 'Lịch sử thanh toán',
       breadcrumb: 'Lịch sử thanh toán',
     },
@@ -15,6 +16,7 @@ export const paymentRoute: Routes = [
     loadComponent: () =>
       import('./payment/payment.component').then(mod => mod.PaymentComponent),
     data: {
+      title: 'Chi tiết thanh toán',
       heading: 'Chi tiết thanh toán',
       breadcrumb: 'Chi tiết thanh toán',
     },
@@ -24,6 +26,7 @@ export const paymentRoute: Routes = [
     loadComponent: () =>
       import('./payment/payment.component').then(mod => mod.PaymentComponent),
     data: {
+      title: 'Chi tiết thanh toán',
       heading: 'Chi tiết thanh toán',
       breadcrumb: 'Chi tiết thanh toán',
     },
