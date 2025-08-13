@@ -6,6 +6,7 @@ export const schoolsRoute: Routes = [
     loadComponent: () =>
       import('./schools.component').then(mod => mod.SchoolsComponent),
     data: {
+      title: 'Danh sách trường học',
       heading: 'Danh sách trường học',
       breadcrumb: 'Danh sách trường học',
     },
@@ -15,6 +16,7 @@ export const schoolsRoute: Routes = [
     loadComponent: () =>
       import('./school/school.component').then(mod => mod.SchoolComponent),
     data: {
+      title: 'Chi tiết trường học',
       heading: 'Chi tiết trường học',
       breadcrumb: 'Chi tiết trường học',
     },

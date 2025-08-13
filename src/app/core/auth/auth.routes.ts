@@ -18,6 +18,9 @@ export const authRoutes: Routes = [
       },
       {
         path: 'login',
+        data: {
+          title: 'Đăng nhập',
+        },
         canMatch: [redirectAuthenticatedGuard],
         loadComponent: () =>
           import('./pages/login/login.component').then(
@@ -26,6 +29,9 @@ export const authRoutes: Routes = [
       },
       {
         path: 'forgot-password',
+        data: {
+          title: 'Quên mật khẩu',
+        },
         loadComponent: () =>
           import('./pages/forgot-password/forgot-password.component').then(
             mod => mod.ForgotPasswordComponent
@@ -33,6 +39,9 @@ export const authRoutes: Routes = [
       },
       {
         path: 'reset-password',
+        data: {
+          title: 'Đặt lại mật khẩu',
+        },
         canActivate: [requireQueryParamsGuard(['token', 'email'])],
         loadComponent: () =>
           import('./pages/reset-password/reset-password.component').then(
@@ -41,6 +50,9 @@ export const authRoutes: Routes = [
       },
       {
         path: 'otp-confirmation',
+        data: {
+          title: 'Xác thực OTP',
+        },
         canMatch: [
           redirectAuthenticatedGuard,
           requireQueryParamsGuard(['email']),

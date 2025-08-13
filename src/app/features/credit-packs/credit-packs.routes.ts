@@ -6,6 +6,7 @@ export const creditPacksRoute: Routes = [
     loadComponent: () =>
       import('./credit-packs.component').then(mod => mod.CreditPacksComponent),
     data: {
+      title: 'Danh sách gói credit',
       heading: 'Danh sách gói credit',
       breadcrumb: 'Danh sách gói credit',
     },
@@ -17,6 +18,7 @@ export const creditPacksRoute: Routes = [
         mod => mod.EditCreditPackComponent
       ),
     data: {
+      title: 'Cập nhật gói credit',
       heading: 'Cập nhật gói credit',
       breadcrumb: 'Cập nhật gói credit',
     },
@@ -28,6 +30,7 @@ export const creditPacksRoute: Routes = [
         mod => mod.CreateCreditPackComponent
       ),
     data: {
+      title: 'Tạo mới gói credit',
       heading: 'Tạo gói credit',
       breadcrumb: 'Tạo gói credit',
     },
@@ -39,6 +42,7 @@ export const creditPacksRoute: Routes = [
         mod => mod.CreditPackComponent
       ),
     data: {
+      title: 'Chi tiết gói credit',
       heading: 'Chi tiết gói credit',
       breadcrumb: 'Chi tiết gói credit',
     },
