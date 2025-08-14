@@ -80,8 +80,10 @@ describe('AuthService', () => {
     };
 
     toastHandlingService = {
-      errorGeneral: vi.fn(),
+      info: vi.fn(),
+      warn: vi.fn(),
       error: vi.fn(),
+      errorGeneral: vi.fn(),
     };
 
     globalModalService = {
@@ -215,7 +217,7 @@ describe('AuthService', () => {
       const result = await service.login(mockLoginRequest).toPromise();
 
       expect(result).toBeNull();
-      expect(toastHandlingService.error).toHaveBeenCalledWith(
+      expect(toastHandlingService.warn).toHaveBeenCalledWith(
         'Đăng nhập thất bại',
         'Tên đăng nhập hoặc mật khẩu chưa chính xác.'
       );
@@ -231,8 +233,8 @@ describe('AuthService', () => {
       const result = await service.login(mockLoginRequest).toPromise();
 
       expect(result).toBeNull();
-      expect(toastHandlingService.error).toHaveBeenCalledWith(
-        'Đăng nhập thất bại',
+      expect(toastHandlingService.info).toHaveBeenCalledWith(
+        'Xác minh tài khoản',
         'Tài khoản của bạn chưa được xác minh. Vui lòng kiểm tra email để hoàn tất xác minh.'
       );
       expect(emailVerificationService.resendConfirmEmail).toHaveBeenCalledWith(
