@@ -1,14 +1,13 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { of, throwError, EMPTY } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 import { UserService } from './user.service';
 import { RequestService } from '../../core/request/request.service';
 import { ToastHandlingService } from '../../core/toast/toast-handling.service';
 import { StatusCode } from '../../../constants/status-code.constant';
 import { User } from '../../../models/entities/user.model';
-import { EntityListResponse } from '../../../models/api/response/query/entity-list-response.model';
 import { UserListParams } from '../../../models/common/user-list-params';
 import { School } from '../../../models/entities/school.model';
 import { UpdateProfileRequest } from '../../../pages/settings-page/personal-information/models/update-profile-request.model';
@@ -391,7 +390,7 @@ describe('UserService', () => {
       service.archiveUser(id).subscribe(() => {
         expect(toastService.success).toHaveBeenCalledWith(
           'Thành công',
-          'Vô hiệu người dùng thành công!'
+          'Vô hiệu hóa người dùng thành công!'
         );
       });
     });
