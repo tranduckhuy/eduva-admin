@@ -403,9 +403,9 @@ describe('TwoFactorService', () => {
       await new Promise<void>(resolve => {
         service.verifyTwoFactor(mockVerifyOtpRequest).subscribe({
           next: result => {
-            expect(toastHandlingService.error).toHaveBeenCalledWith(
+            expect(toastHandlingService.warn).toHaveBeenCalledWith(
               'Email không tồn tại',
-              'Không tìm thấy tài khoản nào tương ứng với địa chỉ email của bạn.'
+              'Vui lòng kiểm tra lại địa chỉ email.'
             );
             expect(result).toBeNull();
             resolve();
@@ -491,9 +491,9 @@ describe('TwoFactorService', () => {
       await new Promise<void>(resolve => {
         service.resendOtp(mockResendOtpRequest).subscribe({
           next: () => {
-            expect(toastHandlingService.error).toHaveBeenCalledWith(
+            expect(toastHandlingService.warn).toHaveBeenCalledWith(
               'Email không tồn tại',
-              'Không tìm thấy tài khoản nào tương ứng với địa chỉ email của bạn.'
+              'Vui lòng kiểm tra lại địa chỉ email.'
             );
             resolve();
           },
