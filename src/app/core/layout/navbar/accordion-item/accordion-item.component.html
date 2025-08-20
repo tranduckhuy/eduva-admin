@@ -1,9 +1,9 @@
 @if (type() === 'link') {
-  <div
-    class="accordion-item whitespace-nowrap text-textBlack dark:text-white"
-    [class.active]="isActive()">
+  <div class="accordion-item whitespace-nowrap text-textBlack dark:text-white">
     <a
       [routerLink]="link()"
+      [routerLinkActive]="suppressActive() ? [] : ['active']"
+      [routerLinkActiveOptions]="{ exact: true }"
       class="accordion-button flex w-full items-center gap-2 rounded-md px-4 py-[10px] font-medium transition-colors ease-linear">
       <i
         class="material-symbols-rounded text-[22px] leading-none text-gray-500 dark:text-dark-100">
@@ -17,9 +17,7 @@
 }
 
 @if (type() === 'button') {
-  <div
-    class="accordion-item whitespace-nowrap text-textBlack dark:text-white"
-    [class.active]="isActive()">
+  <div class="accordion-item whitespace-nowrap text-textBlack dark:text-white">
     <button
       class="accordion-button flex w-full items-center gap-2 rounded-md px-4 py-[10px] font-medium transition-colors ease-linear"
       (click)="onClick()">
@@ -37,7 +35,7 @@
 @if (type() === 'accordion') {
   <div
     class="accordion-item whitespace-nowrap text-textBlack dark:text-white"
-    [class.active]="isActive()">
+    [routerLinkActive]="['active']">
     <button
       class="accordion-button flex w-full items-center gap-2 rounded-md px-4 py-[10px] font-medium transition-colors duration-200 ease-linear"
       (click)="toggleAccordion()">
@@ -63,9 +61,10 @@
         @for (item of submenuItems(); track $index) {
           <li>
             <a
-              [routerLink]="item.link"
               class="submenu-link flex w-full items-center gap-2 rounded-md px-4 py-[10px] font-medium transition-colors duration-200 ease-linear"
-              [class.active]="item.active">
+              [routerLink]="item.link"
+              [routerLinkActive]="['active']"
+              [routerLinkActiveOptions]="{ exact: true }">
               <i class="material-symbols-rounded" style="font-size: 12px">
                 radio_button_unchecked
               </i>
