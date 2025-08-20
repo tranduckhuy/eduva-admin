@@ -19,7 +19,7 @@ export const roleGuard: CanMatchFn = route => {
   const isLoggedIn =
     !!user && Array.isArray(user.roles) && user.roles.length > 0;
   if (!isLoggedIn) {
-    router.navigate(['/auth/login']);
+    router.navigateByUrl('/auth/login');
     return false;
   }
 
