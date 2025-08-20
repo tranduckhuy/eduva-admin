@@ -1,22 +1,19 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  ChangeDetectorRef,
-  OnInit,
+  inject,
   input,
   output,
-  inject,
+  effect,
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, Router, NavigationEnd } from '@angular/router';
-
-import { filter } from 'rxjs';
+import { RouterLink } from '@angular/router';
 
 import { AccordionItemComponent } from './accordion-item/accordion-item.component';
 import { UserService } from '../../../shared/services/api/user/user.service';
 import {
-  UserRole,
+  type UserRoleType,
   UserRoles,
 } from '../../../shared/constants/user-roles.constant';
 
@@ -25,8 +22,13 @@ type NavItem = {
   icon: string;
   type: 'link' | 'accordion' | 'button';
   link?: string;
-  isActive: boolean;
-  submenuItems: { label: string; link: string; active?: boolean }[];
+  isDisabled?: boolean;
+  suppressActive?: boolean;
+  submenuItems: {
+    label: string;
+    link: string;
+    isDisabled?: boolean;
+  }[];
 };
 
 type NavbarConfig = {
@@ -42,55 +44,34 @@ type NavbarConfig = {
   styleUrl: './navbar.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NavbarComponent implements OnInit {
-  private readonly router = inject(Router);
-  private readonly cdr = inject(ChangeDetectorRef);
+export class NavbarComponent {
   private readonly userService = inject(UserService);
 
   isSidebarCollapsed = input();
 
-  navConfigs = signal<NavbarConfig[]>([]);
   closeSidebar = output();
 
   user = this.userService.currentUser;
 
-  ngOnInit(): void {
-    const user = this.user();
-    const userRole = user?.roles?.[0] as UserRole;
-    this.navConfigs.set(this.getNavbarConfigByRole(userRole));
+  navConfigs = signal<NavbarConfig[]>([]);
 
-    this.setActiveNavItems(this.router.url);
+  constructor() {
+    effect(
+      () => {
+        const user = this.user();
+        const userRole = user?.roles?.[0] as UserRoleType;
 
-    // ? Listen to router events to update active states
-    this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe((event: NavigationEnd) => {
-        this.setActiveNavItems(event.urlAfterRedirects);
-      });
+        this.navConfigs.set(this.getNavbarConfig(userRole));
+      },
+      { allowSignalWrites: true }
+    );
   }
 
-  private setActiveNavItems(url: string) {
-    const path = url.split('?')[0]; // ? Just get path name
-
-    this.navConfigs().forEach(section => {
-      section.navItems.forEach(item => {
-        // ? Match exact main nav item by path only
-        item.isActive = item.link === path;
-
-        // ? Reset and re-check submenu
-        item.submenuItems.forEach(sub => {
-          sub.active = sub.link === path;
-          if (sub.active) {
-            item.isActive = true; // ? If submenu is active, parent is also active
-          }
-        });
-      });
-    });
-
-    this.cdr.markForCheck();
+  get navConfigsArray(): NavbarConfig[] {
+    return this.navConfigs();
   }
 
-  private getNavbarConfigByRole(role: UserRole): NavbarConfig[] {
+  private getNavbarConfig(role: UserRoleType): NavbarConfig[] {
     if (role !== UserRoles.SYSTEM_ADMIN) return [];
 
     return [
@@ -102,7 +83,6 @@ export class NavbarComponent implements OnInit {
             icon: 'dashboard',
             type: 'link',
             link: '/admin',
-            isActive: true,
             submenuItems: [],
           },
         ],
@@ -115,44 +95,37 @@ export class NavbarComponent implements OnInit {
             icon: 'school',
             link: '/admin/schools',
             type: 'link',
-            isActive: false,
             submenuItems: [],
           },
           {
             label: 'Người dùng',
             icon: 'people',
             type: 'accordion',
-            isActive: false,
             submenuItems: [
               {
                 label: 'Quản trị viên trường',
                 link: '/admin/school-admins',
-                active: true,
               },
               {
                 label: 'Kiểm duyệt viên',
                 link: '/admin/content-moderators',
-                active: true,
               },
-              { label: 'Giáo viên', link: '/admin/teachers', active: true },
-              { label: 'Học sinh', link: '/admin/students', active: true },
+              { label: 'Giáo viên', link: '/admin/teachers' },
+              { label: 'Học sinh', link: '/admin/students' },
             ],
           },
           {
             label: 'Gói thanh toán',
             icon: 'paid',
             type: 'accordion',
-            isActive: false,
             submenuItems: [
               {
                 label: 'Gói đăng ký',
                 link: '/admin/subscription-plans',
-                active: true,
               },
               {
                 label: 'Gói credit',
                 link: '/admin/credit-packs',
-                active: true,
               },
             ],
           },
@@ -161,7 +134,6 @@ export class NavbarComponent implements OnInit {
             icon: 'receipt_long',
             link: '/admin/payments',
             type: 'link',
-            isActive: false,
             submenuItems: [],
           },
         ],
@@ -174,7 +146,6 @@ export class NavbarComponent implements OnInit {
             icon: 'settings',
             link: '/admin/settings/account-settings',
             type: 'link',
-            isActive: false,
             submenuItems: [],
           },
           {
@@ -182,14 +153,12 @@ export class NavbarComponent implements OnInit {
             icon: 'manufacturing',
             link: '/admin/system-config',
             type: 'link',
-            isActive: false,
             submenuItems: [],
           },
           {
             label: 'Đăng xuất',
             icon: 'logout',
             type: 'button',
-            isActive: false,
             submenuItems: [],
           },
         ],

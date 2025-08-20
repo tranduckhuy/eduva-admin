@@ -5,7 +5,7 @@ import { Router, CanMatchFn } from '@angular/router';
 import { UserService } from '../../shared/services/api/user/user.service';
 
 import {
-  UserRole,
+  type UserRoleType,
   UserRoles,
 } from '../../shared/constants/user-roles.constant';
 
@@ -13,7 +13,7 @@ export const roleGuard: CanMatchFn = route => {
   const userService = inject(UserService);
   const router = inject(Router);
 
-  const expectedRoles = route.data?.['roles'] as UserRole[] | undefined;
+  const expectedRoles = route.data?.['roles'] as UserRoleType[] | undefined;
   const user = userService.currentUser();
 
   const isLoggedIn =
@@ -31,14 +31,13 @@ export const roleGuard: CanMatchFn = route => {
   if (hasExpectedRole) return true;
 
   // ? If the user does NOT have the required role(s)
-  // ? Check if they are SystemAdmin then redirect to their role-specific dashboard
+  // ? Check if they are SystemAdmin then redirect to dashboard
   // ? Otherwise, redirect "Unauthorized" page
   if (user.roles.includes(UserRoles.SYSTEM_ADMIN)) {
     router.navigate(['/admin']);
+  } else {
+    router.navigate(['/errors/403']);
   }
-  // else {
-  //   router.navigate(['/auth']);
-  // }
 
   return false;
 };
