@@ -42,7 +42,7 @@
         [link]="item.link || '#!'"
         [icon]="item.icon"
         [type]="item.type"
-        [isActive]="item.isActive"
+        [suppressActive]="item.suppressActive ?? false"
         [submenuItems]="item.submenuItems"
         [isSidebarCollapsed]="isSidebarCollapsed()" />
     }
