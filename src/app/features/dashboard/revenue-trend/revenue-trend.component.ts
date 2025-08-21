@@ -27,6 +27,7 @@ import { Select } from 'primeng/select';
 import { DashboardResponse } from '../../../shared/models/api/response/query/dashboard-response.model';
 import { DashboardService } from '../service/dashboard.service';
 import { PeriodType } from '../../../shared/models/enum/period-type.enum';
+import { DashboardRequest } from '../../../shared/models/api/request/command/dashboard-request.model';
 
 type DataPoint = {
   x: number;
@@ -127,14 +128,14 @@ export class RevenueTrendComponent {
     return {
       series: [
         {
-          name: 'Credit Points',
+          name: 'Gói Credit',
           data: chartData.map(item => ({
             ...item,
             y: item.meta?.creditPackRevenue ?? 0,
           })),
         },
         {
-          name: 'Subscription Plan',
+          name: 'Gói đăng ký',
           data: chartData.map(item => ({
             ...item,
             y: item.meta?.subscriptionRevenue ?? 0,
@@ -223,17 +224,13 @@ export class RevenueTrendComponent {
     this.lastRequestedPeriod.set(periodType);
 
     // Fetch new dashboard data based on the selected period
-    const request = {
+
+    const request: DashboardRequest = {
       revenuePeriod: periodType,
     };
 
     this.dashboardService.getDashboardData(request).subscribe({
-      next: data => {
-        console.log(
-          'Dashboard data updated for revenue period:',
-          selected.code,
-          data
-        );
+      next: () => {
         this.isChangingPeriod.set(false);
       },
       error: error => {
