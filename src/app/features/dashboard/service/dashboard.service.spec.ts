@@ -74,8 +74,8 @@ describe('DashboardService', () => {
   };
 
   const mockDashboardRequest: DashboardRequest = {
-    startDate: '2024-01-01',
-    endDate: '2024-01-31',
+    startDate: '2025-02-28',
+    endDate: '2025-08-30',
     lessonActivityPeriod: 'MONTH' as any,
     userRegistrationPeriod: 'MONTH' as any,
     revenuePeriod: 'MONTH' as any,
@@ -217,7 +217,10 @@ describe('DashboardService', () => {
       expect(result).toEqual(mockDashboardResponse);
       expect(requestService.get).toHaveBeenCalledWith(
         expect.stringContaining('/dashboards/system-admin'),
-        emptyRequest
+        expect.objectContaining({
+          startDate: expect.any(String),
+          endDate: expect.any(String),
+        })
       );
     });
 
@@ -349,6 +352,10 @@ describe('DashboardService', () => {
         expect.stringContaining('/dashboards/system-admin'),
         mockDashboardRequest
       );
+      expect.objectContaining({
+        startDate: expect.any(String),
+        endDate: expect.any(String),
+      });
     });
   });
 });
