@@ -155,8 +155,8 @@ export class DashboardComponent implements OnInit {
   readonly subscriptionRevenueStatCard = computed<StatCard>(() => {
     const data = this.dashboardData();
     return {
-      title: 'Subscription',
-      description: 'Doanh thu subscription plan',
+      title: 'Gói đăng ký',
+      description: 'Doanh thu gói đăng ký',
       value: data?.systemOverview.subscriptionPlanRevenue ?? 0,
       icon: 'paid',
       isRevenue: true,

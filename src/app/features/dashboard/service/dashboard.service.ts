@@ -36,8 +36,24 @@ export class DashboardService {
   ): Observable<DashboardResponse | null> {
     this.loadingService.start('dashboard');
 
+    const now = new Date();
+
+    // First day of month, 6 months ago
+    const startDate = new Date(now.getFullYear(), now.getMonth() - 5, 1)
+      .toISOString()
+      .split('T')[0];
+
+    // Last day of current month
+    const endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+      .toISOString()
+      .split('T')[0];
+
     return this.handleRequest<DashboardResponse>(
-      this.requestService.get<DashboardResponse>(this.BASE_URL, req),
+      this.requestService.get<DashboardResponse>(this.BASE_URL, {
+        ...req,
+        startDate,
+        endDate,
+      }),
       {
         successHandler: data => this.dashboardSignal.set(data),
       }
