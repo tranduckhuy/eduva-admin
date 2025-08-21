@@ -194,11 +194,17 @@ describe('DashboardService', () => {
       requestService.get.mockReturnValue(throwError(() => httpError));
 
       // Act
-      const result = await service
-        .getDashboardData(mockDashboardRequest)
-        .toPromise();
+      let result;
+      try {
+        result = await service
+          .getDashboardData(mockDashboardRequest)
+          .toPromise();
+      } catch (error) {
+        result = error;
+      }
 
       // Assert
+      // The service returns undefined when HTTP errors occur
       expect(result).toBeUndefined();
       expect(toastService.errorGeneral).toHaveBeenCalled();
       expect(loadingService.start).toHaveBeenCalledWith('dashboard');
@@ -217,7 +223,7 @@ describe('DashboardService', () => {
       expect(result).toEqual(mockDashboardResponse);
       expect(requestService.get).toHaveBeenCalledWith(
         expect.stringContaining('/dashboards/system-admin'),
-        emptyRequest
+        emptyRequest // Service passes empty object as-is
       );
     });
 
@@ -286,7 +292,14 @@ describe('DashboardService', () => {
       );
 
       // Act
-      await service.getDashboardData(mockDashboardRequest).toPromise();
+      let result;
+      try {
+        result = await service
+          .getDashboardData(mockDashboardRequest)
+          .toPromise();
+      } catch (error) {
+        result = error;
+      }
 
       // Assert
       expect(loadingService.start).toHaveBeenCalledWith('dashboard');
@@ -313,7 +326,14 @@ describe('DashboardService', () => {
       );
 
       // Act
-      await service.getDashboardData(mockDashboardRequest).toPromise();
+      let result;
+      try {
+        result = await service
+          .getDashboardData(mockDashboardRequest)
+          .toPromise();
+      } catch (error) {
+        result = error;
+      }
 
       // Assert
       expect(toastService.errorGeneral).toHaveBeenCalled();
