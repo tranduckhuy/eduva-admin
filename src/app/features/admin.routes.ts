@@ -10,6 +10,9 @@ export const adminRoutes: Routes = [
     children: [
       {
         path: '',
+        data: {
+          heading: 'Bảng thống kê',
+        },
         loadComponent: () =>
           import('./dashboard/dashboard.component').then(
             mod => mod.DashboardComponent
