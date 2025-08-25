@@ -19,7 +19,7 @@
       (isYearly() ? pricePerYear() : priceMonthly())
         | currency: 'VND' : 'symbol' : '1.0-0' : 'vi-VN'
     }}</span>
-    / trên {{ isYearly() ? 'năm' : 'tháng' }}
+    / {{ isYearly() ? 'năm' : 'tháng' }}
   </p>
   <p class="mx-auto mb-4 line-clamp-3 text-center dark:text-dark-100">
     {{ description() }}
